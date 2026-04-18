@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trading Journal | Notion Master</title>
-    <!-- Notion 감성: Inter & Pretendard -->
+    <title>Trading Journal | Magic Link Notion</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,14 +16,10 @@
             --border: #e9e9e8;
             --hover: #f1f1ef;
             --accent: #2383e2;
-            --success-bg: rgba(34, 197, 94, 0.1);
-            --success-text: #166534;
-            --danger-bg: rgba(239, 68, 68, 0.1);
-            --danger-text: #991b1b;
-            --callout-bg: #f1f1ef;
+            --success-text: #ff5252;
+            --danger-text: #3b82f6;
         }
 
-        /* 다크 모드 (사용자 설정 대응 가능하지만 노션 기본 스타일 우선) */
         @media (prefers-color-scheme: dark) {
             :root {
                 --bg: #191919;
@@ -33,353 +28,183 @@
                 --border: #2f2f2f;
                 --hover: #2c2c2c;
                 --accent: #2383e2;
-                --success-bg: rgba(239, 68, 68, 0.2); /* 노션 다크는 레드/블루 반전 없음, 수익은 레드 */
                 --success-text: #ff5252;
-                --danger-bg: rgba(59, 130, 246, 0.2);
                 --danger-text: #3b82f6;
-                --callout-bg: #202020;
             }
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Pretendard", -apple-system, sans-serif; }
-        
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Pretendard", sans-serif; }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 100px; }
 
-        /* Notion Cover Image Area */
-        .cover-image {
-            height: 250px;
-            width: 100%;
-            background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
-            object-fit: cover;
-        }
+        .cover { height: 180px; width: 100%; background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; position: relative; }
+        .icon { font-size: 78px; margin-top: -45px; margin-bottom: 20px; display: inline-block; background: var(--bg); border-radius: 20px; }
 
-        .notion-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 100px 100px 100px;
-            position: relative;
-        }
+        .main-layout { display: grid; grid-template-columns: 1fr 320px; gap: 40px; margin-top: 20px; }
 
-        /* Page Icon (Emoji) */
-        .page-icon {
-            font-size: 78px;
-            margin-top: -45px;
-            margin-bottom: 20px;
-            display: inline-block;
-            background: var(--bg);
-            border-radius: 20px;
-        }
-
-        h1 {
-            font-size: 40px;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            margin-bottom: 8px;
-        }
-
-        .breadcrumb {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 40px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* Layout Grid */
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 40px;
-        }
-
-        /* Callout Block */
-        .callout {
-            background: var(--callout-bg);
-            border-radius: 4px;
-            padding: 16px;
-            display: flex;
-            gap: 12px;
-            margin-bottom: 30px;
-            font-size: 14px;
-            border: 1px solid var(--border);
-        }
-
-        /* Notion Database Table Style */
-        .db-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 12px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-
-        th {
-            text-align: left;
-            padding: 8px 12px;
-            color: var(--text-muted);
-            font-weight: 500;
-            border-bottom: 1px solid var(--border);
-            border-right: 1px solid var(--border);
-        }
-        th:last-child { border-right: none; }
-
-        td {
-            padding: 10px 12px;
-            border-bottom: 1px solid var(--border);
-            border-right: 1px solid var(--border);
-            vertical-align: middle;
-        }
-        td:last-child { border-right: none; }
-
+        /* Table Style */
+        .db-title { font-size: 14px; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { text-align: left; padding: 10px; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--border); }
+        td { padding: 12px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
         tr:hover { background: var(--hover); }
 
-        /* Badges (Tags) */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .badge-long { background: var(--success-bg); color: var(--success-text); }
-        .badge-short { background: var(--danger-bg); color: var(--danger-text); }
-        .badge-default { background: var(--hover); color: var(--text-muted); }
+        /* Image Embed */
+        .chart-preview { width: 80px; height: 50px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border); cursor: pointer; transition: transform 0.1s; }
+        .chart-preview:hover { transform: scale(1.05); }
 
-        /* Stats Sidebar */
-        .sidebar-section {
-            margin-bottom: 30px;
-        }
-        .sidebar-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 12px;
-        }
-        .stat-card {
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        .stat-card .label { font-size: 12px; color: var(--text-muted); }
-        .stat-card .value { font-size: 20px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-top: 4px; }
-
-        /* Inputs (Notion Style) */
-        .notion-input-group {
-            margin-bottom: 20px;
-        }
-        .notion-input-group label {
-            display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;
-        }
-        input, select, textarea {
-            width: 100%; border: 1px solid var(--border); padding: 8px 12px; border-radius: 4px;
-            background: transparent; color: var(--text); font-size: 14px; outline: none;
-        }
+        /* Form Style */
+        .sidebar { background: var(--bg); position: sticky; top: 20px; }
+        .input-card { background: var(--hover); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .field { margin-bottom: 15px; }
+        label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; }
+        input, select, textarea { width: 100%; border: 1px solid var(--border); padding: 8px 12px; border-radius: 4px; background: var(--bg); color: var(--text); font-size: 13px; outline: none; }
         input:focus { border-color: var(--accent); }
-        textarea { height: 100px; resize: none; }
-
-        .btn-new {
-            background: transparent; border: 1px solid var(--border); color: var(--text-muted);
-            padding: 6px 12px; border-radius: 4px; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 6px;
-        }
-        .btn-new:hover { background: var(--hover); color: var(--text); }
         
-        .btn-save {
-            background: var(--accent); color: white; border: none; padding: 10px 16px; border-radius: 4px; font-weight: 600; width: 100%; cursor: pointer;
-        }
+        .btn-save { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 4px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 5px; }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; padding: 40px; }
+        .modal-img { max-width: 100%; max-height: 100%; border-radius: 8px; }
 
-        .pnl-plus { color: var(--success-text); }
-        .pnl-minus { color: var(--danger-text); }
-
-        /* Chart Canvas */
-        .chart-box { height: 150px; margin-top: 20px; border: 1px solid var(--border); border-radius: 4px; padding: 10px; }
-
-        @media (max-width: 1000px) {
-            .notion-container { padding: 0 20px 50px 20px; }
-            .main-content { grid-template-columns: 1fr; }
-        }
+        .pnl-up { color: var(--success-text); }
+        .pnl-down { color: var(--danger-text); }
+        .badge { padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+        .long { background: rgba(255, 82, 82, 0.1); color: var(--success-text); }
+        .short { background: rgba(59, 130, 246, 0.1); color: var(--danger-text); }
     </style>
 </head>
 <body>
 
-    <div class="cover-image"></div>
+    <div class="cover"></div>
+    <div class="container">
+        <span class="icon">🪄</span>
+        <h1 style="margin-bottom: 10px;">트레이딩 매직 링크 데이터베이스</h1>
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom:40px;">트레이딩뷰 링크(Alt+S)만 붙여넣으면 사진이 자동으로 나타납니다.</p>
 
-    <div class="notion-container">
-        <span class="page-icon">🚀</span>
-        <div class="breadcrumb">Workspace / <b>Trading Journal</b></div>
-        <h1>트레이딩 복기 데이터베이스</h1>
-        
-        <div class="callout">
-            <span>💡</span>
+        <div class="main-layout">
+            <!-- 일지 리스트 -->
             <div>
-                <b>원칙:</b> 뇌동매매 금지, 손절 준수, 무조건 일기 작성. 
-                <br><span style="color:var(--text-muted); font-size:12px;">오늘의 목표: 수익보다 '기록'에 집중할 것.</span>
-            </div>
-        </div>
-
-        <div class="main-content">
-            <!-- 메인 일지 섹션 (70%) -->
-            <div class="journal-db">
-                <div class="db-header">
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <span>📋</span> <span>Table View</span>
-                    </div>
-                    <button class="btn-new" onclick="focusInput()">+ New Page</button>
-                </div>
-                
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 120px;">날짜</th>
-                                <th style="width: 100px;">종목</th>
-                                <th style="width: 80px;">방향</th>
-                                <th style="text-align: right;">수익금</th>
-                                <th>메모</th>
-                                <th style="width: 50px;"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="dbBody">
-                            <!-- Records will be injected here -->
-                        </tbody>
-                    </table>
-                </div>
-                <div id="emptyMsg" style="padding: 40px; text-align: center; color: var(--text-muted); border-bottom: 1px solid var(--border);">
-                    No records found. Click '+ New Page' to start.
-                </div>
+                <div class="db-title">📋 모든 매매 기록</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 100px;">차트</th>
+                            <th style="width: 100px;">종목</th>
+                            <th style="width: 80px;">포지션</th>
+                            <th style="text-align: right; width: 120px;">수익금</th>
+                            <th>메모</th>
+                            <th style="width: 40px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="dbBody"></tbody>
+                </table>
+                <div id="emptyMsg" style="padding: 100px; text-align: center; color: var(--text-muted);">아직 기록이 없습니다. 우측에서 첫 매매를 기록해보세요.</div>
             </div>
 
-            <!-- 사이드바 (30%) -->
+            <!-- 사이드바 입력 -->
             <aside class="sidebar">
-                <div class="sidebar-section">
-                    <div class="sidebar-title">Analytics</div>
-                    <div class="stat-card">
-                        <div class="label">Net Profit</div>
-                        <div id="statProfit" class="value pnl-plus">0</div>
-                    </div>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                        <div class="stat-card">
-                            <div class="label">Win Rate</div>
-                            <div id="statWinRate" class="value">0%</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="label">Trades</div>
-                            <div id="statCount" class="value">0</div>
+                <div class="input-card">
+                    <div style="font-size: 12px; font-weight: 800; margin-bottom: 20px; color: var(--text-muted);">새 기록 작성</div>
+                    
+                    <div class="field">
+                        <label>차트 이미지 링크 (트레이딩뷰 Alt+S)</label>
+                        <input type="text" id="chartUrl" placeholder="https://www.tradingview.com/x/..." oninput="previewImage()">
+                        <div id="urlPreview" style="margin-top:10px; display:none;">
+                            <img id="previewImg" style="width:100%; border-radius:4px; border:1px solid var(--border);">
                         </div>
                     </div>
-                    <div class="chart-box">
-                        <canvas id="pnlChart"></canvas>
-                    </div>
-                </div>
 
-                <div class="sidebar-section">
-                    <div class="sidebar-title">Entry Log</div>
-                    <div class="notion-input-group">
-                        <label>종목명 (Asset)</label>
-                        <input type="text" id="assetName" placeholder="BTC">
+                    <div class="field">
+                        <label>종목명</label>
+                        <input type="text" id="assetName" placeholder="예: BTCUSDT">
                     </div>
+
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                        <div class="notion-input-group">
-                            <label>방향 (Side)</label>
-                            <select id="tradeType">
+                        <div class="field">
+                            <label>방향</label>
+                            <select id="tradeSide">
                                 <option value="LONG">LONG</option>
                                 <option value="SHORT">SHORT</option>
                             </select>
                         </div>
-                        <div class="notion-input-group">
-                            <label>수량 (Qty)</label>
-                            <input type="number" id="tradeQty" step="any" placeholder="0">
+                        <div class="field">
+                            <label>수익/손실액</label>
+                            <input type="number" id="pnlAmount" placeholder="0">
                         </div>
                     </div>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                        <div class="notion-input-group">
-                            <label>진입가 (In)</label>
-                            <input type="number" id="entryPrice" placeholder="0">
-                        </div>
-                        <div class="notion-input-group">
-                            <label>청산가 (Out)</label>
-                            <input type="number" id="exitPrice" placeholder="0">
-                        </div>
+
+                    <div class="field">
+                        <label>매매 복기</label>
+                        <textarea id="tradeMemo" placeholder="진입 근거와 반성..."></textarea>
                     </div>
-                    <div class="notion-input-group">
-                        <label>복기 및 근거 (Memo)</label>
-                        <textarea id="tradeMemo" placeholder="여기에 복기 내용을 작성하세요..."></textarea>
-                    </div>
-                    <button class="btn-save" onclick="addRecord()">일지 저장</button>
+
+                    <button class="btn-save" onclick="addRecord()">기록 저장하기</button>
                 </div>
 
-                <div class="sidebar-section" style="border-top:1px solid var(--border); padding-top:20px;">
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn-new" style="flex:1;" onclick="exportData()">Export</button>
-                        <button class="btn-new" style="flex:1;" onclick="takeScreenshot()">Capture</button>
-                    </div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-save" style="background:var(--hover); color:var(--text); flex:1;" onclick="exportData()">백업</button>
+                    <button class="btn-save" style="background:var(--hover); color:var(--text); flex:1;" onclick="takeScreenshot()">캡처</button>
                 </div>
             </aside>
         </div>
     </div>
 
+    <!-- 큰 화면 모달 -->
+    <div id="imgModal" class="modal" onclick="this.style.display='none'">
+        <img class="modal-img" id="modalImg">
+    </div>
+
     <script>
-        let records = JSON.parse(localStorage.getItem('notion_master_v6_records')) || [];
-        let pnlChart = null;
+        let records = JSON.parse(localStorage.getItem('trading_v6_2_records')) || [];
 
-        function formatVal(val) {
-            return Number(val).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-        }
-
-        function focusInput() {
-            document.getElementById('assetName').focus();
+        function previewImage() {
+            const url = document.getElementById('chartUrl').value;
+            const previewDiv = document.getElementById('urlPreview');
+            const previewImg = document.getElementById('previewImg');
+            
+            if (url && url.includes('tradingview.com/x/')) {
+                // 트레이딩뷰 링크를 직접 이미지 경로로 변환 (끝에 .png를 붙이거나 썸네일 경로 사용)
+                // 보통 https://www.tradingview.com/x/ABC/ 를 <img> 태그에 넣으면 바로는 안될 수 있으나
+                // 실제로는 브라우저가 리다이렉션을 처리하거나 특정 규칙을 적용할 수 있음
+                // 여기서는 사용자 경험을 위해 링크를 그대로 이미지 소스로 시도
+                const imgUrl = url.endsWith('/') ? url.slice(0, -1) : url;
+                previewImg.src = `https://www.tradingview.com/x/${imgUrl.split('/').pop()}.png`;
+                previewDiv.style.display = 'block';
+            } else {
+                previewDiv.style.display = 'none';
+            }
         }
 
         function addRecord() {
             const asset = document.getElementById('assetName').value.toUpperCase();
-            const type = document.getElementById('tradeType').value;
-            const entry = Number(document.getElementById('entryPrice').value);
-            const exit = Number(document.getElementById('exitPrice').value);
-            const qty = Number(document.getElementById('tradeQty').value);
+            const side = document.getElementById('tradeSide').value;
+            const pnl = Number(document.getElementById('pnlAmount').value);
             const memo = document.getElementById('tradeMemo').value;
+            const url = document.getElementById('chartUrl').value;
 
-            if(!asset || !entry || !exit || !qty || !memo) return alert('모든 항목을 채워주세요.');
+            if(!asset || !url) return alert('종목명과 차트 링크는 필수입니다!');
 
-            const pnl = type === 'LONG' ? (exit - entry) * qty : (entry - exit) * qty;
-            const record = { id: Date.now(), asset, type, entry, exit, qty, memo, pnl };
+            const imgId = url.split('/').filter(Boolean).pop();
+            const finalImgUrl = `https://www.tradingview.com/x/${imgId}.png`;
+
+            const record = {
+                id: Date.now(),
+                asset, side, pnl, memo,
+                image: finalImgUrl
+            };
 
             records.unshift(record);
-            localStorage.setItem('notion_master_v6_records', JSON.stringify(records));
+            localStorage.setItem('trading_v6_2_records', JSON.stringify(records));
             
-            // Clear inputs
+            // 초기화
             document.getElementById('assetName').value = '';
-            document.getElementById('entryPrice').value = '';
-            document.getElementById('exitPrice').value = '';
-            document.getElementById('tradeQty').value = '';
+            document.getElementById('pnlAmount').value = '';
             document.getElementById('tradeMemo').value = '';
+            document.getElementById('chartUrl').value = '';
+            document.getElementById('urlPreview').style.display = 'none';
 
             renderRecords();
-        }
-
-        function deleteRecord(id) {
-            if(confirm('이 페이지를 삭제하시겠습니까?')) {
-                records = records.filter(r => r.id !== id);
-                localStorage.setItem('notion_master_v6_records', JSON.stringify(records));
-                renderRecords();
-            }
         }
 
         function renderRecords() {
@@ -389,84 +214,49 @@
 
             if (records.length === 0) {
                 emptyMsg.style.display = 'block';
-                updateStats(0, 0, 0);
                 return;
             }
             emptyMsg.style.display = 'none';
 
-            let totalP = 0; let wins = 0;
             records.forEach(r => {
-                totalP += r.pnl; if(r.pnl > 0) wins++;
-                const d = new Date(r.id);
-                const dateStr = `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-                
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td style="color:var(--text-muted); font-size:12px;">${dateStr}</td>
-                    <td><div style="display:flex; align-items:center; gap:6px;">📄 <b>${r.asset}</b></div></td>
-                    <td><span class="badge ${r.type === 'LONG' ? 'badge-long' : 'badge-short'}">${r.type}</span></td>
-                    <td style="text-align:right; font-weight:700;" class="${r.pnl > 0 ? 'pnl-plus' : (r.pnl < 0 ? 'pnl-minus' : '')}">
-                        ${r.pnl > 0 ? '+' : ''}${formatVal(r.pnl)}
+                    <td><img src="${r.image}" class="chart-preview" onclick="showModal('${r.image}')"></td>
+                    <td><b>${r.asset}</b></td>
+                    <td><span class="badge ${r.side === 'LONG' ? 'long' : 'short'}">${r.side}</span></td>
+                    <td style="text-align:right; font-weight:700;" class="${r.pnl >= 0 ? 'pnl-up' : 'pnl-down'}">
+                        ${r.pnl >= 0 ? '+' : ''}${r.pnl.toLocaleString()}
                     </td>
-                    <td style="color:var(--text-muted); font-size:13px;">${r.memo.substring(0, 30)}${r.memo.length > 30 ? '...' : ''}</td>
+                    <td style="color:var(--text-muted); font-size:13px;">${r.memo.substring(0, 50)}...</td>
                     <td><span onclick="deleteRecord(${r.id})" style="cursor:pointer; opacity:0.3;">🗑️</span></td>
                 `;
                 body.appendChild(tr);
             });
-
-            updateStats(totalP, ((wins/records.length)*100).toFixed(1), records.length);
-            updateChart();
         }
 
-        function updateStats(p, w, c) {
-            const el = document.getElementById('statProfit');
-            el.innerText = (p > 0 ? '+' : '') + formatVal(p);
-            el.className = 'value ' + (p > 0 ? 'pnl-plus' : (p < 0 ? 'pnl-minus' : ''));
-            document.getElementById('statWinRate').innerText = w + '%';
-            document.getElementById('statCount').innerText = c;
+        function showModal(src) {
+            const modal = document.getElementById('imgModal');
+            document.getElementById('modalImg').src = src;
+            modal.style.display = 'flex';
         }
 
-        function updateChart() {
-            const ctx = document.getElementById('pnlChart').getContext('2d');
-            const sorted = [...records].sort((a,b) => a.id - b.id);
-            let cum = 0; const data = sorted.map(r => { cum += r.pnl; return cum; });
-            if (pnlChart) pnlChart.destroy();
-            pnlChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['0', ...sorted.map((_, i) => i + 1)],
-                    datasets: [{
-                        data: [0, ...data],
-                        borderColor: '#2383e2',
-                        borderWidth: 1.5,
-                        pointRadius: 0, tension: 0.3, fill: false
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { display: false },
-                        y: { grid: { color: 'rgba(0,0,0,0.03)', drawBorder: false }, ticks: { display: false } }
-                    }
-                }
-            });
+        function deleteRecord(id) {
+            if(confirm('이 기록을 삭제하시겠습니까?')) {
+                records = records.filter(r => r.id !== id);
+                localStorage.setItem('trading_v6_2_records', JSON.stringify(records));
+                renderRecords();
+            }
         }
 
         function exportData() {
             const blob = new Blob([JSON.stringify(records)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = 'notion_trading_data.json';
-            a.click();
+            const a = document.createElement('a'); a.href = url; a.download = 'trading_journal_backup.json'; a.click();
         }
 
         function takeScreenshot() {
-            html2canvas(document.querySelector('.notion-container'), { backgroundColor: '#ffffff' }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `notion_report_${Date.now()}.png`;
-                link.href = canvas.toDataURL();
-                link.click();
+            html2canvas(document.body, { backgroundColor: '#ffffff' }).then(canvas => {
+                const link = document.createElement('a'); link.download = 'report.png'; link.href = canvas.toDataURL(); link.click();
             });
         }
 
