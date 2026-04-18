@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>트레이딩 마스터 매매일지 | Mastery Pro v7.2</title>
+    <title>트레이딩 마스터 매매일지 | Mastery Pro v7.3</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -42,14 +42,18 @@
         .container { max-width: 1300px; margin: 0 auto; padding: 0 60px; position: relative; }
         .icon { font-size: 78px; margin-top: -45px; margin-bottom: 20px; display: inline-block; background: var(--bg); border-radius: 20px; }
 
+        /* 환율 전광판 */
+        .exchange-rate-bar { position: absolute; top: 20px; right: 60px; background: rgba(0,0,0,0.5); color: white; padding: 8px 15px; border-radius: 20px; font-size: 12px; backdrop-filter: blur(10px); display: flex; gap: 10px; align-items: center; border: 1px solid rgba(255,255,255,0.1); }
+        .rate-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981; }
+
         .main-layout { display: grid; grid-template-columns: 1fr 380px; gap: 40px; margin-top: 20px; }
 
         /* 성과 분석 그리드 */
         .analytics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
-        .stat-item { background: var(--hover); padding: 15px; border-radius: 12px; border: 1px solid var(--border); text-align: center; transition: transform 0.2s; }
-        .stat-item:hover { transform: translateY(-2px); }
+        .stat-item { background: var(--hover); padding: 15px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
         .stat-item .label { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; font-weight: 700; text-transform: uppercase; }
         .stat-item .value { font-size: 18px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+        .stat-item .krw-value { font-size: 10px; color: var(--text-muted); margin-top: 4px; display: block; }
 
         .sub-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 30px; }
         .sub-stat-item { background: transparent; padding: 10px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
@@ -99,9 +103,10 @@
         .modal-img { max-width: 100%; max-height: 100%; border-radius: 4px; }
 
         @media (max-width: 1100px) { 
-            .notion-container { padding: 0 20px 50px 20px; } 
+            .container { padding: 0 20px 50px 20px; } 
             .main-layout { grid-template-columns: 1fr; } 
             .analytics-grid { grid-template-columns: 1fr 1fr; }
+            .exchange-rate-bar { right: 20px; }
         }
     </style>
 </head>
@@ -110,25 +115,35 @@
     <div class="cover"></div>
     <div class="container">
         <span class="icon">🏆</span>
-        <h1>트레이딩 마스터 매매일지 <small style="font-size: 12px; color:var(--text-muted); font-weight: 400;">v7.2 성과분석 에디션</small></h1>
+        <h1>트레이딩 마스터 매매일지 <small style="font-size: 12px; color:var(--text-muted); font-weight: 400;">v7.3 환율연동 에디션</small></h1>
         
+        <!-- 실시간 환율 전광판 -->
+        <div class="exchange-rate-bar">
+            <div class="rate-dot"></div>
+            <span>USDT/KRW: <strong id="liveRate">Loading...</strong>원</span>
+        </div>
+
         <!-- 기간별 성과 분석 그리드 -->
         <div class="analytics-grid">
             <div class="stat-item">
                 <div class="label">오늘의 손익</div>
                 <div id="statToday" class="value">0</div>
+                <span id="krwToday" class="krw-value">≈ 0원</span>
             </div>
             <div class="stat-item">
                 <div class="label">이번 주 손익</div>
                 <div id="statWeek" class="value">0</div>
+                <span id="krwWeek" class="krw-value">≈ 0원</span>
             </div>
             <div class="stat-item">
                 <div class="label">이번 달 손익</div>
                 <div id="statMonth" class="value">0</div>
+                <span id="krwMonth" class="krw-value">≈ 0원</span>
             </div>
             <div class="stat-item">
                 <div class="label">올해의 손익</div>
                 <div id="statYear" class="value">0</div>
+                <span id="krwYear" class="krw-value">≈ 0원</span>
             </div>
         </div>
 
@@ -137,6 +152,7 @@
             <div class="sub-stat-item">
                 <div class="label" style="font-size:10px; font-weight:800; color:var(--text-muted);">전체 누적 손익</div>
                 <div id="statTotal" class="value pnl-up" style="font-weight:800; font-family:'JetBrains Mono';">0</div>
+                <span id="krwTotal" style="font-size:10px; color:var(--text-muted);">≈ 0원</span>
             </div>
             <div class="sub-stat-item">
                 <div class="label" style="font-size:10px; font-weight:800; color:var(--text-muted);">롱 승률</div>
@@ -160,7 +176,7 @@
                             <th style="width: 100px;">종목</th>
                             <th style="width: 70px;">방향</th>
                             <th style="width: 150px;">진입 / 청산 가격</th>
-                            <th style="text-align: right; width: 100px;">손익 (%)</th>
+                            <th style="text-align: right; width: 100px;">손익 (USDT)</th>
                             <th>복기 메모 및 태그</th>
                             <th style="width: 40px;"></th>
                         </tr>
@@ -176,7 +192,7 @@
                 <div class="card">
                     <div class="sidebar-title">📏 정밀 포지션 계산기</div>
                     <div class="field">
-                        <label>기준 가격</label>
+                        <label>기준 가격 (USDT)</label>
                         <div style="display:flex; gap:4px;">
                             <input type="number" id="calcPrice" placeholder="현재가" oninput="runCalc()">
                             <button onclick="fetchLivePrice('calc')" class="btn-fetch" title="현재가 불러오기">⚡</button>
@@ -184,7 +200,7 @@
                     </div>
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                         <div class="field">
-                            <label>진입 원금</label>
+                            <label>진입 원금 ($)</label>
                             <input type="number" id="calcEntry" placeholder="0" oninput="runCalc()">
                         </div>
                         <div class="field">
@@ -242,14 +258,14 @@
                     </div>
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                         <div class="field">
-                            <label>진입 가격</label>
+                            <label>진입 가격 (USDT)</label>
                             <div style="display:flex; gap:4px;">
                                 <input type="number" id="entryPrice" placeholder="0" style="flex:1;">
                                 <button onclick="fetchLivePrice('all')" class="btn-fetch" title="시세 불러오기">⚡</button>
                             </div>
                         </div>
                         <div class="field">
-                            <label>청산 가격</label>
+                            <label>청산 가격 (USDT)</label>
                             <input type="number" id="exitPrice" placeholder="0">
                         </div>
                     </div>
@@ -286,13 +302,27 @@
 
     <script>
         let db;
-        const request = indexedDB.open("MasterJournalDB_v7_2", 1);
+        const request = indexedDB.open("MasterJournalDB_v7_3", 1);
         request.onupgradeneeded = e => { db = e.target.result; db.createObjectStore("images", { keyPath: "id" }); };
         request.onsuccess = e => { db = e.target.result; renderRecords(); };
 
-        let records = JSON.parse(localStorage.getItem('trading_v7_2_master')) || [];
+        let records = JSON.parse(localStorage.getItem('trading_v7_3_master')) || [];
         let tempImageData = null;
         let currentDirection = 'LONG';
+        let usdtRate = 1350; // 기본 환율
+
+        // 실시간 환율 가져오기 (업비트)
+        async function fetchExchangeRate() {
+            try {
+                const res = await fetch('https://api.upbit.com/v1/ticker?markets=KRW-USDT');
+                const data = await res.json();
+                usdtRate = data[0].trade_price;
+                document.getElementById('liveRate').innerText = usdtRate.toLocaleString();
+                renderRecords(); // 환율 반영하여 다시 렌더링
+            } catch (err) {
+                console.error('환율 로드 실패');
+            }
+        }
 
         function initTime() {
             const now = new Date();
@@ -318,7 +348,7 @@
                 document.getElementById('priceSl').innerText = (base * (1 - sl/100)).toLocaleString();
                 document.getElementById('priceTp').innerText = (base * (1 + (sl*rr)/100)).toLocaleString();
             }
-            document.getElementById('resTotal').innerText = (entry * lev).toLocaleString();
+            document.getElementById('resTotal').innerText = (entry * lev).toLocaleString() + ' $';
         }
 
         async function fetchLivePrice(target) {
@@ -398,7 +428,7 @@
             }
 
             records.unshift(record);
-            localStorage.setItem('trading_v7_2_master', JSON.stringify(records));
+            localStorage.setItem('trading_v7_3_master', JSON.stringify(records));
             
             // Reset
             document.getElementById('assetName').value = '';
@@ -455,7 +485,7 @@
                     <td><span class="badge ${r.side === 'LONG' ? 'long-badge' : 'short-badge'}">${r.side}</span></td>
                     <td style="font-family:'JetBrains Mono'; font-size:11px;">${r.entry.toLocaleString()} → ${r.exit.toLocaleString()}</td>
                     <td style="text-align:right; font-weight:700;" class="${r.pnl >= 0 ? 'pnl-up' : 'pnl-down'}">
-                        ${r.pnl >= 0 ? '+' : ''}${r.pnl.toLocaleString()}<br><small>${r.yieldPct.toFixed(2)}%</small>
+                        ${r.pnl >= 0 ? '+' : ''}${r.pnl.toFixed(2)} $<br><small style="font-size:9px;">≈ ${(r.pnl * usdtRate).toLocaleString(undefined, {maximumFractionDigits:0})}원</small>
                     </td>
                     <td>
                         <div style="font-size:12px; margin-bottom:4px;">${r.memo}</div>
@@ -466,15 +496,21 @@
                 body.appendChild(tr);
             }
 
-            // 성과 데이터 업데이트
-            const setStat = (id, val) => {
+            const setStat = (id, krwId, val) => {
                 const el = document.getElementById(id);
-                el.innerText = (val >= 0 ? '+' : '') + val.toLocaleString();
+                const kel = document.getElementById(krwId);
+                el.innerText = (val >= 0 ? '+' : '') + val.toFixed(2) + ' $';
                 el.className = 'value ' + (val >= 0 ? 'pnl-up' : 'pnl-down');
+                kel.innerText = `≈ ${(val * usdtRate).toLocaleString(undefined, {maximumFractionDigits:0})}원`;
             };
-            setStat('statToday', pToday); setStat('statWeek', pWeek);
-            setStat('statMonth', pMonth); setStat('statYear', pYear);
-            setStat('statTotal', totalP);
+            setStat('statToday', 'krwToday', pToday); 
+            setStat('statWeek', 'krwWeek', pWeek);
+            setStat('statMonth', 'krwMonth', pMonth); 
+            setStat('statYear', 'krwYear', pYear);
+            
+            document.getElementById('statTotal').innerText = (totalP >= 0 ? '+' : '') + totalP.toFixed(2) + ' $';
+            document.getElementById('statTotal').className = 'value ' + (totalP >= 0 ? 'pnl-up' : 'pnl-down');
+            document.getElementById('krwTotal').innerText = `≈ ${(totalP * usdtRate).toLocaleString(undefined, {maximumFractionDigits:0})}원`;
 
             document.getElementById('statLongWin').innerText = lTotal > 0 ? ((lWin/lTotal)*100).toFixed(1) + '%' : '0%';
             document.getElementById('statShortWin').innerText = sTotal > 0 ? ((sWin/sTotal)*100).toFixed(1) + '%' : '0%';
@@ -486,7 +522,7 @@
         function deleteRecord(id) {
             if(confirm('삭제하시겠습니까?')) {
                 records = records.filter(r => r.id !== id);
-                localStorage.setItem('trading_v7_2_master', JSON.stringify(records));
+                localStorage.setItem('trading_v7_3_master', JSON.stringify(records));
                 if(db) { const tx = db.transaction("images", "readwrite"); tx.objectStore("images").delete(id); }
                 renderRecords();
             }
@@ -504,7 +540,7 @@
             });
         }
 
-        window.onload = () => { initTime(); runCalc(); fetchSymbols(); };
+        window.onload = () => { initTime(); runCalc(); fetchSymbols(); fetchExchangeRate(); };
     </script>
 </body>
 </html>
