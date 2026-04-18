@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trading Journal | Visual Master</title>
+    <title>Trading Journal | Visual Master v6.4</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
@@ -36,43 +36,50 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Pretendard", sans-serif; }
         body { background-color: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 50px; }
 
-        .cover { height: 160px; width: 100%; background: linear-gradient(135deg, #434343 0%, #000000 100%); }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; position: relative; }
+        .cover { height: 160px; width: 100%; background: linear-gradient(135deg, #1e3a8a 0%, #000000 100%); }
+        .container { max-width: 1300px; margin: 0 auto; padding: 0 60px; position: relative; }
         .icon { font-size: 78px; margin-top: -45px; margin-bottom: 20px; display: inline-block; background: var(--bg); border-radius: 20px; }
 
-        .main-layout { display: grid; grid-template-columns: 1fr 340px; gap: 40px; margin-top: 20px; }
+        .main-layout { display: grid; grid-template-columns: 1fr 360px; gap: 40px; margin-top: 20px; }
 
-        /* DB Table */
+        /* DB Table Style */
         .db-title { font-size: 14px; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th { text-align: left; padding: 10px; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--border); }
-        td { padding: 12px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
         tr:hover { background: var(--hover); }
-
-        /* Image Paste Zone */
-        .paste-zone {
-            width: 100%; height: 150px; border: 2px dashed var(--border); border-radius: 8px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--text-muted); cursor: pointer; font-size: 13px; margin-bottom: 20px;
-            background-size: cover; background-position: center; position: relative; overflow: hidden;
-            transition: 0.2s;
-        }
-        .paste-zone:hover { border-color: var(--accent); background-color: var(--hover); }
-        .paste-zone.active { border-color: var(--accent); background-color: rgba(35, 131, 226, 0.05); }
 
         .chart-thumb { width: 80px; height: 50px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border); cursor: pointer; }
 
-        /* Sidebar Input */
-        .input-card { background: var(--hover); padding: 24px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border); }
-        .field { margin-bottom: 16px; }
-        label { display: block; font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; }
-        input, select, textarea { width: 100%; border: 1px solid var(--border); padding: 10px 12px; border-radius: 6px; background: var(--bg); color: var(--text); font-size: 14px; outline: none; }
-        input:focus { border-color: var(--accent); }
-        textarea { height: 100px; resize: none; line-height: 1.6; }
-        
-        .btn-save { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 10px; font-size: 15px; }
+        /* Sidebar & Cards */
+        .sidebar { background: var(--bg); }
+        .card { background: var(--hover); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .sidebar-title { font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.05em; }
 
-        /* Modal */
+        /* Form Controls */
+        .field { margin-bottom: 12px; }
+        label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
+        input, select, textarea { width: 100%; border: 1px solid var(--border); padding: 8px 12px; border-radius: 4px; background: var(--bg); color: var(--text); font-size: 13px; outline: none; transition: border-color 0.2s; }
+        input:focus { border-color: var(--accent); }
+        textarea { height: 80px; resize: none; line-height: 1.6; }
+
+        /* Image Paste Zone */
+        .paste-zone {
+            width: 100%; height: 120px; border: 2px dashed var(--border); border-radius: 6px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); cursor: pointer; font-size: 12px; margin-bottom: 15px;
+            background-size: cover; background-position: center; position: relative; overflow: hidden;
+        }
+        .paste-zone:hover { border-color: var(--accent); background-color: rgba(35, 131, 226, 0.05); }
+
+        /* Calculator Specific */
+        .calc-result-row { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; }
+        .calc-result-row strong { font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+
+        .btn-save { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 4px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 10px; font-size: 14px; transition: opacity 0.2s; }
+        .btn-save:hover { opacity: 0.9; }
+
+        /* Utility */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; padding: 20px; }
         .modal-img { max-width: 100%; max-height: 100%; border-radius: 4px; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
 
@@ -81,27 +88,29 @@
         .badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
         .long { background: rgba(255, 82, 82, 0.1); color: var(--success-text); }
         .short { background: rgba(59, 130, 246, 0.1); color: var(--danger-text); }
+
+        @media (max-width: 1100px) { .notion-container { padding: 0 20px 50px 20px; } .main-layout { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
     <div class="cover"></div>
     <div class="container">
-        <span class="icon">📈</span>
-        <h1>비주얼 트레이딩 저널</h1>
-        <p style="color:var(--text-muted); font-size:15px; margin-bottom:40px;">이미지를 복사(Ctrl+C)하고 여기서 붙여넣기(Ctrl+V) 하세요. 마법처럼 기록됩니다.</p>
+        <span class="icon">💼</span>
+        <h1>트레이딩 마스터 저널</h1>
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom:40px;">매매 복기부터 포지션 사이징까지, 당신의 트레이딩을 완성하세요.</p>
 
         <div class="main-layout">
-            <!-- 일지 테이블 -->
+            <!-- 일지 테이블 (왼쪽) -->
             <div>
-                <div class="db-title">📂 히스토리 데이터베이스</div>
+                <div class="db-title">📊 Trading Database</div>
                 <table>
                     <thead>
                         <tr>
                             <th style="width: 100px;">차트</th>
                             <th style="width: 100px;">날짜</th>
                             <th style="width: 120px;">종목</th>
-                            <th style="width: 80px;">포지션</th>
+                            <th style="width: 80px;">방향</th>
                             <th style="text-align: right; width: 120px;">손익</th>
                             <th>메모</th>
                             <th style="width: 40px;"></th>
@@ -109,60 +118,97 @@
                     </thead>
                     <tbody id="dbBody"></tbody>
                 </table>
-                <div id="emptyMsg" style="padding: 100px; text-align: center; color: var(--text-muted);">아직 기록된 매매가 없습니다.</div>
+                <div id="emptyMsg" style="padding: 100px; text-align: center; color: var(--text-muted);">아직 기록이 없습니다. 우측에서 기록을 시작하세요.</div>
             </div>
 
-            <!-- 사이드바 입력 -->
-            <aside>
-                <div class="input-card">
-                    <label>차트 이미지 (Ctrl+V)</label>
+            <!-- 사이드바 (오른쪽) -->
+            <aside class="sidebar">
+                
+                <!-- 포지션 사이징 계산기 (복구됨!) -->
+                <div class="card">
+                    <div class="sidebar-title">📏 Position Sizing (1:2 RR)</div>
+                    <div class="field">
+                        <label>Entry Margin (원금)</label>
+                        <input type="number" id="calcEntry" placeholder="0" oninput="runCalc()">
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                        <div class="field">
+                            <label>Leverage</label>
+                            <input type="number" id="calcLev" value="10" oninput="runCalc()">
+                        </div>
+                        <div class="field">
+                            <label>Stop Loss %</label>
+                            <input type="number" id="calcSl" value="5" oninput="runCalc()">
+                        </div>
+                    </div>
+                    <div style="background:var(--bg); padding:12px; border-radius:4px; border:1px solid var(--border); margin-top:10px;">
+                        <div class="calc-result-row">
+                            <span>Total Size:</span>
+                            <strong id="resTotal" style="color:var(--accent);">0</strong>
+                        </div>
+                        <div class="calc-result-row">
+                            <span>TP (2.0x):</span>
+                            <strong id="resTp" class="pnl-up">+0</strong>
+                        </div>
+                        <div class="calc-result-row">
+                            <span>SL (1.0x):</span>
+                            <strong id="resSl" class="pnl-down">-0</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 매매 기록 입력 -->
+                <div class="card" style="background:var(--hover);">
+                    <div class="sidebar-title">📝 New Trade Log</div>
+                    
+                    <label>Chart Image (Ctrl+V)</label>
                     <div class="paste-zone" id="pasteZone" onclick="document.getElementById('fileInput').click()">
-                        <div id="zoneText">📸 이미지를 여기에 붙여넣거나 클릭하여 선택</div>
+                        <div id="zoneText">📸 복사한 이미지 붙여넣기</div>
                         <input type="file" id="fileInput" style="display:none" accept="image/*" onchange="handleImage(this.files[0])">
                     </div>
 
                     <div class="field">
-                        <label>종목</label>
+                        <label>Asset</label>
                         <input type="text" id="assetName" placeholder="BTCUSDT">
                     </div>
 
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                         <div class="field">
-                            <label>방향</label>
+                            <label>Side</label>
                             <select id="tradeSide">
                                 <option value="LONG">LONG</option>
                                 <option value="SHORT">SHORT</option>
                             </select>
                         </div>
                         <div class="field">
-                            <label>수익/손실액</label>
+                            <label>PNL</label>
                             <input type="number" id="pnlAmount" placeholder="0">
                         </div>
                     </div>
 
                     <div class="field">
-                        <label>진입 근거 및 복기</label>
-                        <textarea id="tradeMemo" placeholder="왜 진입했나요? 무엇을 배웠나요?"></textarea>
+                        <label>Memo</label>
+                        <textarea id="tradeMemo" placeholder="진입 근거 및 반성 기록..."></textarea>
                     </div>
 
-                    <button class="btn-save" onclick="addRecord()">일지 저장하기</button>
+                    <button class="btn-save" onclick="addRecord()">기록 저장하기</button>
                 </div>
 
                 <div style="display:flex; gap:10px;">
-                    <button class="btn-save" style="background:var(--hover); color:var(--text); flex:1; font-size:12px;" onclick="exportData()">Data Export</button>
-                    <button class="btn-save" style="background:var(--hover); color:var(--text); flex:1; font-size:12px;" onclick="takeScreenshot()">PNG Report</button>
+                    <button class="btn-save" style="background:var(--hover); color:var(--text); flex:1; font-size:12px;" onclick="exportData()">Export</button>
+                    <button class="btn-save" style="background:var(--hover); color:var(--text); flex:1; font-size:12px;" onclick="takeScreenshot()">Capture</button>
                 </div>
             </aside>
         </div>
     </div>
 
-    <!-- 모달 -->
+    <!-- 이미지 모달 -->
     <div id="imgModal" class="modal" onclick="this.style.display='none'">
         <img class="modal-img" id="modalImg">
     </div>
 
     <script>
-        // IndexedDB 설정 (대용량 이미지 저장을 위함)
+        // IndexedDB 설정
         let db;
         const request = indexedDB.open("TradingJournalDB", 1);
         request.onupgradeneeded = e => {
@@ -171,10 +217,25 @@
         };
         request.onsuccess = e => { db = e.target.result; renderRecords(); };
 
-        let records = JSON.parse(localStorage.getItem('trading_v6_3_meta')) || [];
+        let records = JSON.parse(localStorage.getItem('trading_v6_4_meta')) || [];
         let tempImageData = null;
 
-        // 붙여넣기 이벤트 (Ctrl+V)
+        // 계산기 로직
+        function runCalc() {
+            const entry = Number(document.getElementById('calcEntry').value) || 0;
+            const lev = Number(document.getElementById('calcLev').value) || 0;
+            const sl = Number(document.getElementById('calcSl').value) || 0;
+
+            const total = entry * lev;
+            const loss = total * (sl / 100);
+            const profit = loss * 2;
+
+            document.getElementById('resTotal').innerText = total.toLocaleString();
+            document.getElementById('resTp').innerText = '+' + profit.toLocaleString();
+            document.getElementById('resSl').innerText = '-' + loss.toLocaleString();
+        }
+
+        // 이미지 붙여넣기
         document.addEventListener('paste', e => {
             const items = (e.clipboardData || e.originalEvent.clipboardData).items;
             for (let item of items) {
@@ -196,7 +257,6 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
                     tempImageData = canvas.toDataURL('image/jpeg', 0.8);
-                    
                     const zone = document.getElementById('pasteZone');
                     zone.style.backgroundImage = `url(${tempImageData})`;
                     document.getElementById('zoneText').style.display = 'none';
@@ -211,29 +271,22 @@
             const side = document.getElementById('tradeSide').value;
             const pnl = Number(document.getElementById('pnlAmount').value);
             const memo = document.getElementById('tradeMemo').value;
-
-            if(!asset) return alert('종목명을 입력해주세요.');
-
+            if(!asset) return alert('종목명을 입력하세요.');
             const id = Date.now();
             const record = { id, asset, side, pnl, memo, hasImage: !!tempImageData };
-
-            // 이미지 저장 (IndexedDB)
             if (tempImageData) {
                 const tx = db.transaction("images", "readwrite");
                 tx.objectStore("images").add({ id, data: tempImageData });
             }
-
             records.unshift(record);
-            localStorage.setItem('trading_v6_3_meta', JSON.stringify(records));
-            
-            // 초기화
+            localStorage.setItem('trading_v6_4_meta', JSON.stringify(records));
+            // Reset
             document.getElementById('assetName').value = '';
             document.getElementById('pnlAmount').value = '';
             document.getElementById('tradeMemo').value = '';
             document.getElementById('pasteZone').style.backgroundImage = 'none';
             document.getElementById('zoneText').style.display = 'block';
             tempImageData = null;
-
             renderRecords();
         }
 
@@ -241,30 +294,24 @@
             const body = document.getElementById('dbBody');
             const emptyMsg = document.getElementById('emptyMsg');
             body.innerHTML = '';
-
             if (records.length === 0) { emptyMsg.style.display = 'block'; return; }
             emptyMsg.style.display = 'none';
-
             for (let r of records) {
                 const tr = document.createElement('tr');
                 const d = new Date(r.id);
                 const dateStr = `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-
                 let imgHtml = '—';
                 if (r.hasImage) {
                     const imgData = await getImg(r.id);
                     if (imgData) imgHtml = `<img src="${imgData}" class="chart-thumb" onclick="showModal('${imgData}')">`;
                 }
-
                 tr.innerHTML = `
                     <td>${imgHtml}</td>
-                    <td style="color:var(--text-muted); font-size:12px;">${dateStr}</td>
+                    <td style="color:var(--text-muted); font-size:11px;">${dateStr}</td>
                     <td><b>${r.asset}</b></td>
                     <td><span class="badge ${r.side === 'LONG' ? 'long' : 'short'}">${r.side}</span></td>
-                    <td style="text-align:right; font-weight:700;" class="${r.pnl >= 0 ? 'pnl-up' : 'pnl-down'}">
-                        ${r.pnl >= 0 ? '+' : ''}${r.pnl.toLocaleString()}
-                    </td>
-                    <td style="color:var(--text-muted); font-size:13px;">${r.memo.substring(0, 50)}${r.memo.length > 50 ? '...' : ''}</td>
+                    <td style="text-align:right; font-weight:700;" class="${r.pnl >= 0 ? 'pnl-up' : 'pnl-down'}">${r.pnl >= 0 ? '+' : ''}${r.pnl.toLocaleString()}</td>
+                    <td style="color:var(--text-muted); font-size:12px;">${r.memo.substring(0, 50)}${r.memo.length > 50 ? '...' : ''}</td>
                     <td><span onclick="deleteRecord(${r.id})" style="cursor:pointer; opacity:0.3;">🗑️</span></td>
                 `;
                 body.appendChild(tr);
@@ -288,7 +335,7 @@
         function deleteRecord(id) {
             if(confirm('삭제하시겠습니까?')) {
                 records = records.filter(r => r.id !== id);
-                localStorage.setItem('trading_v6_3_meta', JSON.stringify(records));
+                localStorage.setItem('trading_v6_4_meta', JSON.stringify(records));
                 const tx = db.transaction("images", "readwrite");
                 tx.objectStore("images").delete(id);
                 renderRecords();
@@ -296,7 +343,6 @@
         }
 
         function exportData() {
-            alert('전체 데이터 백업 기능은 준비 중입니다. 현재는 메타데이터만 저장됩니다.');
             const blob = new Blob([JSON.stringify(records)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a'); a.href = url; a.download = 'journal_meta.json'; a.click();
