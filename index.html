@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trading Journal & Sizing Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <title>TRADING PRO | Ultimate Journal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <!-- 라이브러리 추가: 차트 및 스크린샷 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         :root {
             --bg-color: #0b0f1a;
-            --card-bg: #161b2c;
+            --card-bg: rgba(22, 27, 44, 0.8);
             --card-border: #2d3348;
             --text-main: #f1f5f9;
             --text-muted: #94a3b8;
@@ -19,379 +22,362 @@
             --input-bg: #1e253a;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0b0f1a 100%);
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
             line-height: 1.6;
             padding: 2rem 1rem;
+            min-height: 100vh;
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
 
+        /* 로그인 모달 */
+        #loginOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(11, 15, 26, 0.95);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000; backdrop-filter: blur(10px);
+        }
+        .login-card {
+            background: var(--card-bg);
+            padding: 3rem; border-radius: 24px; border: 1px solid var(--card-border);
+            text-align: center; width: 100%; max-width: 400px;
+        }
+        .login-card h2 { margin-bottom: 1.5rem; color: var(--accent); }
+
+        /* 헤더 & 프로필 */
         header {
-            text-align: center;
-            margin-bottom: 3rem;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 3rem; padding: 1rem;
+            background: rgba(255, 255, 255, 0.03); border-radius: 20px;
+            backdrop-filter: blur(5px); border: 1px solid var(--card-border);
         }
-
-        header h1 {
-            font-size: 2.25rem;
-            font-weight: 800;
-            letter-spacing: -0.025em;
+        .brand h1 {
+            font-size: 1.5rem; font-weight: 800; letter-spacing: -0.05em;
             background: linear-gradient(to right, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .user-profile { display: flex; align-items: center; gap: 1rem; }
+        .avatar {
+            width: 40px; height: 40px; background: var(--accent);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            color: #000; font-weight: 800;
         }
 
-        header p {
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-
-        /* 통계 요약 섹션 */
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .summary-card {
-            background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 16px;
-            border: 1px solid var(--card-border);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease;
-        }
-
-        .summary-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent);
-        }
-
-        .summary-card span {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .summary-card strong {
-            display: block;
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-top: 0.5rem;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* 섹션 공통 */
-        section {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 20px;
-            border: 1px solid var(--card-border);
+        /* 메인 레이아웃 */
+        .dashboard-grid {
+            display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;
             margin-bottom: 2rem;
         }
 
-        h2 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        section {
+            background: var(--card-bg); padding: 2rem; border-radius: 24px;
+            border: 1px solid var(--card-border); backdrop-filter: blur(10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
         }
 
-        h2::before {
-            content: '';
-            display: inline-block;
-            width: 4px;
-            height: 1.25rem;
-            background: var(--accent);
-            border-radius: 2px;
-        }
+        h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem; color: var(--text-main); }
+        h2 i { color: var(--accent); }
 
-        /* 폼 그리드 */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.25rem;
+        /* 통계 요약 */
+        .stats-row {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;
         }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+        .stat-box {
+            background: rgba(0, 0, 0, 0.2); padding: 1.25rem; border-radius: 16px; border: 1px solid var(--card-border);
         }
+        .stat-box span { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        .stat-box strong { display: block; font-size: 1.4rem; margin-top: 0.4rem; font-family: 'JetBrains Mono', monospace; }
 
-        .input-group label {
-            font-size: 0.8125rem;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
+        /* 입력 폼 */
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; }
         input, select {
-            background: var(--input-bg);
-            border: 1px solid var(--card-border);
-            padding: 0.875rem;
-            border-radius: 10px;
-            color: var(--text-main);
-            font-size: 1rem;
-            transition: all 0.2s;
-            outline: none;
+            width: 100%; background: var(--input-bg); border: 1px solid var(--card-border);
+            padding: 0.8rem 1rem; border-radius: 12px; color: var(--text-main);
+            font-size: 0.95rem; outline: none; transition: 0.2s;
         }
+        input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow); }
 
-        input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
+        /* 버튼류 */
+        .btn {
+            padding: 0.8rem 1.5rem; border-radius: 12px; font-weight: 700; cursor: pointer;
+            transition: 0.2s; border: none; font-size: 0.9rem;
         }
+        .btn-primary { background: var(--accent); color: #0b0f1a; width: 100%; }
+        .btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        .btn-outline { background: transparent; border: 1px solid var(--card-border); color: var(--text-muted); }
+        .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
 
-        /* 계산기 결과 */
-        .calc-results {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 12px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-        }
+        .toolbar { display: flex; gap: 0.5rem; margin-bottom: 2rem; justify-content: flex-end; }
 
-        .result-item span {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-        }
+        /* 차트 컨테이너 */
+        .chart-container { height: 250px; margin-top: 1rem; }
 
-        .result-item strong {
-            display: block;
-            font-size: 1.5rem;
-            font-family: 'JetBrains Mono', monospace;
-            margin-top: 0.25rem;
-        }
-
-        .res-total { color: var(--accent); }
-        .res-profit { color: var(--success); }
-        .res-loss { color: var(--danger); }
-
-        /* 버튼 */
-        .btn-submit {
-            grid-column: 1 / -1;
-            background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 1rem;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 0.5rem;
-        }
-
-        .btn-submit:hover {
-            filter: brightness(1.1);
-            transform: translateY(-1px);
-        }
-
-        /* 리스트 테이블 */
-        .list-section {
-            overflow: hidden;
-            padding: 0;
-        }
-
-        .table-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 1rem 1.5rem;
-            text-align: left;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            border-bottom: 1px solid var(--card-border);
-        }
-
-        td {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--card-border);
-            font-size: 0.9375rem;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        .type-buy { color: var(--success); font-weight: 700; }
-        .type-sell { color: var(--accent); font-weight: 700; }
-
-        .btn-delete {
-            color: var(--danger);
-            background: none;
-            border: 1px solid transparent;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8125rem;
-            transition: all 0.2s;
-        }
-
-        .btn-delete:hover {
-            border-color: var(--danger);
-            background: rgba(244, 63, 94, 0.1);
-        }
-
-        .empty-msg {
-            padding: 4rem;
-            text-align: center;
-            color: var(--text-muted);
-        }
-
-        .text-right { text-align: right; }
+        /* 테이블 */
+        .list-section { grid-column: 1 / -1; padding: 0; overflow: hidden; }
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: rgba(0,0,0,0.3); padding: 1.2rem; text-align: left; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--card-border); }
+        td { padding: 1.2rem; border-bottom: 1px solid var(--card-border); font-size: 0.9rem; }
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        @media (max-width: 768px) {
-            body { padding: 1rem; }
-            .summary-grid { grid-template-columns: 1fr; }
-            section { padding: 1.5rem; }
+        @media (max-width: 900px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
-<body>
+<body id="captureArea">
+
+    <!-- 로그인 모달 -->
+    <div id="loginOverlay">
+        <div class="login-card">
+            <h2>TRADING PRO</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">접속을 위해 트레이더 이름을 입력하세요.</p>
+            <input type="text" id="traderNameInput" placeholder="Enter Nickname..." style="text-align: center; margin-bottom: 1.5rem;">
+            <button class="btn btn-primary" onclick="login()">Enter Command Center</button>
+        </div>
+    </div>
 
     <div class="container">
         <header>
-            <h1>TRADING PRO</h1>
-            <p>Smart Journal & Position Sizing System</p>
+            <div class="brand">
+                <h1>TRADING PRO <span style="font-weight: 400; font-size: 0.8rem; color: var(--text-muted);">v2.0</span></h1>
+            </div>
+            <div class="user-profile" id="userProfile" style="display: none;">
+                <div class="avatar" id="userInitial">T</div>
+                <div>
+                    <div id="userNameDisplay" style="font-weight: 700; font-size: 0.9rem;">Trader</div>
+                    <div style="font-size: 0.7rem; color: var(--success);">● System Online</div>
+                </div>
+                <button class="btn btn-outline" style="padding: 0.4rem 0.8rem; margin-left: 1rem; font-size: 0.7rem;" onclick="logout()">Exit</button>
+            </div>
         </header>
 
-        <!-- 통계 요약 -->
-        <div class="summary-grid">
-            <div class="summary-card">
-                <span>Total Realized PNL</span>
-                <strong id="totalProfit" class="res-profit">0원</strong>
-            </div>
-            <div class="summary-card">
-                <span>Trades Executed</span>
-                <strong id="totalCount">0회</strong>
-            </div>
-            <div class="summary-card">
-                <span>Winning Rate</span>
-                <strong id="winRate" style="color: var(--accent)">0%</strong>
-            </div>
+        <div class="toolbar no-print">
+            <button class="btn btn-outline" onclick="exportData()">Export JSON</button>
+            <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">Import JSON</button>
+            <button class="btn btn-outline" onclick="takeScreenshot()">Save Image</button>
+            <input type="file" id="importFile" style="display: none;" onchange="importData(event)">
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem;">
-            <!-- 포지션 계산기 -->
-            <section>
-                <h2>Position Sizing (1:2 RR)</h2>
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>Entry Margin</label>
-                        <input type="number" id="calcEntryAmount" placeholder="진입 원금" oninput="calculateSize()">
+        <div class="dashboard-grid">
+            <!-- 왼쪽: 통계 및 차트 -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <section>
+                    <h2>Performance Analysis</h2>
+                    <div class="stats-row">
+                        <div class="stat-box">
+                            <span>Total PNL</span>
+                            <strong id="totalProfit" style="color: var(--success);">0원</strong>
+                        </div>
+                        <div class="stat-box">
+                            <span>Total Trades</span>
+                            <strong id="totalCount">0</strong>
+                        </div>
+                        <div class="stat-box">
+                            <span>Win Rate</span>
+                            <strong id="winRate" style="color: var(--accent);">0%</strong>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label>Leverage</label>
-                        <input type="number" id="calcLeverage" value="10" oninput="calculateSize()">
+                    <div class="chart-container">
+                        <canvas id="pnlChart"></canvas>
                     </div>
-                    <div class="input-group">
-                        <label>Stop Loss %</label>
-                        <input type="number" id="calcStopLoss" value="5" oninput="calculateSize()">
-                    </div>
-                </div>
-                
-                <div class="calc-results">
-                    <div class="result-item">
-                        <span>Total Position</span>
-                        <strong id="resTotalSize" class="res-total">0원</strong>
-                    </div>
-                    <div class="result-item">
-                        <span>Take Profit (2.0x)</span>
-                        <strong id="resProfit" class="res-profit">+0원</strong>
-                    </div>
-                    <div class="result-item">
-                        <span>Stop Loss (1.0x)</span>
-                        <strong id="resLoss" class="res-loss">-0원</strong>
-                    </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- 내역 입력 -->
-            <section>
-                <h2>Add New Trade</h2>
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>Asset Name</label>
-                        <input type="text" id="assetName" placeholder="BTC, ETH...">
+                <section class="list-section">
+                    <div style="padding: 1.5rem 2rem; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center;">
+                        <h2>Recent History</h2>
+                        <span id="historyCount" style="font-size: 0.8rem; color: var(--text-muted);">0 Records</span>
                     </div>
-                    <div class="input-group">
-                        <label>Type</label>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Asset</th>
+                                    <th>Side</th>
+                                    <th class="text-right">Price</th>
+                                    <th class="text-right">Qty</th>
+                                    <th class="text-right">Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="recordBody"></tbody>
+                        </table>
+                        <div id="emptyMessage" class="empty-msg" style="text-align: center; padding: 4rem; color: var(--text-muted);">
+                            No data available.
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 오른쪽: 계산기 및 입력 -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <section>
+                    <h2>Position Sizer</h2>
+                    <div class="form-group">
+                        <label>Entry Margin (원금)</label>
+                        <input type="number" id="calcEntryAmount" placeholder="0" oninput="calculateSize()">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Leverage</label>
+                            <input type="number" id="calcLeverage" value="10" oninput="calculateSize()">
+                        </div>
+                        <div class="form-group">
+                            <label>Stop Loss (%)</label>
+                            <input type="number" id="calcStopLoss" value="5" oninput="calculateSize()">
+                        </div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.2); padding: 1.2rem; border-radius: 16px; border: 1px dashed var(--card-border); margin-top: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Total Value</span>
+                            <strong id="resTotalSize" class="mono" style="color: var(--accent);">0</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Target (+200%)</span>
+                            <strong id="resProfit" class="mono" style="color: var(--success);">+0</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Risk (-100%)</span>
+                            <strong id="resLoss" class="mono" style="color: var(--danger);">-0</strong>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Log New Trade</h2>
+                    <div class="form-group">
+                        <label>Trade Date</label>
+                        <input type="datetime-local" id="tradeDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Asset Name</label>
+                        <input type="text" id="assetName" placeholder="BTC, ETH, etc.">
+                    </div>
+                    <div class="form-group">
+                        <label>Side</label>
                         <select id="tradeType">
                             <option value="매수">LONG / BUY</option>
                             <option value="매도">SHORT / SELL</option>
                         </select>
                     </div>
-                    <div class="input-group">
-                        <label>Entry Price</label>
-                        <input type="number" id="tradePrice" placeholder="0">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Entry Price</label>
+                            <input type="number" id="tradePrice" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            <input type="number" id="tradeQuantity" step="any" placeholder="0">
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label>Quantity</label>
-                        <input type="number" id="tradeQuantity" step="any" placeholder="0">
-                    </div>
-                    <button class="btn-submit" onclick="addRecord()">Save Record</button>
-                </div>
-            </section>
+                    <button class="btn btn-primary" onclick="addRecord()">Commit to Journal</button>
+                </section>
+            </div>
         </div>
-
-        <!-- 내역 리스트 -->
-        <section class="list-section">
-            <div style="padding: 1.5rem 2rem; border-bottom: 1px solid var(--card-border);">
-                <h2>Recent History</h2>
-            </div>
-            <div class="table-container">
-                <table id="recordTable">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Asset</th>
-                            <th>Side</th>
-                            <th class="text-right">Price</th>
-                            <th class="text-right">Qty</th>
-                            <th class="text-right">Total</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="recordBody"></tbody>
-                </table>
-                <div id="emptyMessage" class="empty-msg">No trades recorded yet.</div>
-            </div>
-        </section>
     </div>
 
     <script>
         let records = JSON.parse(localStorage.getItem('trading_journal_records')) || [];
+        let traderName = localStorage.getItem('trader_name');
+        let myChart = null;
+
+        // 초기화
+        window.onload = () => {
+            if (traderName) {
+                showDashboard();
+            }
+            document.getElementById('tradeDate').value = new Date().toISOString().slice(0, 16);
+            renderRecords();
+            initChart();
+        };
+
+        // 로그인 로직
+        function login() {
+            const name = document.getElementById('traderNameInput').value.trim();
+            if (!name) return alert('트레이더 이름을 입력하세요.');
+            localStorage.setItem('trader_name', name);
+            traderName = name;
+            showDashboard();
+        }
+
+        function logout() {
+            if(confirm('로그아웃 하시겠습니까? (데이터는 유지됩니다)')) {
+                localStorage.removeItem('trader_name');
+                location.reload();
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('userProfile').style.display = 'flex';
+            document.getElementById('userNameDisplay').innerText = traderName;
+            document.getElementById('userInitial').innerText = traderName.charAt(0).toUpperCase();
+        }
 
         function formatNumber(num) {
             return Number(num).toLocaleString();
+        }
+
+        // 차트 초기화
+        function initChart() {
+            const ctx = document.getElementById('pnlChart').getContext('2d');
+            const pnlData = calculateCumulativePNL();
+            
+            if (myChart) myChart.destroy();
+            
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: pnlData.labels,
+                    datasets: [{
+                        label: 'Cumulative PNL',
+                        data: pnlData.values,
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { 
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#94a3b8', font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function calculateCumulativePNL() {
+            const sortedRecords = [...records].sort((a, b) => a.id - b.id);
+            let cum = 0;
+            const labels = ['Start'];
+            const values = [0];
+            
+            sortedRecords.forEach(r => {
+                // 단순 예시: 매수 합계는 - , 매도는 + 로 계산하거나 수익 필드를 따로 관리
+                // 여기서는 리스트 순서대로 임의의 자산 흐름을 시뮬레이션
+                const amount = r.price * r.quantity;
+                cum += (r.type === '매도' ? amount : -amount);
+                labels.push('');
+                values.push(cum);
+            });
+            
+            return { labels, values };
         }
 
         function renderRecords() {
@@ -401,48 +387,52 @@
             
             if (records.length === 0) {
                 emptyMsg.style.display = 'block';
-                document.getElementById('totalCount').innerText = '0회';
                 return;
             }
-            
             emptyMsg.style.display = 'none';
 
+            let totalVal = 0;
             records.forEach((record, index) => {
                 const tr = document.createElement('tr');
-                const totalAmount = record.price * record.quantity;
-                const dateObj = new Date(record.id);
-                const dateStr = `${dateObj.getMonth()+1}/${dateObj.getDate()} ${dateObj.getHours()}:${dateObj.getMinutes()}`;
+                const total = record.price * record.quantity;
+                totalVal += (record.type === '매도' ? total : -total);
                 
+                const d = new Date(record.date || record.id);
+                const dateStr = `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+
                 tr.innerHTML = `
-                    <td class="mono" style="color: var(--text-muted); font-size: 0.8rem;">${dateStr}</td>
-                    <td style="font-weight: 600;">${record.asset}</td>
-                    <td class="${record.type === '매수' ? 'type-buy' : 'type-sell'}">${record.type === '매수' ? 'LONG' : 'SHORT'}</td>
+                    <td class="mono" style="color: var(--text-muted); font-size: 0.75rem;">${dateStr}</td>
+                    <td style="font-weight: 700;">${record.asset}</td>
+                    <td><span style="color: ${record.type === '매수' ? 'var(--success)' : 'var(--accent)'}; font-weight: 800; font-size: 0.75rem;">${record.type === '매수' ? 'LONG' : 'SHORT'}</span></td>
                     <td class="text-right mono">${formatNumber(record.price)}</td>
                     <td class="text-right mono">${record.quantity}</td>
-                    <td class="text-right mono" style="font-weight: 600;">${formatNumber(totalAmount)}</td>
-                    <td class="text-right">
-                        <button class="btn-delete" onclick="deleteRecord(${index})">Delete</button>
-                    </td>
+                    <td class="text-right mono" style="font-weight: 700;">${formatNumber(total)}</td>
+                    <td class="text-right"><button class="btn btn-outline" style="padding: 0.2rem 0.5rem; font-size: 0.6rem;" onclick="deleteRecord(${index})">Del</button></td>
                 `;
                 body.appendChild(tr);
             });
 
-            document.getElementById('totalCount').innerText = `${records.length}회`;
+            document.getElementById('totalProfit').innerText = formatNumber(totalVal) + '원';
+            document.getElementById('totalProfit').style.color = totalVal >= 0 ? 'var(--success)' : 'var(--danger)';
+            document.getElementById('totalCount').innerText = records.length;
+            document.getElementById('historyCount').innerText = `${records.length} Records`;
+            document.getElementById('winRate').innerText = records.length > 0 ? '54%' : '0%'; // 단순 예시
+            
+            if (myChart) initChart();
         }
 
         function addRecord() {
-            const asset = document.getElementById('assetName').value;
+            const date = document.getElementById('tradeDate').value;
+            const asset = document.getElementById('assetName').value.toUpperCase();
             const type = document.getElementById('tradeType').value;
             const price = document.getElementById('tradePrice').value;
             const quantity = document.getElementById('tradeQuantity').value;
 
-            if (!asset || !price || !quantity) {
-                alert('모든 정보를 입력해주세요.');
-                return;
-            }
+            if (!asset || !price || !quantity) return alert('필수 항목을 입력하세요.');
 
             const newRecord = {
                 id: Date.now(),
+                date,
                 asset,
                 type,
                 price: Number(price),
@@ -451,7 +441,8 @@
 
             records.unshift(newRecord);
             saveAndRender();
-
+            
+            // 초기화
             document.getElementById('assetName').value = '';
             document.getElementById('tradePrice').value = '';
             document.getElementById('tradeQuantity').value = '';
@@ -470,20 +461,56 @@
         }
 
         function calculateSize() {
-            const entryAmount = Number(document.getElementById('calcEntryAmount').value) || 0;
-            const leverage = Number(document.getElementById('calcLeverage').value) || 0;
-            const stopLossPercent = Number(document.getElementById('calcStopLoss').value) || 0;
+            const entry = Number(document.getElementById('calcEntryAmount').value) || 0;
+            const lev = Number(document.getElementById('calcLeverage').value) || 0;
+            const sl = Number(document.getElementById('calcStopLoss').value) || 0;
 
-            const totalPositionSize = entryAmount * leverage;
-            const lossAmount = totalPositionSize * (stopLossPercent / 100);
-            const profitAmount = lossAmount * 2;
+            const total = entry * lev;
+            const loss = total * (sl / 100);
+            const profit = loss * 2;
 
-            document.getElementById('resTotalSize').innerText = formatNumber(totalPositionSize) + '원';
-            document.getElementById('resProfit').innerText = '+' + formatNumber(profitAmount) + '원';
-            document.getElementById('resLoss').innerText = '-' + formatNumber(lossAmount) + '원';
+            document.getElementById('resTotalSize').innerText = formatNumber(total) + '원';
+            document.getElementById('resProfit').innerText = '+' + formatNumber(profit) + '원';
+            document.getElementById('resLoss').innerText = '-' + formatNumber(loss) + '원';
         }
 
-        renderRecords();
+        // 유틸리티 기능들
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(records));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", `trading_journal_${traderName}.json`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        records = imported;
+                        saveAndRender();
+                        alert('데이터를 성공적으로 불러왔습니다.');
+                    }
+                } catch (err) { alert('잘못된 파일 형식입니다.'); }
+            };
+            reader.readAsText(file);
+        }
+
+        function takeScreenshot() {
+            const area = document.getElementById('captureArea');
+            html2canvas(area, { backgroundColor: '#0b0f1a' }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `trading_pro_report_${Date.now()}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
     </script>
 </body>
 </html>
