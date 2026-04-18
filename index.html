@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>트레이딩 멀티 허브 | Master Journal v9.0</title>
+    <title>트레이딩 멀티 허브 | Master Journal v9.1</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -18,6 +18,8 @@
             --accent: #2383e2;
             --success-text: #ff5252;
             --danger-text: #3b82f6;
+            --long-color: #ff5252;
+            --short-color: #3b82f6;
             --gold: #f59e0b;
         }
 
@@ -41,7 +43,6 @@
         .container { max-width: 1300px; margin: 0 auto; padding: 0 60px; position: relative; }
         .icon { font-size: 78px; margin-top: -45px; margin-bottom: 20px; display: inline-block; background: var(--bg); border-radius: 20px; }
 
-        /* 탭 시스템 */
         .tab-wrapper { border-bottom: 1px solid var(--border); margin-bottom: 30px; display: flex; gap: 20px; }
         .tab-item { padding: 10px 4px; font-size: 14px; font-weight: 700; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: 0.2s; }
         .tab-item:hover { color: var(--text); }
@@ -51,7 +52,6 @@
 
         .main-layout { display: grid; grid-template-columns: 1fr 380px; gap: 40px; margin-top: 20px; }
 
-        /* 대시보드 */
         .analytics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
         .stat-item { background: var(--hover); padding: 15px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
         .stat-item .label { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; font-weight: 700; }
@@ -66,19 +66,18 @@
         th { text-align: left; padding: 12px 10px; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--border); }
         td { padding: 12px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 
-        /* 카드 및 폼 */
         .card { background: var(--hover); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; }
         .sidebar-title { font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; }
 
         .field { margin-bottom: 12px; }
         label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; }
         input, select, textarea { width: 100%; border: 1px solid var(--border); padding: 8px 12px; border-radius: 4px; background: var(--bg); color: var(--text); font-size: 13px; outline: none; }
-        input:focus { border-color: var(--accent); }
         
         .dir-btn { padding: 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--text-muted); font-weight: 800; cursor: pointer; transition: 0.2s; font-size: 12px; }
         .dir-btn.long.active { background: var(--long-color); color: white; border-color: var(--long-color); }
         .dir-btn.short.active { background: var(--short-color); color: white; border-color: var(--short-color); }
 
+        .btn-apply { background: var(--accent); color: white; border: none; padding: 10px; border-radius: 6px; font-weight: 800; width: 100%; cursor: pointer; margin-top: 10px; font-size: 13px; }
         .btn-save { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 800; width: 100%; cursor: pointer; margin-top: 10px; }
         .btn-fetch { padding:0 8px; background:var(--accent); color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px; min-width: 32px; }
 
@@ -97,7 +96,6 @@
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; padding: 20px; }
         .modal-img { max-width: 100%; max-height: 100%; border-radius: 4px; }
 
-        /* 탭별 표시 처리 */
         .view-section { display: none; }
         .view-section.active { display: block; }
         .view-only-msg { padding: 40px; text-align: center; background: var(--hover); border-radius: 12px; border: 1px dashed var(--border); color: var(--text-muted); font-size: 14px; margin-top: 20px; }
@@ -108,13 +106,12 @@
     <div class="cover"></div>
     <div class="container">
         <span class="icon">🏆</span>
-        <h1 id="mainTitle">TRADING MULTI-HUB <small style="font-size: 12px; color:var(--text-muted); font-weight: 400;">v9.0 Master Edition</small></h1>
+        <h1 id="mainTitle">TRADING MULTI-HUB <small style="font-size: 12px; color:var(--text-muted); font-weight: 400;">v9.1 Fixed Mastery</small></h1>
         
         <div class="exchange-rate-bar">
             <span>USDT/KRW: <strong id="liveRate">Loading...</strong>원</span>
         </div>
 
-        <!-- 탭 메뉴 -->
         <div class="tab-wrapper">
             <div class="tab-item active" onclick="switchTab('binance')">바이낸스 (Master)</div>
             <div class="tab-item" onclick="switchTab('upbit')">업비트 (국내조회)</div>
@@ -122,7 +119,6 @@
             <div class="tab-item" onclick="switchTab('global')">글로벌 통합 (조회)</div>
         </div>
 
-        <!-- [바이낸스 탭] 전체 기능 포함 -->
         <div id="view-binance" class="view-section active">
             <div class="analytics-grid">
                 <div class="stat-item"><div class="label">오늘 손익</div><div id="statToday" class="value">0</div></div>
@@ -130,64 +126,35 @@
                 <div class="stat-item"><div class="label">월간 손익</div><div id="statMonth" class="value">0</div></div>
                 <div class="stat-item"><div class="label">총 누적 손익</div><div id="statTotal" class="value">0</div></div>
             </div>
-
             <div class="insight-section">
-                <div class="insight-card">
-                    <div class="insight-title">📅 요일별 매매 성과</div>
-                    <div style="height: 150px;"><canvas id="dayChart"></canvas></div>
-                </div>
-                <div class="insight-card">
-                    <div class="insight-title">🏷️ 태그별 손익 Top 5</div>
-                    <div id="tagAnalysis" style="font-size:12px;"></div>
-                </div>
+                <div class="insight-card"><div class="insight-title">📅 요일별 매매 성과</div><div style="height: 150px;"><canvas id="dayChart"></canvas></div></div>
+                <div class="insight-card"><div class="insight-title">🏷️ 태그별 손익 Top 5</div><div id="tagAnalysis" style="font-size:12px;"></div></div>
             </div>
-
             <div class="main-layout">
                 <div>
                     <div class="db-title">📋 바이낸스 매매 복기 히스토리</div>
                     <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 80px;">차트</th>
-                                <th style="width: 100px;">날짜</th>
-                                <th style="width: 100px;">종목</th>
-                                <th style="width: 70px;">방향</th>
-                                <th style="width: 150px;">진입/청산</th>
-                                <th style="text-align:right;">손익(USDT)</th>
-                                <th>메모/태그</th>
-                                <th style="width: 30px;"></th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th style="width: 80px;">차트</th><th style="width: 100px;">날짜</th><th style="width: 100px;">종목</th><th style="width: 70px;">방향</th><th style="width: 150px;">진입/청산</th><th style="text-align:right;">손익(USDT)</th><th>메모/태그</th><th style="width: 30px;"></th></tr></thead>
                         <tbody id="dbBody"></tbody>
                     </table>
                     <div id="emptyMsg" style="padding: 100px; text-align: center; color: var(--text-muted);">데이터가 없습니다.</div>
                 </div>
-
-                <aside id="sidebar-master">
-                    <!-- 공용 계산기 & 기록장 -->
-                </aside>
+                <aside id="sidebar-master"></aside>
             </div>
         </div>
 
-        <!-- [기타 거래소 탭] 조회 및 전용 계산기만 -->
         <div id="view-other" class="view-section">
             <div class="main-layout">
                 <div>
                     <div class="db-title" id="otherTitle">시장가 시세 정보</div>
-                    <div id="marketList" style="margin-top: 20px;">
-                        <!-- 시세 정보 카드 예정 -->
-                        <div class="view-only-msg">이 탭은 시세 조회 전용 파티션입니다. 매매 기록은 '바이낸스' 탭을 이용해 주세요.</div>
-                    </div>
+                    <div id="marketList" style="margin-top: 20px;"><div class="view-only-msg">이 탭은 시세 조회 전용 파티션입니다. 매매 기록은 '바이낸스' 탭을 이용해 주세요.</div></div>
                 </div>
-                <aside id="sidebar-viewer">
-                    <!-- 조회 전용 사이드바 (계산기만) -->
-                </aside>
+                <aside id="sidebar-viewer"></aside>
             </div>
         </div>
-
     </div>
 
-    <!-- 사이드바 템플릿 (계산기 + 기록장) -->
+    <!-- 계산기 템플릿 (손익비 필드 포함하여 완벽 복구) -->
     <template id="template-master-sidebar">
         <div class="card">
             <div class="sidebar-title">📏 리스크 및 주문량 계산기</div>
@@ -197,25 +164,31 @@
                 <div class="field"><label>내 자본($)</label><input type="number" id="calcEntry" value="100" oninput="runCalc()"></div>
                 <div class="field"><label>레버리지</label><input type="number" id="calcLev" value="10" oninput="runCalc()"></div>
             </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div class="field"><label>손절 폭 (%)</label><input type="number" id="calcSl" value="5" oninput="runCalc()"></div>
+                <div class="field"><label>손익비 (1:X)</label><input type="number" id="calcRr" value="2" oninput="runCalc()"></div>
+            </div>
             <div class="result-box">
-                <div class="result-row"><span>규모:</span><strong id="resTotal">0 $</strong></div>
+                <div class="result-row"><span>진입 규모:</span><strong id="resTotal">0 $</strong></div>
                 <div class="result-row"><span>주문 수량:</span><strong id="resQty" class="gold-text">0.00</strong></div>
+                <div class="result-row"><span>성공 시 수익:</span><strong id="resTpAmt" class="pnl-up">+0 $</strong></div>
+                <div class="result-row"><span>실패 시 손실:</span><strong id="resSlAmt" class="pnl-down">-0 $</strong></div>
             </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
                 <button class="btn-save" style="background:var(--hover); color:var(--text); margin-top:0;" onclick="runCalc()">계산하기</button>
-                <button class="btn-apply" style="margin-top:0;" onclick="applyToLog()">적용 딸깍 🖱️</button>
+                <button class="btn-apply" style="margin-top:0;" onclick="applyToLog()">기록장에 적용 🖱️</button>
             </div>
         </div>
         <div class="card" style="background:var(--hover);">
             <div class="sidebar-title">📝 매매 복기 작성</div>
             <div class="direction-group"><button class="dir-btn long active" id="btnLong" onclick="setDirection('LONG')">LONG</button><button class="dir-btn short" id="btnShort" onclick="setDirection('SHORT')">SHORT</button></div>
-            <div class="field" id="pasteZone" style="border:2px dashed var(--border); height:60px; border-radius:6px; background-size:cover; font-size:10px; display:flex; align-items:center; justify-content:center; cursor:pointer;">차트 붙여넣기</div>
+            <div class="field" id="pasteZone" style="border:2px dashed var(--border); height:60px; border-radius:6px; background-size:cover; font-size:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-muted);">차트 붙여넣기 (Ctrl+V)</div>
             <div class="field"><label>종목</label><input type="text" id="assetName" list="assetList" onchange="fetchLivePrice('all')"></div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div class="field"><label>진입가 ⚡</label><div style="display:flex; gap:4px;"><input type="number" id="entryPrice" oninput="updatePnlPreview()"><button onclick="fetchLivePrice('entry', this)" class="btn-fetch">⚡</button></div></div>
                 <div class="field"><label>청산가 ⚡</label><div style="display:flex; gap:4px;"><input type="number" id="exitPrice" oninput="updatePnlPreview()"><button onclick="fetchLivePrice('exit', this)" class="btn-fetch">⚡</button></div></div>
             </div>
-            <div class="field"><label>체결 수량</label><input type="number" id="tradeQty" step="any" oninput="updatePnlPreview()"></div>
+            <div class="field"><label>수량 (Qty)</label><input type="number" id="tradeQty" step="any" oninput="updatePnlPreview()"></div>
             <div class="pnl-preview"><div class="pnl-preview-row"><span>확정 손익:</span><span id="pnlValue">0.00 $</span></div></div>
             <div class="field" style="margin-top:12px;">
                 <textarea id="tradeMemo" placeholder="복기 내용..."></textarea>
@@ -230,22 +203,20 @@
 
     <script>
         let db;
-        const request = indexedDB.open("MasterJournalDB_v9_0", 1);
+        const request = indexedDB.open("MasterJournalDB_v9_1", 1);
         request.onupgradeneeded = e => { db = e.target.result; db.createObjectStore("images", { keyPath: "id" }); };
         request.onsuccess = e => { db = e.target.result; renderRecords(); };
 
-        let records = JSON.parse(localStorage.getItem('trading_v9_0_master')) || [];
+        let records = JSON.parse(localStorage.getItem('trading_v9_1_master')) || [];
         let tempImageData = null;
         let currentDirection = 'LONG';
         let currentTab = 'binance';
         let usdtRate = 1350;
 
-        // 탭 전환 로직
         function switchTab(tabId) {
             currentTab = tabId;
             document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
             event.target.classList.add('active');
-
             const viewBinance = document.getElementById('view-binance');
             const viewOther = document.getElementById('view-other');
             const sidebarMaster = document.getElementById('sidebar-master');
@@ -259,7 +230,6 @@
                 viewBinance.classList.remove('active'); viewOther.classList.add('active');
                 document.getElementById('otherTitle').innerText = tabId.toUpperCase() + " 시세 및 계산기";
                 sidebarViewer.innerHTML = document.getElementById('template-master-sidebar').innerHTML;
-                // 기록장 섹션 숨기기
                 sidebarViewer.querySelector('.card:nth-child(2)').style.display = 'none';
                 fetchSymbols(tabId);
             }
@@ -278,9 +248,17 @@
             const price = Number(document.getElementById('calcPrice').value) || 0;
             const entry = Number(document.getElementById('calcEntry').value) || 0;
             const lev = Number(document.getElementById('calcLev').value) || 0;
-            const total = entry * lev;
-            document.getElementById('resTotal').innerText = `${total.toLocaleString()} $`;
-            if(price > 0) document.getElementById('resQty').innerText = (total / price).toFixed(5);
+            const sl = Number(document.getElementById('calcSl').value) || 5;
+            const rr = Number(document.getElementById('calcRr').value) || 2;
+
+            const totalSize = entry * lev;
+            document.getElementById('resTotal').innerText = `${totalSize.toLocaleString()} $`;
+            if(price > 0) {
+                document.getElementById('resQty').innerText = (totalSize / price).toFixed(5);
+                const lossAmt = totalSize * (sl / 100);
+                document.getElementById('resTpAmt').innerText = `+${(lossAmt * rr).toFixed(2)} $`;
+                document.getElementById('resSlAmt').innerText = `-${lossAmt.toFixed(2)} $`;
+            }
         }
 
         function applyToLog() {
@@ -292,6 +270,7 @@
             document.getElementById('entryPrice').value = price;
             document.getElementById('tradeQty').value = qty;
             updatePnlPreview();
+            alert('기록장에 적용 완료!');
         }
 
         function updatePnlPreview() {
@@ -300,40 +279,28 @@
             const qty = Number(document.getElementById('tradeQty').value) || 0;
             const pnl = currentDirection === 'LONG' ? (exit - entry) * qty : (entry - exit) * qty;
             const el = document.getElementById('pnlValue');
-            if(el) el.innerText = `${pnl.toFixed(2)} $`;
+            if(el) { el.innerText = `${pnl.toFixed(2)} $`; el.className = pnl >= 0 ? 'pnl-up' : 'pnl-down'; }
         }
 
         async function fetchLivePrice(target, btn) {
             const assetId = (target === 'calc_only') ? 'calcAssetName' : 'assetName';
             const asset = document.getElementById(assetId).value.trim().toUpperCase();
-            if (!asset) return alert('종목명을 먼저 입력해주세요.');
-
+            if (!asset) return alert('종목명을 입력해주세요.');
             try {
                 if (btn) btn.innerText = '...';
                 let price = 0;
-
                 if (currentTab === 'upbit') {
                     const symbol = asset.startsWith('KRW-') ? asset : `KRW-${asset}`;
                     const res = await fetch(`https://api.upbit.com/v1/ticker?markets=${symbol}`);
-                    const data = await res.json();
-                    price = data[0].trade_price / usdtRate; // 원화를 달러로 환산하여 계산기 적용
+                    const data = await res.json(); price = data[0].trade_price / usdtRate;
                 } else {
                     const symbol = asset.endsWith('USDT') ? asset : asset + 'USDT';
                     const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`);
-                    const data = await res.json();
-                    price = parseFloat(data.price);
+                    const data = await res.json(); price = parseFloat(data.price);
                 }
-
-                if (target === 'calc_only') {
-                    document.getElementById('calcPrice').value = price.toFixed(2);
-                } else if (target === 'entry') {
-                    document.getElementById('entryPrice').value = price.toFixed(2);
-                } else if (target === 'exit') {
-                    document.getElementById('exitPrice').value = price.toFixed(2);
-                } else {
-                    document.getElementById('entryPrice').value = price.toFixed(2);
-                    document.getElementById('calcPrice').value = price.toFixed(2);
-                }
+                const fieldId = (target === 'calc_only') ? 'calcPrice' : (target === 'entry' ? 'entryPrice' : (target === 'exit' ? 'exitPrice' : 'calcPrice'));
+                document.getElementById(fieldId).value = price.toFixed(2);
+                if (target === 'all') document.getElementById('entryPrice').value = price.toFixed(2);
                 runCalc(); updatePnlPreview();
                 if (btn) btn.innerText = '⚡';
             } catch (err) { alert('시세 로드 실패.'); if (btn) btn.innerText = '⚡'; }
@@ -347,17 +314,13 @@
                     const res = await fetch('https://api.upbit.com/v1/market/all');
                     const data = await res.json();
                     data.filter(m => m.market.startsWith('KRW-')).forEach(m => {
-                        const option = document.createElement('option');
-                        option.value = m.market.replace('KRW-', '');
-                        list.appendChild(option);
+                        const option = document.createElement('option'); option.value = m.market.replace('KRW-', ''); list.appendChild(option);
                     });
                 } else {
                     const res = await fetch('https://api.binance.com/api/v3/exchangeInfo');
                     const data = await res.json();
                     data.symbols.filter(s => s.symbol.endsWith('USDT')).forEach(s => {
-                        const option = document.createElement('option');
-                        option.value = s.symbol.replace('USDT', '');
-                        list.appendChild(option);
+                        const option = document.createElement('option'); option.value = s.symbol.replace('USDT', ''); list.appendChild(option);
                     });
                 }
             } catch (err) {}
@@ -370,7 +333,11 @@
             for (let item of items) {
                 if (item.kind === 'file') {
                     const reader = new FileReader();
-                    reader.onload = ev => { tempImageData = ev.target.result; document.getElementById('pasteZone').style.backgroundImage = `url(${tempImageData})`; document.getElementById('pasteZone').innerText = ''; };
+                    reader.onload = ev => {
+                        tempImageData = ev.target.result;
+                        const zone = document.getElementById('pasteZone');
+                        if(zone) { zone.style.backgroundImage = `url(${tempImageData})`; zone.innerText = ''; }
+                    };
                     reader.readAsDataURL(item.getAsFile());
                 }
             }
@@ -388,7 +355,7 @@
             const record = { id, asset, side: currentDirection, entry, exit, qty, pnl, tags, hasImage: !!tempImageData };
             if (tempImageData) { const tx = db.transaction("images", "readwrite"); tx.objectStore("images").add({ id, data: tempImageData }); }
             records.unshift(record);
-            localStorage.setItem('trading_v9_0_master', JSON.stringify(records));
+            localStorage.setItem('trading_v9_1_master', JSON.stringify(records));
             renderRecords();
         }
 
@@ -413,7 +380,7 @@
 
         function getImg(id) { return new Promise(res => { if(!db) return res(null); const tx = db.transaction("images", "readonly"); const req = tx.objectStore("images").get(id); req.onsuccess = e => res(e.target.result ? e.target.result.data : null); }); }
         function showModal(src) { document.getElementById('modalImg').src = src; document.getElementById('imgModal').style.display = 'flex'; }
-        function deleteRecord(id) { if(confirm('삭제?')) { records = records.filter(r => r.id !== id); localStorage.setItem('trading_v9_0_master', JSON.stringify(records)); renderRecords(); } }
+        function deleteRecord(id) { if(confirm('삭제?')) { records = records.filter(r => r.id !== id); localStorage.setItem('trading_v9_1_master', JSON.stringify(records)); renderRecords(); } }
 
         window.onload = () => { 
             fetchExchangeRate(); 
