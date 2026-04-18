@@ -76,6 +76,42 @@
             font-weight: 700;
         }
 
+        /* 포지션 사이징 계산기 스타일 */
+        .calculator-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .calc-results {
+            margin-top: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            padding-top: 1.5rem;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .result-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-item span {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        .result-item strong {
+            font-size: 1.25rem;
+            margin-top: 0.25rem;
+        }
+
+        .result-item.success strong { color: var(--buy-color); }
+        .result-item.failure strong { color: var(--sell-color); }
+
         /* 매매 내역 추가 폼 */
         .form-section {
             background: var(--card-bg);
@@ -201,6 +237,44 @@
                 <strong id="winRate">0%</strong>
             </div>
         </div>
+
+        <!-- 포지션 사이징 계산기 -->
+        <section class="calculator-section">
+            <h2 style="margin-bottom: 1rem; font-size: 1.25rem; color: var(--accent-color);">포지션 사이징 계산기 (1:2 손익비)</h2>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>보유 자산 (최대)</label>
+                    <input type="number" id="calcMaxBalance" placeholder="1,000,000" oninput="calculateSize()">
+                </div>
+                <div class="input-group">
+                    <label>진입 금액 (Margin)</label>
+                    <input type="number" id="calcEntryAmount" placeholder="100,000" oninput="calculateSize()">
+                </div>
+                <div class="input-group">
+                    <label>레버리지 (x)</label>
+                    <input type="number" id="calcLeverage" value="10" oninput="calculateSize()">
+                </div>
+                <div class="input-group">
+                    <label>손절 기준 (%)</label>
+                    <input type="number" id="calcStopLoss" value="5" oninput="calculateSize()">
+                </div>
+            </div>
+            
+            <div class="calc-results">
+                <div class="result-item">
+                    <span>레버리지 적용 총 포지션</span>
+                    <strong id="resTotalSize">0원</strong>
+                </div>
+                <div class="result-item success">
+                    <span>성공 시 수익 (익절 1:2)</span>
+                    <strong id="resProfit">0원</strong>
+                </div>
+                <div class="result-item failure">
+                    <span>실패 시 손실 (손절 1:1)</span>
+                    <strong id="resLoss">0원</strong>
+                </div>
+            </div>
+        </section>
 
         <!-- 내역 입력 -->
         <section class="form-section">
@@ -358,6 +432,21 @@
 
         // 초기 실행
         renderRecords();
+
+        // 포지션 사이징 계산 함수
+        function calculateSize() {
+            const entryAmount = Number(document.getElementById('calcEntryAmount').value) || 0;
+            const leverage = Number(document.getElementById('calcLeverage').value) || 0;
+            const stopLossPercent = Number(document.getElementById('calcStopLoss').value) || 0;
+
+            const totalPositionSize = entryAmount * leverage;
+            const lossAmount = totalPositionSize * (stopLossPercent / 100);
+            const profitAmount = lossAmount * 2; // 1:2 손익비
+
+            document.getElementById('resTotalSize').innerText = formatNumber(totalPositionSize) + '원';
+            document.getElementById('resProfit').innerText = '+' + formatNumber(profitAmount) + '원';
+            document.getElementById('resLoss').innerText = '-' + formatNumber(lossAmount) + '원';
+        }
     </script>
 </body>
 </html>
