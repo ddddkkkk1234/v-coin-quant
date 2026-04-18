@@ -3,348 +3,390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRADING PRO | Ultimate Journal</title>
+    <title>TRADING PRO | Master Journal</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-    <!-- 라이브러리 추가: 차트 및 스크린샷 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         :root {
-            --bg-color: #0b0f1a;
-            --card-bg: rgba(22, 27, 44, 0.8);
-            --card-border: #2d3348;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
+            --bg-color: #05070a;
+            --card-bg: #111827;
+            --card-border: #1f2937;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
             --accent: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.3);
-            --success: #10b981;
-            --danger: #f43f5e;
-            --input-bg: #1e253a;
+            --success: #ef4444; /* 한국식 빨강 (수익) */
+            --danger: #3b82f6;  /* 한국식 파랑 (손실) */
+            --input-bg: #1f2937;
+            --tag-bg: #374151;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background-color: var(--bg-color);
-            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0b0f1a 100%);
+            background-image: radial-gradient(circle at 50% 0%, #111827 0%, #05070a 100%);
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
-            line-height: 1.6;
             padding: 2rem 1rem;
             min-height: 100vh;
         }
 
-        .container { max-width: 1200px; margin: 0 auto; }
+        .container { max-width: 1300px; margin: 0 auto; }
 
-        /* 로그인 모달 */
-        #loginOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(11, 15, 26, 0.95);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 1000; backdrop-filter: blur(10px);
+        /* 화폐 토글 */
+        .currency-toggle {
+            display: flex; background: var(--input-bg); border-radius: 10px; padding: 4px; gap: 4px; border: 1px solid var(--card-border);
         }
-        .login-card {
-            background: var(--card-bg);
-            padding: 3rem; border-radius: 24px; border: 1px solid var(--card-border);
-            text-align: center; width: 100%; max-width: 400px;
+        .currency-btn {
+            padding: 4px 12px; border-radius: 6px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-weight: 700; font-size: 0.8rem;
         }
-        .login-card h2 { margin-bottom: 1.5rem; color: var(--accent); }
+        .currency-btn.active { background: var(--accent); color: #000; }
 
-        /* 헤더 & 프로필 */
+        /* 헤더 */
         header {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 3rem; padding: 1rem;
-            background: rgba(255, 255, 255, 0.03); border-radius: 20px;
-            backdrop-filter: blur(5px); border: 1px solid var(--card-border);
+            margin-bottom: 2rem; padding: 1.5rem 2rem;
+            background: var(--card-bg); border-radius: 24px; border: 1px solid var(--card-border);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
         }
-        .brand h1 {
-            font-size: 1.5rem; font-weight: 800; letter-spacing: -0.05em;
-            background: linear-gradient(to right, #38bdf8, #818cf8);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .user-profile { display: flex; align-items: center; gap: 1rem; }
-        .avatar {
-            width: 40px; height: 40px; background: var(--accent);
-            border-radius: 12px; display: flex; align-items: center; justify-content: center;
-            color: #000; font-weight: 800;
-        }
+        .brand h1 { font-size: 1.6rem; font-weight: 900; letter-spacing: -0.05em; color: var(--accent); }
 
-        /* 메인 레이아웃 */
-        .dashboard-grid {
-            display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;
-            margin-bottom: 2rem;
-        }
+        /* 대시보드 레이아웃 */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; margin-bottom: 2.5rem; }
 
         section {
-            background: var(--card-bg); padding: 2rem; border-radius: 24px;
-            border: 1px solid var(--card-border); backdrop-filter: blur(10px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+            background: var(--card-bg); padding: 2rem; border-radius: 28px;
+            border: 1px solid var(--card-border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem; color: var(--text-main); }
-        h2 i { color: var(--accent); }
+        h2 { font-size: 1.1rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; }
+        h2::before { content: ''; width: 4px; height: 1.1rem; background: var(--accent); border-radius: 2px; }
 
-        /* 통계 요약 */
-        .stats-row {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;
-        }
-        .stat-box {
-            background: rgba(0, 0, 0, 0.2); padding: 1.25rem; border-radius: 16px; border: 1px solid var(--card-border);
-        }
-        .stat-box span { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-        .stat-box strong { display: block; font-size: 1.4rem; margin-top: 0.4rem; font-family: 'JetBrains Mono', monospace; }
+        /* 스탯 박스 */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+        .stat-box { background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-radius: 20px; border: 1px solid var(--card-border); }
+        .stat-box span { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+        .stat-box strong { display: block; font-size: 1.6rem; margin-top: 0.5rem; font-family: 'JetBrains Mono', monospace; }
 
-        /* 입력 폼 */
-        .form-group { margin-bottom: 1.25rem; }
-        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; }
-        input, select {
+        /* 입력 폼 보강 */
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+        .input-group { display: flex; flex-direction: column; gap: 0.4rem; }
+        .input-group label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
+        input, select, textarea {
             width: 100%; background: var(--input-bg); border: 1px solid var(--card-border);
-            padding: 0.8rem 1rem; border-radius: 12px; color: var(--text-main);
-            font-size: 0.95rem; outline: none; transition: 0.2s;
+            padding: 0.9rem 1rem; border-radius: 14px; color: var(--text-main); font-size: 0.95rem; outline: none;
         }
-        input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow); }
+        input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1); }
+        textarea { height: 100px; resize: none; font-family: inherit; }
 
-        /* 버튼류 */
-        .btn {
-            padding: 0.8rem 1.5rem; border-radius: 12px; font-weight: 700; cursor: pointer;
-            transition: 0.2s; border: none; font-size: 0.9rem;
+        /* 태그 시스템 */
+        .tag-container { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+        .tag-chip {
+            padding: 0.4rem 0.8rem; border-radius: 8px; background: var(--tag-bg); color: var(--text-muted);
+            font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: 0.2s; border: 1px solid transparent;
         }
-        .btn-primary { background: var(--accent); color: #0b0f1a; width: 100%; }
-        .btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); }
-        .btn-outline { background: transparent; border: 1px solid var(--card-border); color: var(--text-muted); }
-        .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+        .tag-chip.active { background: rgba(56, 189, 248, 0.1); border-color: var(--accent); color: var(--accent); }
 
-        .toolbar { display: flex; gap: 0.5rem; margin-bottom: 2rem; justify-content: flex-end; }
+        /* 결과 색상 */
+        .pnl-plus { color: var(--success) !important; text-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+        .pnl-minus { color: var(--danger) !important; text-shadow: 0 0 10px rgba(59, 130, 246, 0.2); }
 
-        /* 차트 컨테이너 */
-        .chart-container { height: 250px; margin-top: 1rem; }
-
-        /* 테이블 */
-        .list-section { grid-column: 1 / -1; padding: 0; overflow: hidden; }
-        .table-wrapper { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: rgba(0,0,0,0.3); padding: 1.2rem; text-align: left; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--card-border); }
-        td { padding: 1.2rem; border-bottom: 1px solid var(--card-border); font-size: 0.9rem; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
-
-        @media (max-width: 900px) {
-            .dashboard-grid { grid-template-columns: 1fr; }
+        /* 리스트 강화 */
+        .record-card {
+            background: rgba(0,0,0,0.2); border-radius: 18px; padding: 1.5rem; border: 1px solid var(--card-border); margin-bottom: 1rem;
+            display: grid; grid-template-columns: auto 1fr auto; gap: 1.5rem; align-items: start;
         }
+        .record-info h3 { font-size: 1.1rem; margin-bottom: 0.3rem; }
+        .record-meta { font-size: 0.75rem; color: var(--text-muted); display: flex; gap: 1rem; }
+        .record-memo { margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 12px; font-size: 0.85rem; color: #d1d5db; line-height: 1.5; border-left: 3px solid var(--card-border); }
+        .record-tags { display: flex; gap: 0.4rem; margin-top: 0.8rem; }
+        .tag-small { font-size: 0.65rem; padding: 2px 6px; background: var(--tag-bg); border-radius: 4px; color: var(--text-muted); }
+
+        .btn { padding: 0.9rem 1.5rem; border-radius: 14px; font-weight: 800; cursor: pointer; border: none; transition: 0.2s; }
+        .btn-primary { background: var(--accent); color: #000; width: 100%; margin-top: 1rem; }
+        .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+        .no-data { text-align: center; padding: 4rem; color: var(--text-muted); }
+
+        @media (max-width: 1000px) { .dashboard-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body id="captureArea">
 
-    <!-- 로그인 모달 -->
-    <div id="loginOverlay">
-        <div class="login-card">
-            <h2>TRADING PRO</h2>
-            <p style="color: var(--text-muted); margin-bottom: 2rem;">접속을 위해 트레이더 이름을 입력하세요.</p>
-            <input type="text" id="traderNameInput" placeholder="Enter Nickname..." style="text-align: center; margin-bottom: 1.5rem;">
-            <button class="btn btn-primary" onclick="login()">Enter Command Center</button>
-        </div>
-    </div>
-
     <div class="container">
         <header>
             <div class="brand">
-                <h1>TRADING PRO <span style="font-weight: 400; font-size: 0.8rem; color: var(--text-muted);">v2.0</span></h1>
+                <h1>TRADING PRO <span style="font-weight: 400; font-size: 0.8rem; color: var(--text-muted);">Master v3.0</span></h1>
             </div>
-            <div class="user-profile" id="userProfile" style="display: none;">
-                <div class="avatar" id="userInitial">T</div>
-                <div>
-                    <div id="userNameDisplay" style="font-weight: 700; font-size: 0.9rem;">Trader</div>
-                    <div style="font-size: 0.7rem; color: var(--success);">● System Online</div>
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div class="currency-toggle">
+                    <button class="currency-btn active" id="btnKRW" onclick="setCurrency('KRW')">₩ KRW</button>
+                    <button class="currency-btn" id="btnUSDT" onclick="setCurrency('USDT')">$ USDT</button>
                 </div>
-                <button class="btn btn-outline" style="padding: 0.4rem 0.8rem; margin-left: 1rem; font-size: 0.7rem;" onclick="logout()">Exit</button>
+                <button class="btn" style="background: var(--tag-bg); color: #fff; padding: 0.6rem 1rem; font-size: 0.75rem;" onclick="takeScreenshot()">📸 Export Report</button>
             </div>
         </header>
 
-        <div class="toolbar no-print">
-            <button class="btn btn-outline" onclick="exportData()">Export JSON</button>
-            <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">Import JSON</button>
-            <button class="btn btn-outline" onclick="takeScreenshot()">Save Image</button>
-            <input type="file" id="importFile" style="display: none;" onchange="importData(event)">
-        </div>
-
         <div class="dashboard-grid">
-            <!-- 왼쪽: 통계 및 차트 -->
-            <div style="display: flex; flex-direction: column; gap: 2rem;">
+            <!-- 왼쪽: 분석 & 히스토리 -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                 <section>
-                    <h2>Performance Analysis</h2>
-                    <div class="stats-row">
+                    <h2>Overall Performance</h2>
+                    <div class="stats-grid">
                         <div class="stat-box">
-                            <span>Total PNL</span>
-                            <strong id="totalProfit" style="color: var(--success);">0원</strong>
-                        </div>
-                        <div class="stat-box">
-                            <span>Total Trades</span>
-                            <strong id="totalCount">0</strong>
+                            <span>Net Profit</span>
+                            <strong id="totalProfit">0</strong>
                         </div>
                         <div class="stat-box">
                             <span>Win Rate</span>
                             <strong id="winRate" style="color: var(--accent);">0%</strong>
                         </div>
+                        <div class="stat-box">
+                            <span>Total Count</span>
+                            <strong id="totalCount">0</strong>
+                        </div>
                     </div>
-                    <div class="chart-container">
+                    <div style="height: 200px;">
                         <canvas id="pnlChart"></canvas>
                     </div>
                 </section>
 
-                <section class="list-section">
-                    <div style="padding: 1.5rem 2rem; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center;">
-                        <h2>Recent History</h2>
-                        <span id="historyCount" style="font-size: 0.8rem; color: var(--text-muted);">0 Records</span>
+                <div id="historyList">
+                    <h2 style="margin-left: 1rem; margin-bottom: 1rem;">Trading Log & Review</h2>
+                    <div id="recordContainer">
+                        <!-- 동적 생성 -->
                     </div>
-                    <div class="table-wrapper">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Date & Time</th>
-                                    <th>Asset</th>
-                                    <th>Side</th>
-                                    <th class="text-right">Price</th>
-                                    <th class="text-right">Qty</th>
-                                    <th class="text-right">Total</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody id="recordBody"></tbody>
-                        </table>
-                        <div id="emptyMessage" class="empty-msg" style="text-align: center; padding: 4rem; color: var(--text-muted);">
-                            No data available.
-                        </div>
-                    </div>
-                </section>
+                </div>
             </div>
 
-            <!-- 오른쪽: 계산기 및 입력 -->
-            <div style="display: flex; flex-direction: column; gap: 2rem;">
+            <!-- 오른쪽: 기록 섹션 -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                 <section>
-                    <h2>Position Sizer</h2>
-                    <div class="form-group">
-                        <label>Entry Margin (원금)</label>
-                        <input type="number" id="calcEntryAmount" placeholder="0" oninput="calculateSize()">
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <div class="form-group">
-                            <label>Leverage</label>
-                            <input type="number" id="calcLeverage" value="10" oninput="calculateSize()">
+                    <h2>New Trade Entry</h2>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label>Asset</label>
+                            <input type="text" id="assetName" placeholder="BTC, ETH...">
                         </div>
-                        <div class="form-group">
-                            <label>Stop Loss (%)</label>
-                            <input type="number" id="calcStopLoss" value="5" oninput="calculateSize()">
-                        </div>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.2); padding: 1.2rem; border-radius: 16px; border: 1px dashed var(--card-border); margin-top: 0.5rem;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <span style="font-size: 0.75rem; color: var(--text-muted);">Total Value</span>
-                            <strong id="resTotalSize" class="mono" style="color: var(--accent);">0</strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <span style="font-size: 0.75rem; color: var(--text-muted);">Target (+200%)</span>
-                            <strong id="resProfit" class="mono" style="color: var(--success);">+0</strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="font-size: 0.75rem; color: var(--text-muted);">Risk (-100%)</span>
-                            <strong id="resLoss" class="mono" style="color: var(--danger);">-0</strong>
+                        <div class="input-group">
+                            <label>Side</label>
+                            <select id="tradeType">
+                                <option value="LONG">LONG / BUY</option>
+                                <option value="SHORT">SHORT / SELL</option>
+                            </select>
                         </div>
                     </div>
+                    
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label>Entry Price</label>
+                            <input type="number" id="entryPrice" placeholder="0.00">
+                        </div>
+                        <div class="input-group">
+                            <label>Exit Price (청산가)</label>
+                            <input type="number" id="exitPrice" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div class="input-group" style="margin-bottom: 1rem;">
+                        <label>Quantity</label>
+                        <input type="number" id="tradeQuantity" step="any" placeholder="0.00">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Entry Reason & Review (메모)</label>
+                        <textarea id="tradeMemo" placeholder="진입 근거와 매매 후 반성을 기록하세요..."></textarea>
+                    </div>
+
+                    <div class="input-group" style="margin-top: 1rem;">
+                        <label>Tags (선택)</label>
+                        <div class="tag-container" id="tagSelector">
+                            <span class="tag-chip" onclick="toggleTag(this)">#뇌동매매</span>
+                            <span class="tag-chip" onclick="toggleTag(this)">#원칙매매</span>
+                            <span class="tag-chip" onclick="toggleTag(this)">#FOMO</span>
+                            <span class="tag-chip" onclick="toggleTag(this)">#추격매매</span>
+                            <span class="tag-chip" onclick="toggleTag(this)">#돌파매매</span>
+                            <span class="tag-chip" onclick="toggleTag(this)">#분할청산</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="addRecord()">SAVE TRADE LOG</button>
                 </section>
 
-                <section>
-                    <h2>Log New Trade</h2>
-                    <div class="form-group">
-                        <label>Trade Date</label>
-                        <input type="datetime-local" id="tradeDate">
+                <section style="background: rgba(56, 189, 248, 0.05); border-style: dashed;">
+                    <h2>Quick Backup</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                        <button class="btn btn-outline" style="font-size: 0.7rem; padding: 0.5rem;" onclick="exportData()">EXPORT JSON</button>
+                        <button class="btn btn-outline" style="font-size: 0.7rem; padding: 0.5rem;" onclick="document.getElementById('importFile').click()">IMPORT JSON</button>
                     </div>
-                    <div class="form-group">
-                        <label>Asset Name</label>
-                        <input type="text" id="assetName" placeholder="BTC, ETH, etc.">
-                    </div>
-                    <div class="form-group">
-                        <label>Side</label>
-                        <select id="tradeType">
-                            <option value="매수">LONG / BUY</option>
-                            <option value="매도">SHORT / SELL</option>
-                        </select>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <div class="form-group">
-                            <label>Entry Price</label>
-                            <input type="number" id="tradePrice" placeholder="0">
-                        </div>
-                        <div class="form-group">
-                            <label>Quantity</label>
-                            <input type="number" id="tradeQuantity" step="any" placeholder="0">
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" onclick="addRecord()">Commit to Journal</button>
+                    <input type="file" id="importFile" style="display: none;" onchange="importData(event)">
                 </section>
             </div>
         </div>
     </div>
 
     <script>
-        let records = JSON.parse(localStorage.getItem('trading_journal_records')) || [];
-        let traderName = localStorage.getItem('trader_name');
+        let records = JSON.parse(localStorage.getItem('trading_pro_master_records')) || [];
+        let currentCurrency = 'KRW';
         let myChart = null;
 
-        // 초기화
-        window.onload = () => {
-            if (traderName) {
-                showDashboard();
-            }
-            document.getElementById('tradeDate').value = new Date().toISOString().slice(0, 16);
+        function setCurrency(cur) {
+            currentCurrency = cur;
+            document.getElementById('btnKRW').classList.toggle('active', cur === 'KRW');
+            document.getElementById('btnUSDT').classList.toggle('active', cur === 'USDT');
             renderRecords();
-            initChart();
-        };
-
-        // 로그인 로직
-        function login() {
-            const name = document.getElementById('traderNameInput').value.trim();
-            if (!name) return alert('트레이더 이름을 입력하세요.');
-            localStorage.setItem('trader_name', name);
-            traderName = name;
-            showDashboard();
         }
 
-        function logout() {
-            if(confirm('로그아웃 하시겠습니까? (데이터는 유지됩니다)')) {
-                localStorage.removeItem('trader_name');
-                location.reload();
+        function formatVal(val) {
+            const symbol = currentCurrency === 'KRW' ? '₩' : '$';
+            return symbol + Number(val).toLocaleString(undefined, { minimumFractionDigits: currentCurrency === 'KRW' ? 0 : 2 });
+        }
+
+        function toggleTag(el) {
+            el.classList.toggle('active');
+        }
+
+        function addRecord() {
+            const asset = document.getElementById('assetName').value.toUpperCase();
+            const type = document.getElementById('tradeType').value;
+            const entry = Number(document.getElementById('entryPrice').value);
+            const exit = Number(document.getElementById('exitPrice').value);
+            const qty = Number(document.getElementById('tradeQuantity').value);
+            const memo = document.getElementById('tradeMemo').value;
+            
+            const selectedTags = Array.from(document.querySelectorAll('.tag-chip.active')).map(t => t.innerText);
+
+            if(!asset || !entry || !exit || !qty || !memo) {
+                alert('모든 항목(메모 포함)을 입력해야 진짜 매매일지입니다!');
+                return;
+            }
+
+            // PNL 계산
+            let pnl = 0;
+            if (type === 'LONG') {
+                pnl = (exit - entry) * qty;
+            } else {
+                pnl = (entry - exit) * qty;
+            }
+
+            const record = {
+                id: Date.now(),
+                asset, type, entry, exit, qty, memo, pnl,
+                tags: selectedTags,
+                currency: currentCurrency
+            };
+
+            records.unshift(record);
+            localStorage.setItem('trading_pro_master_records', JSON.stringify(records));
+            
+            // 초기화
+            document.getElementById('assetName').value = '';
+            document.getElementById('entryPrice').value = '';
+            document.getElementById('exitPrice').value = '';
+            document.getElementById('tradeQuantity').value = '';
+            document.getElementById('tradeMemo').value = '';
+            document.querySelectorAll('.tag-chip').forEach(t => t.classList.remove('active'));
+
+            renderRecords();
+        }
+
+        function deleteRecord(id) {
+            if(confirm('이 뼈아픈 기록을 정말 삭제하시겠습니까?')) {
+                records = records.filter(r => r.id !== id);
+                localStorage.setItem('trading_pro_master_records', JSON.stringify(records));
+                renderRecords();
             }
         }
 
-        function showDashboard() {
-            document.getElementById('loginOverlay').style.display = 'none';
-            document.getElementById('userProfile').style.display = 'flex';
-            document.getElementById('userNameDisplay').innerText = traderName;
-            document.getElementById('userInitial').innerText = traderName.charAt(0).toUpperCase();
+        function renderRecords() {
+            const container = document.getElementById('recordContainer');
+            container.innerHTML = '';
+
+            if (records.length === 0) {
+                container.innerHTML = '<div class="no-data">기록이 없습니다. 첫 매매를 복기해보세요!</div>';
+                updateStats(0, 0, 0);
+                return;
+            }
+
+            let totalPNL = 0;
+            let wins = 0;
+
+            records.forEach(r => {
+                totalPNL += r.pnl;
+                if(r.pnl > 0) wins++;
+
+                const card = document.createElement('div');
+                card.className = 'record-card';
+                
+                const pnlClass = r.pnl > 0 ? 'pnl-plus' : (r.pnl < 0 ? 'pnl-minus' : '');
+                const d = new Date(r.id);
+                const dateStr = `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+
+                card.innerHTML = `
+                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding-right:1rem; border-right:1px solid var(--card-border);">
+                        <span style="font-size:0.7rem; color:var(--text-muted);">${dateStr}</span>
+                        <span style="font-weight:900; color:${r.type === 'LONG' ? '#10b981' : '#f59e0b'}; margin-top:0.5rem;">${r.type}</span>
+                    </div>
+                    <div class="record-info">
+                        <div style="display:flex; align-items:center; gap:0.8rem;">
+                            <h3>${r.asset}</h3>
+                            <div class="record-meta">
+                                <span>IN: ${formatVal(r.entry)}</span>
+                                <span>OUT: ${formatVal(r.exit)}</span>
+                                <span>QTY: ${r.qty}</span>
+                            </div>
+                        </div>
+                        <div class="record-memo">${r.memo.replace(/\n/g, '<br>')}</div>
+                        <div class="record-tags">
+                            ${r.tags.map(t => `<span class="tag-small">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:0.2rem;">PROFIT / LOSS</span>
+                        <strong class="mono ${pnlClass}" style="font-size:1.4rem;">${r.pnl > 0 ? '+' : ''}${formatVal(r.pnl)}</strong>
+                        <button onclick="deleteRecord(${r.id})" style="display:block; margin-left:auto; margin-top:1rem; background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.7rem;">Delete</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            const winRate = ((wins / records.length) * 100).toFixed(1);
+            updateStats(totalPNL, winRate, records.length);
+            updateChart();
         }
 
-        function formatNumber(num) {
-            return Number(num).toLocaleString();
+        function updateStats(pnl, winRate, count) {
+            const pnlEl = document.getElementById('totalProfit');
+            pnlEl.innerText = (pnl > 0 ? '+' : '') + formatVal(pnl);
+            pnlEl.className = pnl > 0 ? 'pnl-plus' : (pnl < 0 ? 'pnl-minus' : '');
+            
+            document.getElementById('winRate').innerText = winRate + '%';
+            document.getElementById('totalCount').innerText = count;
         }
 
-        // 차트 초기화
-        function initChart() {
+        function updateChart() {
             const ctx = document.getElementById('pnlChart').getContext('2d');
-            const pnlData = calculateCumulativePNL();
-            
+            const sorted = [...records].sort((a,b) => a.id - b.id);
+            let cum = 0;
+            const data = sorted.map(r => {
+                cum += r.pnl;
+                return cum;
+            });
+            const labels = sorted.map((_, i) => i + 1);
+
             if (myChart) myChart.destroy();
-            
             myChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: pnlData.labels,
+                    labels: ['0', ...labels],
                     datasets: [{
-                        label: 'Cumulative PNL',
-                        data: pnlData.values,
+                        data: [0, ...data],
                         borderColor: '#38bdf8',
-                        backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                        backgroundColor: 'rgba(56, 189, 248, 0.05)',
                         fill: true,
-                        tension: 0.4,
-                        borderWidth: 3,
-                        pointRadius: 0
+                        tension: 0.3,
+                        borderWidth: 2,
+                        pointRadius: 2
                     }]
                 },
                 options: {
@@ -353,164 +395,23 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         x: { display: false },
-                        y: { 
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { color: '#94a3b8', font: { size: 10 } }
-                        }
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#6b7280', font: { size: 9 } } }
                     }
                 }
             });
         }
 
-        function calculateCumulativePNL() {
-            const sortedRecords = [...records].sort((a, b) => a.id - b.id);
-            let cum = 0;
-            const labels = ['Start'];
-            const values = [0];
-            
-            sortedRecords.forEach(r => {
-                // 단순 예시: 매수 합계는 - , 매도는 + 로 계산하거나 수익 필드를 따로 관리
-                // 여기서는 리스트 순서대로 임의의 자산 흐름을 시뮬레이션
-                const amount = r.price * r.quantity;
-                cum += (r.type === '매도' ? amount : -amount);
-                labels.push('');
-                values.push(cum);
-            });
-            
-            return { labels, values };
-        }
-
-        function renderRecords() {
-            const body = document.getElementById('recordBody');
-            const emptyMsg = document.getElementById('emptyMessage');
-            body.innerHTML = '';
-            
-            if (records.length === 0) {
-                emptyMsg.style.display = 'block';
-                return;
-            }
-            emptyMsg.style.display = 'none';
-
-            let totalVal = 0;
-            records.forEach((record, index) => {
-                const tr = document.createElement('tr');
-                const total = record.price * record.quantity;
-                totalVal += (record.type === '매도' ? total : -total);
-                
-                const d = new Date(record.date || record.id);
-                const dateStr = `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-
-                tr.innerHTML = `
-                    <td class="mono" style="color: var(--text-muted); font-size: 0.75rem;">${dateStr}</td>
-                    <td style="font-weight: 700;">${record.asset}</td>
-                    <td><span style="color: ${record.type === '매수' ? 'var(--success)' : 'var(--accent)'}; font-weight: 800; font-size: 0.75rem;">${record.type === '매수' ? 'LONG' : 'SHORT'}</span></td>
-                    <td class="text-right mono">${formatNumber(record.price)}</td>
-                    <td class="text-right mono">${record.quantity}</td>
-                    <td class="text-right mono" style="font-weight: 700;">${formatNumber(total)}</td>
-                    <td class="text-right"><button class="btn btn-outline" style="padding: 0.2rem 0.5rem; font-size: 0.6rem;" onclick="deleteRecord(${index})">Del</button></td>
-                `;
-                body.appendChild(tr);
-            });
-
-            document.getElementById('totalProfit').innerText = formatNumber(totalVal) + '원';
-            document.getElementById('totalProfit').style.color = totalVal >= 0 ? 'var(--success)' : 'var(--danger)';
-            document.getElementById('totalCount').innerText = records.length;
-            document.getElementById('historyCount').innerText = `${records.length} Records`;
-            document.getElementById('winRate').innerText = records.length > 0 ? '54%' : '0%'; // 단순 예시
-            
-            if (myChart) initChart();
-        }
-
-        function addRecord() {
-            const date = document.getElementById('tradeDate').value;
-            const asset = document.getElementById('assetName').value.toUpperCase();
-            const type = document.getElementById('tradeType').value;
-            const price = document.getElementById('tradePrice').value;
-            const quantity = document.getElementById('tradeQuantity').value;
-
-            if (!asset || !price || !quantity) return alert('필수 항목을 입력하세요.');
-
-            const newRecord = {
-                id: Date.now(),
-                date,
-                asset,
-                type,
-                price: Number(price),
-                quantity: Number(quantity)
-            };
-
-            records.unshift(newRecord);
-            saveAndRender();
-            
-            // 초기화
-            document.getElementById('assetName').value = '';
-            document.getElementById('tradePrice').value = '';
-            document.getElementById('tradeQuantity').value = '';
-        }
-
-        function deleteRecord(index) {
-            if (confirm('삭제하시겠습니까?')) {
-                records.splice(index, 1);
-                saveAndRender();
-            }
-        }
-
-        function saveAndRender() {
-            localStorage.setItem('trading_journal_records', JSON.stringify(records));
-            renderRecords();
-        }
-
-        function calculateSize() {
-            const entry = Number(document.getElementById('calcEntryAmount').value) || 0;
-            const lev = Number(document.getElementById('calcLeverage').value) || 0;
-            const sl = Number(document.getElementById('calcStopLoss').value) || 0;
-
-            const total = entry * lev;
-            const loss = total * (sl / 100);
-            const profit = loss * 2;
-
-            document.getElementById('resTotalSize').innerText = formatNumber(total) + '원';
-            document.getElementById('resProfit').innerText = '+' + formatNumber(profit) + '원';
-            document.getElementById('resLoss').innerText = '-' + formatNumber(loss) + '원';
-        }
-
-        // 유틸리티 기능들
-        function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(records));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", `trading_journal_${traderName}.json`);
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
-        }
-
-        function importData(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    if (Array.isArray(imported)) {
-                        records = imported;
-                        saveAndRender();
-                        alert('데이터를 성공적으로 불러왔습니다.');
-                    }
-                } catch (err) { alert('잘못된 파일 형식입니다.'); }
-            };
-            reader.readAsText(file);
-        }
-
         function takeScreenshot() {
             const area = document.getElementById('captureArea');
-            html2canvas(area, { backgroundColor: '#0b0f1a' }).then(canvas => {
+            html2canvas(area, { backgroundColor: '#05070a' }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = `trading_pro_report_${Date.now()}.png`;
+                link.download = `trading_report_${Date.now()}.png`;
                 link.href = canvas.toDataURL();
                 link.click();
             });
         }
+
+        window.onload = renderRecords;
     </script>
 </body>
 </html>
