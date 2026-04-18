@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trading Journal | Magic Link Notion</title>
+    <title>Trading Journal | Visual Master</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -34,42 +34,51 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Pretendard", sans-serif; }
-        body { background-color: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 100px; }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 50px; }
 
-        .cover { height: 180px; width: 100%; background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); }
+        .cover { height: 160px; width: 100%; background: linear-gradient(135deg, #434343 0%, #000000 100%); }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; position: relative; }
         .icon { font-size: 78px; margin-top: -45px; margin-bottom: 20px; display: inline-block; background: var(--bg); border-radius: 20px; }
 
-        .main-layout { display: grid; grid-template-columns: 1fr 320px; gap: 40px; margin-top: 20px; }
+        .main-layout { display: grid; grid-template-columns: 1fr 340px; gap: 40px; margin-top: 20px; }
 
-        /* Table Style */
+        /* DB Table */
         .db-title { font-size: 14px; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
         th { text-align: left; padding: 10px; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--border); }
         td { padding: 12px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
         tr:hover { background: var(--hover); }
 
-        /* Image Embed */
-        .chart-preview { width: 80px; height: 50px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border); cursor: pointer; transition: transform 0.1s; }
-        .chart-preview:hover { transform: scale(1.05); }
+        /* Image Paste Zone */
+        .paste-zone {
+            width: 100%; height: 150px; border: 2px dashed var(--border); border-radius: 8px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); cursor: pointer; font-size: 13px; margin-bottom: 20px;
+            background-size: cover; background-position: center; position: relative; overflow: hidden;
+            transition: 0.2s;
+        }
+        .paste-zone:hover { border-color: var(--accent); background-color: var(--hover); }
+        .paste-zone.active { border-color: var(--accent); background-color: rgba(35, 131, 226, 0.05); }
 
-        /* Form Style */
-        .sidebar { background: var(--bg); position: sticky; top: 20px; }
-        .input-card { background: var(--hover); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        .field { margin-bottom: 15px; }
-        label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; }
-        input, select, textarea { width: 100%; border: 1px solid var(--border); padding: 8px 12px; border-radius: 4px; background: var(--bg); color: var(--text); font-size: 13px; outline: none; }
+        .chart-thumb { width: 80px; height: 50px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border); cursor: pointer; }
+
+        /* Sidebar Input */
+        .input-card { background: var(--hover); padding: 24px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .field { margin-bottom: 16px; }
+        label { display: block; font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; }
+        input, select, textarea { width: 100%; border: 1px solid var(--border); padding: 10px 12px; border-radius: 6px; background: var(--bg); color: var(--text); font-size: 14px; outline: none; }
         input:focus { border-color: var(--accent); }
+        textarea { height: 100px; resize: none; line-height: 1.6; }
         
-        .btn-save { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 4px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 5px; }
-        
+        .btn-save { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 10px; font-size: 15px; }
+
         /* Modal */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; padding: 40px; }
-        .modal-img { max-width: 100%; max-height: 100%; border-radius: 8px; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; padding: 20px; }
+        .modal-img { max-width: 100%; max-height: 100%; border-radius: 4px; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
 
         .pnl-up { color: var(--success-text); }
         .pnl-down { color: var(--danger-text); }
-        .badge { padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+        .badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
         .long { background: rgba(255, 82, 82, 0.1); color: var(--success-text); }
         .short { background: rgba(59, 130, 246, 0.1); color: var(--danger-text); }
     </style>
@@ -78,49 +87,46 @@
 
     <div class="cover"></div>
     <div class="container">
-        <span class="icon">🪄</span>
-        <h1 style="margin-bottom: 10px;">트레이딩 매직 링크 데이터베이스</h1>
-        <p style="color:var(--text-muted); font-size:14px; margin-bottom:40px;">트레이딩뷰 링크(Alt+S)만 붙여넣으면 사진이 자동으로 나타납니다.</p>
+        <span class="icon">📈</span>
+        <h1>비주얼 트레이딩 저널</h1>
+        <p style="color:var(--text-muted); font-size:15px; margin-bottom:40px;">이미지를 복사(Ctrl+C)하고 여기서 붙여넣기(Ctrl+V) 하세요. 마법처럼 기록됩니다.</p>
 
         <div class="main-layout">
-            <!-- 일지 리스트 -->
+            <!-- 일지 테이블 -->
             <div>
-                <div class="db-title">📋 모든 매매 기록</div>
+                <div class="db-title">📂 히스토리 데이터베이스</div>
                 <table>
                     <thead>
                         <tr>
                             <th style="width: 100px;">차트</th>
-                            <th style="width: 100px;">종목</th>
+                            <th style="width: 100px;">날짜</th>
+                            <th style="width: 120px;">종목</th>
                             <th style="width: 80px;">포지션</th>
-                            <th style="text-align: right; width: 120px;">수익금</th>
+                            <th style="text-align: right; width: 120px;">손익</th>
                             <th>메모</th>
                             <th style="width: 40px;"></th>
                         </tr>
                     </thead>
                     <tbody id="dbBody"></tbody>
                 </table>
-                <div id="emptyMsg" style="padding: 100px; text-align: center; color: var(--text-muted);">아직 기록이 없습니다. 우측에서 첫 매매를 기록해보세요.</div>
+                <div id="emptyMsg" style="padding: 100px; text-align: center; color: var(--text-muted);">아직 기록된 매매가 없습니다.</div>
             </div>
 
             <!-- 사이드바 입력 -->
-            <aside class="sidebar">
+            <aside>
                 <div class="input-card">
-                    <div style="font-size: 12px; font-weight: 800; margin-bottom: 20px; color: var(--text-muted);">새 기록 작성</div>
-                    
-                    <div class="field">
-                        <label>차트 이미지 링크 (트레이딩뷰 Alt+S)</label>
-                        <input type="text" id="chartUrl" placeholder="https://www.tradingview.com/x/..." oninput="previewImage()">
-                        <div id="urlPreview" style="margin-top:10px; display:none;">
-                            <img id="previewImg" style="width:100%; border-radius:4px; border:1px solid var(--border);">
-                        </div>
+                    <label>차트 이미지 (Ctrl+V)</label>
+                    <div class="paste-zone" id="pasteZone" onclick="document.getElementById('fileInput').click()">
+                        <div id="zoneText">📸 이미지를 여기에 붙여넣거나 클릭하여 선택</div>
+                        <input type="file" id="fileInput" style="display:none" accept="image/*" onchange="handleImage(this.files[0])">
                     </div>
 
                     <div class="field">
-                        <label>종목명</label>
-                        <input type="text" id="assetName" placeholder="예: BTCUSDT">
+                        <label>종목</label>
+                        <input type="text" id="assetName" placeholder="BTCUSDT">
                     </div>
 
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
                         <div class="field">
                             <label>방향</label>
                             <select id="tradeSide">
@@ -135,102 +141,141 @@
                     </div>
 
                     <div class="field">
-                        <label>매매 복기</label>
-                        <textarea id="tradeMemo" placeholder="진입 근거와 반성..."></textarea>
+                        <label>진입 근거 및 복기</label>
+                        <textarea id="tradeMemo" placeholder="왜 진입했나요? 무엇을 배웠나요?"></textarea>
                     </div>
 
-                    <button class="btn-save" onclick="addRecord()">기록 저장하기</button>
+                    <button class="btn-save" onclick="addRecord()">일지 저장하기</button>
                 </div>
 
                 <div style="display:flex; gap:10px;">
-                    <button class="btn-save" style="background:var(--hover); color:var(--text); flex:1;" onclick="exportData()">백업</button>
-                    <button class="btn-save" style="background:var(--hover); color:var(--text); flex:1;" onclick="takeScreenshot()">캡처</button>
+                    <button class="btn-save" style="background:var(--hover); color:var(--text); flex:1; font-size:12px;" onclick="exportData()">Data Export</button>
+                    <button class="btn-save" style="background:var(--hover); color:var(--text); flex:1; font-size:12px;" onclick="takeScreenshot()">PNG Report</button>
                 </div>
             </aside>
         </div>
     </div>
 
-    <!-- 큰 화면 모달 -->
+    <!-- 모달 -->
     <div id="imgModal" class="modal" onclick="this.style.display='none'">
         <img class="modal-img" id="modalImg">
     </div>
 
     <script>
-        let records = JSON.parse(localStorage.getItem('trading_v6_2_records')) || [];
+        // IndexedDB 설정 (대용량 이미지 저장을 위함)
+        let db;
+        const request = indexedDB.open("TradingJournalDB", 1);
+        request.onupgradeneeded = e => {
+            db = e.target.result;
+            db.createObjectStore("images", { keyPath: "id" });
+        };
+        request.onsuccess = e => { db = e.target.result; renderRecords(); };
 
-        function previewImage() {
-            const url = document.getElementById('chartUrl').value;
-            const previewDiv = document.getElementById('urlPreview');
-            const previewImg = document.getElementById('previewImg');
-            
-            if (url && url.includes('tradingview.com/x/')) {
-                // 트레이딩뷰 링크를 직접 이미지 경로로 변환 (끝에 .png를 붙이거나 썸네일 경로 사용)
-                // 보통 https://www.tradingview.com/x/ABC/ 를 <img> 태그에 넣으면 바로는 안될 수 있으나
-                // 실제로는 브라우저가 리다이렉션을 처리하거나 특정 규칙을 적용할 수 있음
-                // 여기서는 사용자 경험을 위해 링크를 그대로 이미지 소스로 시도
-                const imgUrl = url.endsWith('/') ? url.slice(0, -1) : url;
-                previewImg.src = `https://www.tradingview.com/x/${imgUrl.split('/').pop()}.png`;
-                previewDiv.style.display = 'block';
-            } else {
-                previewDiv.style.display = 'none';
+        let records = JSON.parse(localStorage.getItem('trading_v6_3_meta')) || [];
+        let tempImageData = null;
+
+        // 붙여넣기 이벤트 (Ctrl+V)
+        document.addEventListener('paste', e => {
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let item of items) {
+                if (item.kind === 'file') handleImage(item.getAsFile());
             }
+        });
+
+        function handleImage(file) {
+            if (!file || !file.type.startsWith('image/')) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 1280;
+                    let width = img.width; let height = img.height;
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    tempImageData = canvas.toDataURL('image/jpeg', 0.8);
+                    
+                    const zone = document.getElementById('pasteZone');
+                    zone.style.backgroundImage = `url(${tempImageData})`;
+                    document.getElementById('zoneText').style.display = 'none';
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         }
 
-        function addRecord() {
+        async function addRecord() {
             const asset = document.getElementById('assetName').value.toUpperCase();
             const side = document.getElementById('tradeSide').value;
             const pnl = Number(document.getElementById('pnlAmount').value);
             const memo = document.getElementById('tradeMemo').value;
-            const url = document.getElementById('chartUrl').value;
 
-            if(!asset || !url) return alert('종목명과 차트 링크는 필수입니다!');
+            if(!asset) return alert('종목명을 입력해주세요.');
 
-            const imgId = url.split('/').filter(Boolean).pop();
-            const finalImgUrl = `https://www.tradingview.com/x/${imgId}.png`;
+            const id = Date.now();
+            const record = { id, asset, side, pnl, memo, hasImage: !!tempImageData };
 
-            const record = {
-                id: Date.now(),
-                asset, side, pnl, memo,
-                image: finalImgUrl
-            };
+            // 이미지 저장 (IndexedDB)
+            if (tempImageData) {
+                const tx = db.transaction("images", "readwrite");
+                tx.objectStore("images").add({ id, data: tempImageData });
+            }
 
             records.unshift(record);
-            localStorage.setItem('trading_v6_2_records', JSON.stringify(records));
+            localStorage.setItem('trading_v6_3_meta', JSON.stringify(records));
             
             // 초기화
             document.getElementById('assetName').value = '';
             document.getElementById('pnlAmount').value = '';
             document.getElementById('tradeMemo').value = '';
-            document.getElementById('chartUrl').value = '';
-            document.getElementById('urlPreview').style.display = 'none';
+            document.getElementById('pasteZone').style.backgroundImage = 'none';
+            document.getElementById('zoneText').style.display = 'block';
+            tempImageData = null;
 
             renderRecords();
         }
 
-        function renderRecords() {
+        async function renderRecords() {
             const body = document.getElementById('dbBody');
             const emptyMsg = document.getElementById('emptyMsg');
             body.innerHTML = '';
 
-            if (records.length === 0) {
-                emptyMsg.style.display = 'block';
-                return;
-            }
+            if (records.length === 0) { emptyMsg.style.display = 'block'; return; }
             emptyMsg.style.display = 'none';
 
-            records.forEach(r => {
+            for (let r of records) {
                 const tr = document.createElement('tr');
+                const d = new Date(r.id);
+                const dateStr = `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+
+                let imgHtml = '—';
+                if (r.hasImage) {
+                    const imgData = await getImg(r.id);
+                    if (imgData) imgHtml = `<img src="${imgData}" class="chart-thumb" onclick="showModal('${imgData}')">`;
+                }
+
                 tr.innerHTML = `
-                    <td><img src="${r.image}" class="chart-preview" onclick="showModal('${r.image}')"></td>
+                    <td>${imgHtml}</td>
+                    <td style="color:var(--text-muted); font-size:12px;">${dateStr}</td>
                     <td><b>${r.asset}</b></td>
                     <td><span class="badge ${r.side === 'LONG' ? 'long' : 'short'}">${r.side}</span></td>
                     <td style="text-align:right; font-weight:700;" class="${r.pnl >= 0 ? 'pnl-up' : 'pnl-down'}">
                         ${r.pnl >= 0 ? '+' : ''}${r.pnl.toLocaleString()}
                     </td>
-                    <td style="color:var(--text-muted); font-size:13px;">${r.memo.substring(0, 50)}...</td>
+                    <td style="color:var(--text-muted); font-size:13px;">${r.memo.substring(0, 50)}${r.memo.length > 50 ? '...' : ''}</td>
                     <td><span onclick="deleteRecord(${r.id})" style="cursor:pointer; opacity:0.3;">🗑️</span></td>
                 `;
                 body.appendChild(tr);
+            }
+        }
+
+        function getImg(id) {
+            return new Promise(resolve => {
+                const tx = db.transaction("images", "readonly");
+                const request = tx.objectStore("images").get(id);
+                request.onsuccess = e => resolve(e.target.result ? e.target.result.data : null);
             });
         }
 
@@ -241,26 +286,27 @@
         }
 
         function deleteRecord(id) {
-            if(confirm('이 기록을 삭제하시겠습니까?')) {
+            if(confirm('삭제하시겠습니까?')) {
                 records = records.filter(r => r.id !== id);
-                localStorage.setItem('trading_v6_2_records', JSON.stringify(records));
+                localStorage.setItem('trading_v6_3_meta', JSON.stringify(records));
+                const tx = db.transaction("images", "readwrite");
+                tx.objectStore("images").delete(id);
                 renderRecords();
             }
         }
 
         function exportData() {
+            alert('전체 데이터 백업 기능은 준비 중입니다. 현재는 메타데이터만 저장됩니다.');
             const blob = new Blob([JSON.stringify(records)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = 'trading_journal_backup.json'; a.click();
+            const a = document.createElement('a'); a.href = url; a.download = 'journal_meta.json'; a.click();
         }
 
         function takeScreenshot() {
             html2canvas(document.body, { backgroundColor: '#ffffff' }).then(canvas => {
-                const link = document.createElement('a'); link.download = 'report.png'; link.href = canvas.toDataURL(); link.click();
+                const link = document.createElement('a'); link.download = 'trading_report.png'; link.href = canvas.toDataURL(); link.click();
             });
         }
-
-        window.onload = renderRecords;
     </script>
 </body>
 </html>
