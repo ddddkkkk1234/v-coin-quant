@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>트레이딩 마스터 매매일지 | Mastery Pro v7.1</title>
+    <title>트레이딩 마스터 매매일지 | Mastery Pro v7.2</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -44,7 +44,17 @@
 
         .main-layout { display: grid; grid-template-columns: 1fr 380px; gap: 40px; margin-top: 20px; }
 
-        /* DB 테이블 스타일 */
+        /* 성과 분석 그리드 */
+        .analytics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+        .stat-item { background: var(--hover); padding: 15px; border-radius: 12px; border: 1px solid var(--border); text-align: center; transition: transform 0.2s; }
+        .stat-item:hover { transform: translateY(-2px); }
+        .stat-item .label { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; font-weight: 700; text-transform: uppercase; }
+        .stat-item .value { font-size: 18px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+
+        .sub-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 30px; }
+        .sub-stat-item { background: transparent; padding: 10px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
+
+        /* DB 테이블 */
         .db-title { font-size: 14px; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th { text-align: left; padding: 12px 10px; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--border); }
@@ -53,35 +63,25 @@
 
         .chart-thumb { width: 80px; height: 50px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border); cursor: pointer; }
 
-        /* 사이드바 & 카드 */
+        /* 카드 및 사이드바 */
         .card { background: var(--hover); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; }
         .sidebar-title { font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.05em; }
 
-        /* 성과 통계 대시보드 */
-        .analytics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
-        .stat-item { background: var(--hover); padding: 15px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
-        .stat-item .label { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; font-weight: 700; }
-        .stat-item .value { font-size: 18px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
-
-        /* 입력 폼 컨트롤 */
         .field { margin-bottom: 12px; }
         label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; }
         input, select, textarea { width: 100%; border: 1px solid var(--border); padding: 8px 12px; border-radius: 4px; background: var(--bg); color: var(--text); font-size: 13px; outline: none; transition: border-color 0.2s; }
         input:focus { border-color: var(--accent); }
         textarea { height: 80px; resize: none; line-height: 1.6; }
 
-        /* 방향 선택 버튼 */
         .direction-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
         .dir-btn { padding: 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--text-muted); font-weight: 800; cursor: pointer; transition: 0.2s; font-size: 12px; }
         .dir-btn.long.active { background: var(--long-color); color: white; border-color: var(--long-color); box-shadow: 0 4px 12px rgba(255, 82, 82, 0.3); }
         .dir-btn.short.active { background: var(--short-color); color: white; border-color: var(--short-color); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
 
-        /* 태그 버튼 */
         .tag-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
         .tag-btn { padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text-muted); font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s; }
         .tag-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* 계산기 결과 창 */
         .price-display { background: rgba(0,0,0,0.05); padding: 10px; border-radius: 4px; margin-top: 10px; font-size: 12px; }
         .price-line { display: flex; justify-content: space-between; margin-bottom: 4px; }
         .price-line strong { font-family: 'JetBrains Mono', monospace; }
@@ -89,7 +89,6 @@
         .btn-save { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 4px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 10px; font-size: 14px; }
         .btn-fetch { padding:0 8px; background:var(--accent); color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px; }
 
-        /* 결과 색상 정의 */
         .pnl-up { color: var(--success-text); }
         .pnl-down { color: var(--danger-text); }
         .badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
@@ -99,7 +98,11 @@
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; padding: 20px; }
         .modal-img { max-width: 100%; max-height: 100%; border-radius: 4px; }
 
-        @media (max-width: 1100px) { .notion-container { padding: 0 20px 50px 20px; } .main-layout { grid-template-columns: 1fr; } }
+        @media (max-width: 1100px) { 
+            .notion-container { padding: 0 20px 50px 20px; } 
+            .main-layout { grid-template-columns: 1fr; } 
+            .analytics-grid { grid-template-columns: 1fr 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -107,21 +110,41 @@
     <div class="cover"></div>
     <div class="container">
         <span class="icon">🏆</span>
-        <h1>트레이딩 마스터 매매일지 <small style="font-size: 12px; color:var(--text-muted); font-weight: 400;">v7.1 Pro</small></h1>
+        <h1>트레이딩 마스터 매매일지 <small style="font-size: 12px; color:var(--text-muted); font-weight: 400;">v7.2 성과분석 에디션</small></h1>
         
-        <!-- 성과 분석 대시보드 -->
+        <!-- 기간별 성과 분석 그리드 -->
         <div class="analytics-grid">
             <div class="stat-item">
-                <div class="label">총 누적 손익</div>
-                <div id="statProfit" class="value pnl-up">0</div>
+                <div class="label">오늘의 손익</div>
+                <div id="statToday" class="value">0</div>
             </div>
             <div class="stat-item">
-                <div class="label">롱(Long) 승률</div>
-                <div id="statLongWin" class="value" style="color:var(--success-text)">0%</div>
+                <div class="label">이번 주 손익</div>
+                <div id="statWeek" class="value">0</div>
             </div>
             <div class="stat-item">
-                <div class="label">숏(Short) 승률</div>
-                <div id="statShortWin" class="value" style="color:var(--danger-text)">0%</div>
+                <div class="label">이번 달 손익</div>
+                <div id="statMonth" class="value">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="label">올해의 손익</div>
+                <div id="statYear" class="value">0</div>
+            </div>
+        </div>
+
+        <!-- 하위 통계 (총 손익 및 승률) -->
+        <div class="sub-stats">
+            <div class="sub-stat-item">
+                <div class="label" style="font-size:10px; font-weight:800; color:var(--text-muted);">전체 누적 손익</div>
+                <div id="statTotal" class="value pnl-up" style="font-weight:800; font-family:'JetBrains Mono';">0</div>
+            </div>
+            <div class="sub-stat-item">
+                <div class="label" style="font-size:10px; font-weight:800; color:var(--text-muted);">롱 승률</div>
+                <div id="statLongWin" class="value" style="color:var(--success-text); font-weight:800;">0%</div>
+            </div>
+            <div class="sub-stat-item">
+                <div class="label" style="font-size:10px; font-weight:800; color:var(--text-muted);">숏 승률</div>
+                <div id="statShortWin" class="value" style="color:var(--danger-text); font-weight:800;">0%</div>
             </div>
         </div>
 
@@ -144,17 +167,16 @@
                     </thead>
                     <tbody id="dbBody"></tbody>
                 </table>
-                <div id="emptyMsg" style="padding: 100px; text-align: center; color: var(--text-muted);">복기할 데이터가 없습니다. 원칙 매매를 시작하세요!</div>
+                <div id="emptyMsg" style="padding: 100px; text-align: center; color: var(--text-muted);">데이터가 없습니다. 첫 매매를 기록해 성과를 분석해보세요.</div>
             </div>
 
-            <!-- 사이드바 도구함 -->
+            <!-- 사이드바 도구 -->
             <aside class="sidebar">
-                
-                <!-- 정밀 포지션 계산기 -->
+                <!-- 포지션 계산기 -->
                 <div class="card">
                     <div class="sidebar-title">📏 정밀 포지션 계산기</div>
                     <div class="field">
-                        <label>현재 기준 가격 (시세 연동)</label>
+                        <label>기준 가격</label>
                         <div style="display:flex; gap:4px;">
                             <input type="number" id="calcPrice" placeholder="현재가" oninput="runCalc()">
                             <button onclick="fetchLivePrice('calc')" class="btn-fetch" title="현재가 불러오기">⚡</button>
@@ -196,10 +218,9 @@
                     </div>
                 </div>
 
-                <!-- 매매 기록 작성 -->
+                <!-- 매매 기록 -->
                 <div class="card">
                     <div class="sidebar-title">📝 매매 기록 작성</div>
-                    
                     <div class="field">
                         <label>방향 선택</label>
                         <div class="direction-group">
@@ -207,22 +228,18 @@
                             <button class="dir-btn short" id="btnShort" onclick="setDirection('SHORT')">SHORT / 매도</button>
                         </div>
                     </div>
-
                     <div class="field">
                         <label>매매 시각</label>
                         <input type="datetime-local" id="tradeDate">
                     </div>
-
                     <div class="field" id="pasteZone" style="border:2px dashed var(--border); height:80px; display:flex; align-items:center; justify-content:center; font-size:11px; cursor:pointer; background-size:cover; color:var(--text-muted);">
                         📸 차트 이미지 붙여넣기 (Ctrl+V)
                     </div>
-
                     <div class="field">
                         <label>종목 검색</label>
                         <input type="text" id="assetName" list="assetList" placeholder="예: BTC, ETH" onchange="fetchLivePrice('all')">
                         <datalist id="assetList"></datalist>
                     </div>
-
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                         <div class="field">
                             <label>진입 가격</label>
@@ -232,19 +249,17 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label>청산 가격 (매매 종료)</label>
+                            <label>청산 가격</label>
                             <input type="number" id="exitPrice" placeholder="0">
                         </div>
                     </div>
-
                     <div class="field">
                         <label>수량 (Qty)</label>
                         <input type="number" id="tradeQty" step="any" placeholder="1.0">
                     </div>
-
                     <div class="field">
                         <label>복기 메모 및 태그</label>
-                        <textarea id="tradeMemo" placeholder="진입 이유와 반성 내용을 기록하세요..."></textarea>
+                        <textarea id="tradeMemo" placeholder="복기 내용을 기록하세요..."></textarea>
                         <div class="tag-group" id="tagSelector">
                             <span class="tag-btn" onclick="toggleTag(this)">원칙매매</span>
                             <span class="tag-btn" onclick="toggleTag(this)">뇌동매매</span>
@@ -254,12 +269,12 @@
                             <span class="tag-btn" onclick="toggleTag(this)">손절</span>
                         </div>
                     </div>
-                    <button class="btn-save" onclick="addRecord()">기록 저장 및 분석</button>
+                    <button class="btn-save" onclick="addRecord()">기록 저장</button>
                 </div>
 
                 <div style="display:flex; gap:10px;">
-                    <button class="btn-save" style="background:var(--hover); color:var(--text); flex:1; font-size:12px;" onclick="exportData()">데이터 백업</button>
-                    <button class="btn-save" style="background:var(--hover); color:var(--text); flex:1; font-size:12px;" onclick="takeScreenshot()">리포트 캡처</button>
+                    <button class="btn-save" style="background:var(--hover); color:var(--text); flex:1; font-size:12px;" onclick="exportData()">Export</button>
+                    <button class="btn-save" style="background:var(--hover); color:var(--text); flex:1; font-size:12px;" onclick="takeScreenshot()">Capture</button>
                 </div>
             </aside>
         </div>
@@ -271,11 +286,11 @@
 
     <script>
         let db;
-        const request = indexedDB.open("MasterJournalDB_v7_1", 1);
+        const request = indexedDB.open("MasterJournalDB_v7_2", 1);
         request.onupgradeneeded = e => { db = e.target.result; db.createObjectStore("images", { keyPath: "id" }); };
         request.onsuccess = e => { db = e.target.result; renderRecords(); };
 
-        let records = JSON.parse(localStorage.getItem('trading_v7_1_master')) || [];
+        let records = JSON.parse(localStorage.getItem('trading_v7_2_master')) || [];
         let tempImageData = null;
         let currentDirection = 'LONG';
 
@@ -299,9 +314,7 @@
             const lev = Number(document.getElementById('calcLev').value) || 0;
             const sl = Number(document.getElementById('calcSl').value) || 0;
             const rr = Number(document.getElementById('calcRr').value) || 2;
-
             if (base > 0) {
-                // 계산기는 롱 기준으로 목표가 제시 (트레이더의 판단 기준)
                 document.getElementById('priceSl').innerText = (base * (1 - sl/100)).toLocaleString();
                 document.getElementById('priceTp').innerText = (base * (1 + (sl*rr)/100)).toLocaleString();
             }
@@ -316,15 +329,10 @@
                 const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`);
                 const data = await res.json();
                 const price = parseFloat(data.price);
-                
-                if (target === 'calc') {
-                    document.getElementById('calcPrice').value = price;
-                } else {
-                    document.getElementById('entryPrice').value = price;
-                    document.getElementById('calcPrice').value = price; // 동기화
-                }
+                if (target === 'calc') { document.getElementById('calcPrice').value = price; }
+                else { document.getElementById('entryPrice').value = price; document.getElementById('calcPrice').value = price; }
                 runCalc();
-            } catch (err) { alert('시세 로드 실패. 종목을 확인하세요.'); }
+            } catch (err) { alert('시세 로드 실패.'); }
         }
 
         async function fetchSymbols() {
@@ -368,7 +376,7 @@
         }
 
         async function addRecord() {
-            const time = document.getElementById('tradeDate').value;
+            const timeStr = document.getElementById('tradeDate').value;
             const asset = document.getElementById('assetName').value.toUpperCase();
             const side = currentDirection;
             const entry = Number(document.getElementById('entryPrice').value);
@@ -377,12 +385,11 @@
             const memo = document.getElementById('tradeMemo').value;
             const tags = Array.from(document.querySelectorAll('.tag-btn.active')).map(b => b.innerText);
 
-            if(!asset || !entry || !exit) return alert('종목, 진입가, 청산가는 필수입니다.');
+            if(!asset || !entry || !exit) return alert('필수 항목을 입력하세요.');
 
             let yieldPct = side === 'LONG' ? ((exit - entry) / entry) * 100 : ((entry - exit) / entry) * 100;
             let pnl = yieldPct * entry * qty / 100;
-
-            const id = new Date(time).getTime();
+            const id = new Date(timeStr).getTime();
             const record = { id, asset, side, entry, exit, qty, memo, tags, pnl, yieldPct, hasImage: !!tempImageData };
 
             if (tempImageData) {
@@ -391,9 +398,9 @@
             }
 
             records.unshift(record);
-            localStorage.setItem('trading_v7_1_master', JSON.stringify(records));
+            localStorage.setItem('trading_v7_2_master', JSON.stringify(records));
             
-            // 초기화
+            // Reset
             document.getElementById('assetName').value = '';
             document.getElementById('entryPrice').value = '';
             document.getElementById('exitPrice').value = '';
@@ -413,9 +420,21 @@
             document.getElementById('emptyMsg').style.display = 'none';
 
             let totalP = 0; let lWin = 0; let lTotal = 0; let sWin = 0; let sTotal = 0;
+            let pToday = 0; let pWeek = 0; let pMonth = 0; let pYear = 0;
+
+            const now = new Date();
+            const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+            const startOfWeek = new Date(now.setDate(now.getDate() - (now.getDay() === 0 ? 6 : now.getDay() - 1))).setHours(0,0,0,0);
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+            const startOfYear = new Date(now.getFullYear(), 0, 1).getTime();
 
             for (let r of records) {
                 totalP += r.pnl;
+                if (r.id >= startOfToday) pToday += r.pnl;
+                if (r.id >= startOfWeek) pWeek += r.pnl;
+                if (r.id >= startOfMonth) pMonth += r.pnl;
+                if (r.id >= startOfYear) pYear += r.pnl;
+
                 if (r.side === 'LONG') { lTotal++; if(r.pnl > 0) lWin++; }
                 else { sTotal++; if(r.pnl > 0) sWin++; }
 
@@ -447,8 +466,16 @@
                 body.appendChild(tr);
             }
 
-            document.getElementById('statProfit').innerText = (totalP >= 0 ? '+' : '') + totalP.toLocaleString();
-            document.getElementById('statProfit').className = 'value ' + (totalP >= 0 ? 'pnl-up' : 'pnl-down');
+            // 성과 데이터 업데이트
+            const setStat = (id, val) => {
+                const el = document.getElementById(id);
+                el.innerText = (val >= 0 ? '+' : '') + val.toLocaleString();
+                el.className = 'value ' + (val >= 0 ? 'pnl-up' : 'pnl-down');
+            };
+            setStat('statToday', pToday); setStat('statWeek', pWeek);
+            setStat('statMonth', pMonth); setStat('statYear', pYear);
+            setStat('statTotal', totalP);
+
             document.getElementById('statLongWin').innerText = lTotal > 0 ? ((lWin/lTotal)*100).toFixed(1) + '%' : '0%';
             document.getElementById('statShortWin').innerText = sTotal > 0 ? ((sWin/sTotal)*100).toFixed(1) + '%' : '0%';
         }
@@ -457,9 +484,9 @@
         function showModal(src) { document.getElementById('modalImg').src = src; document.getElementById('imgModal').style.display = 'flex'; }
         
         function deleteRecord(id) {
-            if(confirm('이 기록을 삭제하시겠습니까?')) {
+            if(confirm('삭제하시겠습니까?')) {
                 records = records.filter(r => r.id !== id);
-                localStorage.setItem('trading_v7_1_master', JSON.stringify(records));
+                localStorage.setItem('trading_v7_2_master', JSON.stringify(records));
                 if(db) { const tx = db.transaction("images", "readwrite"); tx.objectStore("images").delete(id); }
                 renderRecords();
             }
@@ -473,7 +500,7 @@
 
         function takeScreenshot() {
             html2canvas(document.body, { backgroundColor: '#ffffff' }).then(canvas => {
-                const link = document.createElement('a'); link.download = '매매분석_리포트.png'; link.href = canvas.toDataURL(); link.click();
+                const link = document.createElement('a'); link.download = '성과분석_리포트.png'; link.href = canvas.toDataURL(); link.click();
             });
         }
 
