@@ -124,9 +124,9 @@
             <!-- 사이드바 (오른쪽) -->
             <aside class="sidebar">
                 
-                <!-- 포지션 사이징 계산기 (복구됨!) -->
+                <!-- 포지션 사이징 계산기 -->
                 <div class="card">
-                    <div class="sidebar-title">📏 Position Sizing (1:2 RR)</div>
+                    <div class="sidebar-title">📏 Position Sizing</div>
                     <div class="field">
                         <label>Entry Margin (원금)</label>
                         <input type="number" id="calcEntry" placeholder="0" oninput="runCalc()">
@@ -141,13 +141,17 @@
                             <input type="number" id="calcSl" value="5" oninput="runCalc()">
                         </div>
                     </div>
+                    <div class="field">
+                        <label>RR Ratio (손익비 1 : X)</label>
+                        <input type="number" id="calcRr" value="2" step="0.1" oninput="runCalc()">
+                    </div>
                     <div style="background:var(--bg); padding:12px; border-radius:4px; border:1px solid var(--border); margin-top:10px;">
                         <div class="calc-result-row">
                             <span>Total Size:</span>
                             <strong id="resTotal" style="color:var(--accent);">0</strong>
                         </div>
                         <div class="calc-result-row">
-                            <span>TP (2.0x):</span>
+                            <span id="labelTp">TP (1:2.0):</span>
                             <strong id="resTp" class="pnl-up">+0</strong>
                         </div>
                         <div class="calc-result-row">
@@ -225,14 +229,16 @@
             const entry = Number(document.getElementById('calcEntry').value) || 0;
             const lev = Number(document.getElementById('calcLev').value) || 0;
             const sl = Number(document.getElementById('calcSl').value) || 0;
+            const rr = Number(document.getElementById('calcRr').value) || 2;
 
             const total = entry * lev;
             const loss = total * (sl / 100);
-            const profit = loss * 2;
+            const profit = loss * rr;
 
             document.getElementById('resTotal').innerText = total.toLocaleString();
             document.getElementById('resTp').innerText = '+' + profit.toLocaleString();
             document.getElementById('resSl').innerText = '-' + loss.toLocaleString();
+            document.getElementById('labelTp').innerText = `TP (1:${rr.toFixed(1)}):`;
         }
 
         // 이미지 붙여넣기
