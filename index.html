@@ -165,6 +165,11 @@
                 <div class="card" style="background:var(--hover);">
                     <div class="sidebar-title">📝 New Trade Log</div>
                     
+                    <div class="field">
+                        <label>Trade Date (매매 시각)</label>
+                        <input type="datetime-local" id="tradeDate">
+                    </div>
+
                     <label>Chart Image (Ctrl+V)</label>
                     <div class="paste-zone" id="pasteZone" onclick="document.getElementById('fileInput').click()">
                         <div id="zoneText">📸 복사한 이미지 붙여넣기</div>
@@ -221,8 +226,21 @@
         };
         request.onsuccess = e => { db = e.target.result; renderRecords(); };
 
-        let records = JSON.parse(localStorage.getItem('trading_v6_4_meta')) || [];
+        let records = JSON.parse(localStorage.getItem('trading_v6_6_meta')) || [];
         let tempImageData = null;
+
+        // 시간 자동 초기화 함수
+        function initTime() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('tradeDate').value = now.toISOString().slice(0, 16);
+        }
+
+        // 페이지 로드 시 시간 초기화
+        window.onload = () => {
+            initTime();
+            renderRecords();
+        };
 
         // 계산기 로직
         function runCalc() {
@@ -273,19 +291,22 @@
         }
 
         async function addRecord() {
+            const tradeTime = document.getElementById('tradeDate').value;
             const asset = document.getElementById('assetName').value.toUpperCase();
             const side = document.getElementById('tradeSide').value;
             const pnl = Number(document.getElementById('pnlAmount').value);
             const memo = document.getElementById('tradeMemo').value;
             if(!asset) return alert('종목명을 입력하세요.');
-            const id = Date.now();
+            
+            const id = tradeTime ? new Date(tradeTime).getTime() : Date.now();
             const record = { id, asset, side, pnl, memo, hasImage: !!tempImageData };
             if (tempImageData) {
                 const tx = db.transaction("images", "readwrite");
                 tx.objectStore("images").add({ id, data: tempImageData });
             }
             records.unshift(record);
-            localStorage.setItem('trading_v6_4_meta', JSON.stringify(records));
+            localStorage.setItem('trading_v6_6_meta', JSON.stringify(records));
+            
             // Reset
             document.getElementById('assetName').value = '';
             document.getElementById('pnlAmount').value = '';
@@ -293,6 +314,7 @@
             document.getElementById('pasteZone').style.backgroundImage = 'none';
             document.getElementById('zoneText').style.display = 'block';
             tempImageData = null;
+            initTime(); // 시간 다시 지금으로 리셋
             renderRecords();
         }
 
