@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>트레이딩 마스터 매매일지 | Mastery Pro v8.0</title>
+    <title>트레이딩 마스터 매매일지 | Mastery Pro v8.1</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -103,7 +103,7 @@
     <div class="cover"></div>
     <div class="container">
         <span class="icon">📈</span>
-        <h1>트레이딩 마스터 저널 <small style="font-size: 12px; color:var(--text-muted); font-weight: 400;">v8.0 Stable Pro</small></h1>
+        <h1>트레이딩 마스터 저널 <small style="font-size: 12px; color:var(--text-muted); font-weight: 400;">v8.1 (시세 긴급수리)</small></h1>
         
         <div class="exchange-rate-bar">
             <span>USDT/KRW: <strong id="liveRate">1,350</strong>원</span>
@@ -155,13 +155,13 @@
                     <div class="sidebar-title">📏 리스크 및 주문량 계산기</div>
                     <div class="field">
                         <label>종목 검색</label>
-                        <input type="text" id="calcAssetName" list="assetList" placeholder="BTC, ETH..." onchange="fetchLivePrice('calc_only', this)">
+                        <input type="text" id="calcAssetName" list="assetList" placeholder="BTC, ETH..." onchange="fetchLivePrice('calc_only')">
                     </div>
                     <div class="field">
                         <label>현재 시세 (딸깍 ⚡)</label>
                         <div style="display:flex; gap:4px;">
                             <input type="number" id="calcPrice" placeholder="현재가" oninput="runCalc()">
-                            <button onclick="fetchLivePrice('calc_only', this)" class="btn-fetch">⚡</button>
+                            <button onclick="fetchLivePrice('calc_only')" class="btn-fetch" id="btnCalcFetch">⚡</button>
                         </div>
                     </div>
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
@@ -173,6 +173,7 @@
                         <div class="field"><label>손익비 (1:X)</label><input type="number" id="calcRr" value="2" oninput="runCalc()"></div>
                     </div>
                     <div class="result-box">
+                        <div class="result-row"><span>규모:</span><strong id="resTotal" style="color:var(--accent);">0 $</strong></div>
                         <div class="result-row"><span>주문 수량:</span><strong id="resQty" class="gold-text">0.00</strong></div>
                         <div class="result-row"><span>예상 수익:</span><strong id="resTpAmt" class="pnl-up">+0 $</strong></div>
                         <div class="result-row"><span>예상 손실:</span><strong id="resSlAmt" class="pnl-down">-0 $</strong></div>
@@ -191,21 +192,21 @@
                         <button class="dir-btn short" id="btnShort" onclick="setDirection('SHORT')">SHORT</button>
                     </div>
                     <div class="field" id="pasteZone" style="border:2px dashed var(--border); height:60px; border-radius:6px; background-size:cover; font-size:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-muted);">차트 붙여넣기</div>
-                    <div class="field"><label>종목</label><input type="text" id="assetName" list="assetList" onchange="fetchLivePrice('all', this)"><datalist id="assetList"></datalist></div>
+                    <div class="field"><label>종목</label><input type="text" id="assetName" list="assetList" onchange="fetchLivePrice('all')"><datalist id="assetList"></datalist></div>
                     
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                         <div class="field">
                             <label>진입가 ⚡</label>
                             <div style="display:flex; gap:4px;">
                                 <input type="number" id="entryPrice" oninput="updatePnlPreview()">
-                                <button onclick="fetchLivePrice('entry', this)" class="btn-fetch">⚡</button>
+                                <button onclick="fetchLivePrice('entry')" class="btn-fetch" id="btnEntryFetch">⚡</button>
                             </div>
                         </div>
                         <div class="field">
                             <label>청산가 ⚡</label>
                             <div style="display:flex; gap:4px;">
                                 <input type="number" id="exitPrice" oninput="updatePnlPreview()">
-                                <button onclick="fetchLivePrice('exit', this)" class="btn-fetch">⚡</button>
+                                <button onclick="fetchLivePrice('exit')" class="btn-fetch" id="btnExitFetch">⚡</button>
                             </div>
                         </div>
                     </div>
@@ -228,11 +229,11 @@
 
     <script>
         let db;
-        const request = indexedDB.open("MasterJournalDB_v8_0", 1);
+        const request = indexedDB.open("MasterJournalDB_v8_1", 1);
         request.onupgradeneeded = e => { db = e.target.result; db.createObjectStore("images", { keyPath: "id" }); };
         request.onsuccess = e => { db = e.target.result; renderRecords(); };
 
-        let records = JSON.parse(localStorage.getItem('trading_v8_0_master')) || [];
+        let records = JSON.parse(localStorage.getItem('trading_v8_1_master')) || [];
         let tempImageData = null;
         let currentDirection = 'LONG';
         let dayChart = null;
@@ -262,6 +263,7 @@
             const rr = Number(document.getElementById('calcRr').value) || 2;
             const totalSize = entry * lev;
             if(price > 0) {
+                document.getElementById('resTotal').innerText = `${totalSize.toLocaleString()} $`;
                 document.getElementById('resQty').innerText = (totalSize / price).toFixed(5);
                 const lossAmt = totalSize * (sl / 100);
                 document.getElementById('resTpAmt').innerText = `+${(lossAmt * rr).toFixed(2)} $`;
@@ -278,7 +280,6 @@
             document.getElementById('entryPrice').value = price;
             document.getElementById('tradeQty').value = qty;
             updatePnlPreview();
-            alert('적용 완료!');
         }
 
         function updatePnlPreview() {
@@ -292,24 +293,23 @@
             el.className = pnl >= 0 ? 'pnl-up' : 'pnl-down';
         }
 
-        async function fetchLivePrice(target, btn) {
-            let assetId = target === 'calc_only' ? 'calcAssetName' : 'assetName';
-            const assetInput = document.getElementById(assetId);
-            const asset = assetInput.value.trim().toUpperCase();
+        // 시세 가져오기 핵심 로직 (긴급 수리 버전)
+        async function fetchLivePrice(target) {
+            const assetId = (target === 'calc_only') ? 'calcAssetName' : 'assetName';
+            const asset = document.getElementById(assetId).value.trim().toUpperCase();
             
             if (!asset) return alert('종목명을 입력해주세요.');
             const symbol = asset.endsWith('USDT') ? asset : asset + 'USDT';
 
             try {
-                if (btn) btn.innerText = '...';
-                const res = await fetch(`https://api.binance.com/api/v3/ticker?symbol=${symbol}`);
+                const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`);
                 if (!res.ok) throw new Error();
                 const data = await res.json();
                 const price = parseFloat(data.price);
                 
                 if (target === 'calc_only') {
                     document.getElementById('calcPrice').value = price;
-                    document.getElementById('assetName').value = asset;
+                    document.getElementById('assetName').value = asset; // 기록장 종목 동기화
                 } else if (target === 'entry') {
                     document.getElementById('entryPrice').value = price;
                 } else if (target === 'exit') {
@@ -320,11 +320,10 @@
                     document.getElementById('calcAssetName').value = asset;
                 }
                 
-                runCalc(); updatePnlPreview();
-                if (btn) btn.innerText = '⚡';
+                runCalc(); 
+                updatePnlPreview();
             } catch (err) {
-                alert('시세 로드 실패.');
-                if (btn) btn.innerText = '⚡';
+                alert('시세 로드 실패. 종목명을 확인하세요.');
             }
         }
 
@@ -348,9 +347,8 @@
                     const reader = new FileReader();
                     reader.onload = ev => {
                         tempImageData = ev.target.result;
-                        const zone = document.getElementById('pasteZone');
-                        zone.style.backgroundImage = `url(${tempImageData})`;
-                        zone.innerText = '';
+                        document.getElementById('pasteZone').style.backgroundImage = `url(${tempImageData})`;
+                        document.getElementById('pasteZone').innerText = '';
                     };
                     reader.readAsDataURL(item.getAsFile());
                 }
@@ -369,7 +367,7 @@
             const record = { id, asset, side: currentDirection, entry, exit, qty, pnl, tags, hasImage: !!tempImageData };
             if (tempImageData) { const tx = db.transaction("images", "readwrite"); tx.objectStore("images").add({ id, data: tempImageData }); }
             records.unshift(record);
-            localStorage.setItem('trading_v8_0_master', JSON.stringify(records));
+            localStorage.setItem('trading_v8_1_master', JSON.stringify(records));
             tempImageData = null;
             document.getElementById('pasteZone').style.backgroundImage = 'none';
             document.getElementById('pasteZone').innerText = '차트 붙여넣기';
@@ -381,8 +379,7 @@
             body.innerHTML = '';
             let stats = { total:0, today:0, week:0, month:0 };
             let dayPnL = [0,0,0,0,0,0,0]; let tagPnL = {};
-            const now = new Date();
-            const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+            const startOfToday = new Date().setHours(0,0,0,0);
 
             if (records.length === 0) { document.getElementById('emptyMsg').style.display = 'block'; return; }
             document.getElementById('emptyMsg').style.display = 'none';
@@ -430,7 +427,7 @@
 
         function getImg(id) { return new Promise(res => { if(!db) return res(null); const tx = db.transaction("images", "readonly"); const req = tx.objectStore("images").get(id); req.onsuccess = e => res(e.target.result ? e.target.result.data : null); }); }
         function showModal(src) { document.getElementById('modalImg').src = src; document.getElementById('imgModal').style.display = 'flex'; }
-        function deleteRecord(id) { if(confirm('삭제?')) { records = records.filter(r => r.id !== id); localStorage.setItem('trading_v8_0_master', JSON.stringify(records)); renderRecords(); } }
+        function deleteRecord(id) { if(confirm('삭제?')) { records = records.filter(r => r.id !== id); localStorage.setItem('trading_v8_1_master', JSON.stringify(records)); renderRecords(); } }
         async function fetchSymbols() { try { const res = await fetch('https://api.binance.com/api/v3/exchangeInfo'); const data = await res.json(); const list = document.getElementById('assetList'); data.symbols.filter(s => s.symbol.endsWith('USDT')).forEach(s => { const option = document.createElement('option'); option.value = s.symbol.replace('USDT', ''); list.appendChild(option); }); } catch(err){} }
 
         window.onload = () => { fetchExchangeRate(); fetchSymbols(); };
