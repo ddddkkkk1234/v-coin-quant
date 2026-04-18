@@ -276,13 +276,26 @@
 
         async function fetchLivePrice(target) {
             let assetId = target === 'calc_only' ? 'calcAssetName' : 'assetName';
-            const asset = document.getElementById(assetId).value.trim().toUpperCase();
-            if (!asset) return alert('종목명을 먼저 입력해주세요.');
+            const assetInput = document.getElementById(assetId);
+            const asset = assetInput.value.trim().toUpperCase();
+            
+            if (!asset) return alert('종목명을 먼저 입력해주세요 (예: BTC)');
+            
             const symbol = asset.endsWith('USDT') ? asset : asset + 'USDT';
+            
+            // 로딩 표시용 버튼 찾기
+            const btn = event ? event.currentTarget : null;
+            const originalText = btn ? btn.innerText : '⚡';
+
             try {
-                const res = await fetch(`https://api.binance.com/api/v3/ticker?symbol=${symbol}`);
+                if (btn) btn.innerText = '...'; // 로딩 중 표시
+                
+                const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`);
+                if (!res.ok) throw new Error('Symbol not found');
+                
                 const data = await res.json();
                 const price = parseFloat(data.price);
+                
                 if (target === 'calc_only') {
                     document.getElementById('calcPrice').value = price;
                     document.getElementById('assetName').value = asset;
@@ -291,8 +304,14 @@
                     document.getElementById('calcPrice').value = price;
                     document.getElementById('calcAssetName').value = asset;
                 }
-                runCalc(); updatePnlPreview();
-            } catch (err) { alert('시세 로드 실패.'); }
+                
+                runCalc(); 
+                updatePnlPreview();
+                if (btn) btn.innerText = originalText;
+            } catch (err) {
+                alert(`시세 로드 실패: ${asset} 종목을 찾을 수 없거나 네트워크 오류입니다.`);
+                if (btn) btn.innerText = originalText;
+            }
         }
 
         async function fetchSymbols() {
