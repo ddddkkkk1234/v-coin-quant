@@ -3,18 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>매매일지 (Trading Journal)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Trading Journal & Sizing Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent-color: #38bdf8;
-            --buy-color: #ef4444; /* 한국식 빨강 */
-            --sell-color: #3b82f6; /* 한국식 파랑 */
-            --border-color: #334155;
+            --bg-color: #0b0f1a;
+            --card-bg: #161b2c;
+            --card-border: #2d3348;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.3);
+            --success: #10b981;
+            --danger: #f43f5e;
+            --input-bg: #1e253a;
         }
 
         * {
@@ -25,107 +27,105 @@
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-primary);
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            line-height: 1.5;
-            padding: 2rem;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            padding: 2rem 1rem;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
         }
 
         header {
-            margin-bottom: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            text-align: center;
+            margin-bottom: 3rem;
         }
 
         header h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--accent-color);
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1rem;
         }
 
         /* 통계 요약 섹션 */
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 1.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         .summary-card {
             background: var(--card-bg);
             padding: 1.5rem;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
         }
 
         .summary-card span {
-            display: block;
             font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-weight: 500;
         }
 
         .summary-card strong {
-            font-size: 1.5rem;
+            display: block;
+            font-size: 1.75rem;
             font-weight: 700;
+            margin-top: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        /* 포지션 사이징 계산기 스타일 */
-        .calculator-section {
+        /* 섹션 공통 */
+        section {
             background: var(--card-bg);
             padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
             margin-bottom: 2rem;
         }
 
-        .calc-results {
-            margin-top: 1.5rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            padding-top: 1.5rem;
-            border-top: 1px dashed var(--border-color);
-        }
-
-        .result-item {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .result-item span {
-            font-size: 0.8125rem;
-            color: var(--text-secondary);
-        }
-
-        .result-item strong {
+        h2 {
             font-size: 1.25rem;
-            margin-top: 0.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .result-item.success strong { color: var(--buy-color); }
-        .result-item.failure strong { color: var(--sell-color); }
-
-        /* 매매 내역 추가 폼 */
-        .form-section {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 2rem;
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 1.25rem;
+            background: var(--accent);
+            border-radius: 2px;
         }
 
+        /* 폼 그리드 */
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
         }
 
         .input-group {
@@ -135,259 +135,302 @@
         }
 
         .input-group label {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-muted);
         }
 
-        input, select, textarea {
-            background: #0f172a;
-            border: 1px solid var(--border-color);
-            padding: 0.75rem;
-            border-radius: 6px;
-            color: var(--text-primary);
+        input, select {
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            padding: 0.875rem;
+            border-radius: 10px;
+            color: var(--text-main);
             font-size: 1rem;
+            transition: all 0.2s;
             outline: none;
         }
 
         input:focus {
-            border-color: var(--accent-color);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
 
+        /* 계산기 결과 */
+        .calc-results {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 12px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .result-item span {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .result-item strong {
+            display: block;
+            font-size: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            margin-top: 0.25rem;
+        }
+
+        .res-total { color: var(--accent); }
+        .res-profit { color: var(--success); }
+        .res-loss { color: var(--danger); }
+
+        /* 버튼 */
         .btn-submit {
-            background: var(--accent-color);
-            color: #0f172a;
+            grid-column: 1 / -1;
+            background: var(--accent);
+            color: #000;
             border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
+            padding: 1rem;
+            border-radius: 10px;
             font-weight: 700;
+            font-size: 1rem;
             cursor: pointer;
-            transition: opacity 0.2s;
-            width: 100%;
+            transition: all 0.2s;
+            margin-top: 0.5rem;
         }
 
         .btn-submit:hover {
-            opacity: 0.9;
+            filter: brightness(1.1);
+            transform: translateY(-1px);
         }
 
-        /* 테이블 섹션 */
+        /* 리스트 테이블 */
         .list-section {
-            background: var(--card-bg);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
+            overflow: hidden;
+            padding: 0;
+        }
+
+        .table-container {
             overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            text-align: left;
         }
 
         th {
-            background: #0f172a;
-            padding: 1rem;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--card-border);
         }
 
         td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--card-border);
             font-size: 0.9375rem;
         }
 
-        .type-buy { color: var(--buy-color); font-weight: 600; }
-        .type-sell { color: var(--sell-color); font-weight: 600; }
-
-        .btn-delete {
-            color: #ef4444;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 0.875rem;
-            text-decoration: underline;
+        tr:last-child td {
+            border-bottom: none;
         }
 
-        /* 유틸리티 클래스 */
-        .text-right { text-align: right; }
-        .empty-msg { padding: 3rem; text-align: center; color: var(--text-secondary); }
+        .type-buy { color: var(--success); font-weight: 700; }
+        .type-sell { color: var(--accent); font-weight: 700; }
 
+        .btn-delete {
+            color: var(--danger);
+            background: none;
+            border: 1px solid transparent;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8125rem;
+            transition: all 0.2s;
+        }
+
+        .btn-delete:hover {
+            border-color: var(--danger);
+            background: rgba(244, 63, 94, 0.1);
+        }
+
+        .empty-msg {
+            padding: 4rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .text-right { text-align: right; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .summary-grid { grid-template-columns: 1fr; }
+            section { padding: 1.5rem; }
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <header>
-            <h1>매매일지 (Trading Journal)</h1>
+            <h1>TRADING PRO</h1>
+            <p>Smart Journal & Position Sizing System</p>
         </header>
 
-        <!-- 요약 정보 -->
+        <!-- 통계 요약 -->
         <div class="summary-grid">
             <div class="summary-card">
-                <span>총 실현 수익</span>
-                <strong id="totalProfit">0원</strong>
+                <span>Total Realized PNL</span>
+                <strong id="totalProfit" class="res-profit">0원</strong>
             </div>
             <div class="summary-card">
-                <span>총 거래 횟수</span>
+                <span>Trades Executed</span>
                 <strong id="totalCount">0회</strong>
             </div>
             <div class="summary-card">
-                <span>승률</span>
-                <strong id="winRate">0%</strong>
+                <span>Winning Rate</span>
+                <strong id="winRate" style="color: var(--accent)">0%</strong>
             </div>
         </div>
 
-        <!-- 포지션 사이징 계산기 -->
-        <section class="calculator-section">
-            <h2 style="margin-bottom: 1rem; font-size: 1.25rem; color: var(--accent-color);">포지션 사이징 계산기 (1:2 손익비)</h2>
-            <div class="form-grid">
-                <div class="input-group">
-                    <label>보유 자산 (최대)</label>
-                    <input type="number" id="calcMaxBalance" placeholder="1,000,000" oninput="calculateSize()">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem;">
+            <!-- 포지션 계산기 -->
+            <section>
+                <h2>Position Sizing (1:2 RR)</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Entry Margin</label>
+                        <input type="number" id="calcEntryAmount" placeholder="진입 원금" oninput="calculateSize()">
+                    </div>
+                    <div class="input-group">
+                        <label>Leverage</label>
+                        <input type="number" id="calcLeverage" value="10" oninput="calculateSize()">
+                    </div>
+                    <div class="input-group">
+                        <label>Stop Loss %</label>
+                        <input type="number" id="calcStopLoss" value="5" oninput="calculateSize()">
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label>진입 금액 (Margin)</label>
-                    <input type="number" id="calcEntryAmount" placeholder="100,000" oninput="calculateSize()">
+                
+                <div class="calc-results">
+                    <div class="result-item">
+                        <span>Total Position</span>
+                        <strong id="resTotalSize" class="res-total">0원</strong>
+                    </div>
+                    <div class="result-item">
+                        <span>Take Profit (2.0x)</span>
+                        <strong id="resProfit" class="res-profit">+0원</strong>
+                    </div>
+                    <div class="result-item">
+                        <span>Stop Loss (1.0x)</span>
+                        <strong id="resLoss" class="res-loss">-0원</strong>
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label>레버리지 (x)</label>
-                    <input type="number" id="calcLeverage" value="10" oninput="calculateSize()">
-                </div>
-                <div class="input-group">
-                    <label>손절 기준 (%)</label>
-                    <input type="number" id="calcStopLoss" value="5" oninput="calculateSize()">
-                </div>
-            </div>
-            
-            <div class="calc-results">
-                <div class="result-item">
-                    <span>레버리지 적용 총 포지션</span>
-                    <strong id="resTotalSize">0원</strong>
-                </div>
-                <div class="result-item success">
-                    <span>성공 시 수익 (익절 1:2)</span>
-                    <strong id="resProfit">0원</strong>
-                </div>
-                <div class="result-item failure">
-                    <span>실패 시 손실 (손절 1:1)</span>
-                    <strong id="resLoss">0원</strong>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- 내역 입력 -->
-        <section class="form-section">
-            <div class="form-grid">
-                <div class="input-group">
-                    <label>날짜</label>
-                    <input type="date" id="tradeDate">
+            <!-- 내역 입력 -->
+            <section>
+                <h2>Add New Trade</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Asset Name</label>
+                        <input type="text" id="assetName" placeholder="BTC, ETH...">
+                    </div>
+                    <div class="input-group">
+                        <label>Type</label>
+                        <select id="tradeType">
+                            <option value="매수">LONG / BUY</option>
+                            <option value="매도">SHORT / SELL</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Entry Price</label>
+                        <input type="number" id="tradePrice" placeholder="0">
+                    </div>
+                    <div class="input-group">
+                        <label>Quantity</label>
+                        <input type="number" id="tradeQuantity" step="any" placeholder="0">
+                    </div>
+                    <button class="btn-submit" onclick="addRecord()">Save Record</button>
                 </div>
-                <div class="input-group">
-                    <label>종목명</label>
-                    <input type="text" id="assetName" placeholder="예: 비트코인">
-                </div>
-                <div class="input-group">
-                    <label>매매구분</label>
-                    <select id="tradeType">
-                        <option value="매수">매수</option>
-                        <option value="매도">매도</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>단가 (원)</label>
-                    <input type="number" id="tradePrice" placeholder="0">
-                </div>
-                <div class="input-group">
-                    <label>수량</label>
-                    <input type="number" id="tradeQuantity" step="any" placeholder="0">
-                </div>
-            </div>
-            <button class="btn-submit" onclick="addRecord()">내역 기록하기</button>
-        </section>
+            </section>
+        </div>
 
         <!-- 내역 리스트 -->
-        <div class="list-section">
-            <table id="recordTable">
-                <thead>
-                    <tr>
-                        <th>날짜</th>
-                        <th>종목명</th>
-                        <th>구분</th>
-                        <th class="text-right">단가</th>
-                        <th class="text-right">수량</th>
-                        <th class="text-right">합계금액</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="recordBody">
-                    <!-- JS에서 동적 생성 -->
-                </tbody>
-            </table>
-            <div id="emptyMessage" class="empty-msg">기록된 매매 내역이 없습니다.</div>
-        </div>
+        <section class="list-section">
+            <div style="padding: 1.5rem 2rem; border-bottom: 1px solid var(--card-border);">
+                <h2>Recent History</h2>
+            </div>
+            <div class="table-container">
+                <table id="recordTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Asset</th>
+                            <th>Side</th>
+                            <th class="text-right">Price</th>
+                            <th class="text-right">Qty</th>
+                            <th class="text-right">Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordBody"></tbody>
+                </table>
+                <div id="emptyMessage" class="empty-msg">No trades recorded yet.</div>
+            </div>
+        </section>
     </div>
 
     <script>
         let records = JSON.parse(localStorage.getItem('trading_journal_records')) || [];
 
-        // 날짜 입력 필드 오늘로 초기화
-        document.getElementById('tradeDate').valueAsDate = new Date();
-
-        // 쉼표 포맷팅
         function formatNumber(num) {
             return Number(num).toLocaleString();
         }
 
-        // 내역 렌더링
         function renderRecords() {
             const body = document.getElementById('recordBody');
             const emptyMsg = document.getElementById('emptyMessage');
-            
             body.innerHTML = '';
             
             if (records.length === 0) {
                 emptyMsg.style.display = 'block';
-                document.getElementById('totalProfit').innerText = '0원';
                 document.getElementById('totalCount').innerText = '0회';
-                document.getElementById('winRate').innerText = '0%';
                 return;
             }
             
             emptyMsg.style.display = 'none';
 
-            let totalProfit = 0;
-            let buyCount = 0;
-            let sellCount = 0;
-
             records.forEach((record, index) => {
                 const tr = document.createElement('tr');
                 const totalAmount = record.price * record.quantity;
+                const dateObj = new Date(record.id);
+                const dateStr = `${dateObj.getMonth()+1}/${dateObj.getDate()} ${dateObj.getHours()}:${dateObj.getMinutes()}`;
                 
                 tr.innerHTML = `
-                    <td>${record.date}</td>
-                    <td>${record.asset}</td>
-                    <td class="${record.type === '매수' ? 'type-buy' : 'type-sell'}">${record.type}</td>
-                    <td class="text-right">${formatNumber(record.price)}원</td>
-                    <td class="text-right">${record.quantity}</td>
-                    <td class="text-right">${formatNumber(totalAmount)}원</td>
+                    <td class="mono" style="color: var(--text-muted); font-size: 0.8rem;">${dateStr}</td>
+                    <td style="font-weight: 600;">${record.asset}</td>
+                    <td class="${record.type === '매수' ? 'type-buy' : 'type-sell'}">${record.type === '매수' ? 'LONG' : 'SHORT'}</td>
+                    <td class="text-right mono">${formatNumber(record.price)}</td>
+                    <td class="text-right mono">${record.quantity}</td>
+                    <td class="text-right mono" style="font-weight: 600;">${formatNumber(totalAmount)}</td>
                     <td class="text-right">
-                        <button class="btn-delete" onclick="deleteRecord(${index})">삭제</button>
+                        <button class="btn-delete" onclick="deleteRecord(${index})">Delete</button>
                     </td>
                 `;
                 body.appendChild(tr);
-
-                // 통계 계산 (간단한 예시: 매수 합계 - 매도 합계 등을 실현 수익으로 볼 수 있으나 여기서는 매도 시점에 대해서만 계산하는 등 고도화 가능)
-                // 여기서는 단순히 등록된 내역 기반 정보만 요약 표시
             });
 
             document.getElementById('totalCount').innerText = `${records.length}회`;
-            // 수익률 계산 등은 추가 로직이 필요하지만 현재는 기본 UI 구성 위주
         }
 
-        // 내역 추가
         function addRecord() {
-            const date = document.getElementById('tradeDate').value;
             const asset = document.getElementById('assetName').value;
             const type = document.getElementById('tradeType').value;
             const price = document.getElementById('tradePrice').value;
@@ -400,7 +443,6 @@
 
             const newRecord = {
                 id: Date.now(),
-                date,
                 asset,
                 type,
                 price: Number(price),
@@ -410,30 +452,23 @@
             records.unshift(newRecord);
             saveAndRender();
 
-            // 필드 초기화
             document.getElementById('assetName').value = '';
             document.getElementById('tradePrice').value = '';
             document.getElementById('tradeQuantity').value = '';
         }
 
-        // 내역 삭제
         function deleteRecord(index) {
-            if (confirm('정말 삭제하시겠습니까?')) {
+            if (confirm('삭제하시겠습니까?')) {
                 records.splice(index, 1);
                 saveAndRender();
             }
         }
 
-        // 저장 및 리렌더링
         function saveAndRender() {
             localStorage.setItem('trading_journal_records', JSON.stringify(records));
             renderRecords();
         }
 
-        // 초기 실행
-        renderRecords();
-
-        // 포지션 사이징 계산 함수
         function calculateSize() {
             const entryAmount = Number(document.getElementById('calcEntryAmount').value) || 0;
             const leverage = Number(document.getElementById('calcLeverage').value) || 0;
@@ -441,12 +476,14 @@
 
             const totalPositionSize = entryAmount * leverage;
             const lossAmount = totalPositionSize * (stopLossPercent / 100);
-            const profitAmount = lossAmount * 2; // 1:2 손익비
+            const profitAmount = lossAmount * 2;
 
             document.getElementById('resTotalSize').innerText = formatNumber(totalPositionSize) + '원';
             document.getElementById('resProfit').innerText = '+' + formatNumber(profitAmount) + '원';
             document.getElementById('resLoss').innerText = '-' + formatNumber(lossAmount) + '원';
         }
+
+        renderRecords();
     </script>
 </body>
 </html>
