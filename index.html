@@ -3,199 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KIMP AI | 김치프리미엄 실시간 분석</title>
+    <title>AI KIMP TRADING JOURNAL | Mastery</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         :root {
-            --bg: #0b0e11; --card-bg: #1e2329; --text: #eaecef; --text-muted: #848e9c;
-            --border: #2b2f36; --hover: #2b3139; --accent: #fcd535; --success: #0ecb81;
-            --danger: #f6465d; --nav-bg: #161a1e;
+            --bg: #05070a; --card-bg: #0f172a; --text: #f8fafc; --text-muted: #94a3b8;
+            --border: #1e293b; --hover: #1e293b; --accent: #00f2ff; --success: #22c55e;
+            --danger: #ef4444; --nav-bg: #0f172a; --ai-gradient: linear-gradient(135deg, #00f2ff 0%, #3b82f6 100%);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Pretendard", sans-serif; }
         body { background-color: var(--bg); color: var(--text); font-size: 13px; }
-
-        /* 상단 네비게이션 (GNB) */
-        header { background: var(--nav-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-        .nav-container { max-width: 1400px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; height: 60px; }
-        .nav-left { display: flex; align-items: center; gap: 30px; }
-        .logo { color: var(--accent); font-size: 20px; font-weight: 900; letter-spacing: -1px; cursor: pointer; }
-        .main-menu { display: flex; gap: 20px; }
-        .menu-item { color: var(--text); font-weight: 600; cursor: pointer; font-size: 14px; padding: 20px 0; border-bottom: 2px solid transparent; transition: 0.2s; }
+        
+        header { background: var(--nav-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+        .nav-container { max-width: 1400px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; height: 65px; }
+        .logo { font-size: 22px; font-weight: 900; background: var(--ai-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; cursor: pointer; }
+        
+        .main-menu { display: flex; gap: 25px; }
+        .menu-item { color: var(--text-muted); font-weight: 700; cursor: pointer; font-size: 14px; padding: 22px 0; border-bottom: 3px solid transparent; transition: 0.3s; }
         .menu-item:hover, .menu-item.active { color: var(--accent); border-bottom-color: var(--accent); }
         
-        .nav-right { display: flex; align-items: center; gap: 15px; }
-        .nav-btn { font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-muted); }
-        .nav-btn:hover { color: var(--text); }
-        .lang-select { background: none; border: 1px solid var(--border); color: var(--text); padding: 4px 8px; border-radius: 4px; font-size: 11px; }
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+        .btn-journal { background: var(--ai-gradient); color: #000; padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 12px; cursor: pointer; border: none; transition: 0.3s; }
+        .btn-journal:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); }
 
-        /* 광고 영역 */
-        .ad-banner-wrap { max-width: 1400px; margin: 15px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .ad-box { height: 60px; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text-muted); cursor: pointer; }
-
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px 50px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 25px; }
         
-        /* 실시간 요약바 */
-        .market-summary { display: flex; gap: 20px; background: var(--card-bg); padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border); font-size: 12px; }
-        .summary-item strong { color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+        .market-summary { display: flex; gap: 25px; background: var(--card-bg); padding: 15px 25px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--border); font-size: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .summary-item b { color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 14px; margin-left: 5px; }
 
-        /* 테이블 및 레이아웃 */
-        .main-content { display: grid; grid-template-columns: 1fr 350px; gap: 20px; }
-        .pro-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; }
-        .card-header { padding: 15px; font-weight: 800; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .main-content { display: grid; grid-template-columns: 1fr 380px; gap: 25px; }
+        .pro-card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 25px; transition: 0.3s; }
+        .card-header { padding: 18px 20px; font-weight: 800; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); }
         
         table { width: 100%; border-collapse: collapse; }
-        th { background: #161a1e; padding: 12px 10px; text-align: left; color: var(--text-muted); font-size: 11px; }
-        td { padding: 10px; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; }
-        tr:hover { background: var(--hover); }
+        th { background: rgba(0,0,0,0.2); padding: 14px 15px; text-align: left; color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+        td { padding: 14px 15px; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; }
+        tr:hover { background: rgba(255,255,255,0.03); }
+
+        input, textarea { width: 100%; background: #05070a; border: 1px solid var(--border); padding: 12px; border-radius: 8px; color: var(--text); font-size: 13px; margin-bottom: 12px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(0, 242, 255, 0.1); }
+        
+        .btn-accent { background: var(--ai-gradient); color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: 800; width: 100%; cursor: pointer; transition: 0.3s; }
+        .btn-accent:hover { opacity: 0.9; box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
 
         .pnl-up { color: var(--success); } .pnl-down { color: var(--danger); }
-        .view-section { display: none; } .view-section.active { display: block; }
-        
-        /* 계산기 스타일 */
-        .calc-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .btn-action { background: var(--accent); color: #000; border: none; padding: 12px; border-radius: 6px; font-weight: 800; width: 100%; cursor: pointer; }
+        .view-section { display: none; } .view-section.active { display: block; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .chart-thumb { width: 45px; height: 30px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; backdrop-filter: blur(5px); }
     </style>
 </head>
 <body>
-
     <header>
         <div class="nav-container">
             <div class="nav-left">
-                <div class="logo" onclick="location.reload()">KIMP AI</div>
+                <div class="logo">AI KIMP JOURNAL</div>
                 <nav class="main-menu">
                     <div class="menu-item active" onclick="switchView('coin')">김프(코인)</div>
                     <div class="menu-item" onclick="switchView('gold')">김프(금)</div>
                     <div class="menu-item" onclick="switchView('indicators')">지표</div>
-                    <div class="menu-item" onclick="switchView('analysis')">시황/분석</div>
-                    <div class="menu-item" onclick="switchView('news')">뉴스</div>
+                    <div class="menu-item" onclick="switchView('analysis')">AI 시황분석</div>
                 </nav>
             </div>
             <div class="nav-right">
-                <div class="nav-btn" onclick="switchView('journal')">📉 매매일지</div>
-                <div class="nav-btn">내정보</div>
-                <select class="lang-select"><option>KR</option><option>EN</option></select>
-                <div class="nav-btn" style="color:var(--accent)">로그인</div>
+                <button class="btn-journal" onclick="switchView('journal')">📉 TRADING JOURNAL</button>
             </div>
         </div>
     </header>
 
-    <div class="ad-banner-wrap">
-        <div class="ad-box">📢 KIMP AI 공식 텔레그램 채널 오픈!</div>
-        <div class="ad-box">🚀 바이낸스 가입 시 수수료 20% 페이백 혜택</div>
-    </div>
-
     <div class="container">
         <div class="market-summary">
-            <div class="summary-item">USDT/KRW: <strong id="sumRate">1,400</strong></div>
-            <div class="summary-item">BTC 김프: <strong id="sumKimp">0.00%</strong></div>
-            <div class="summary-item">공포/탐욕: <strong id="sumFear">Loading...</strong></div>
-            <div class="summary-item" style="margin-left:auto; color:var(--success)">● AI 실시간 분석 가동 중</div>
+            <div class="summary-item">USDT/KRW: <b id="sumRate">1,400</b></div>
+            <div class="summary-item">BTC KIMP: <b id="sumKimp">0.00%</b></div>
+            <div class="summary-item" style="margin-left:auto; color:var(--accent); font-weight:800;"><span style="animation: pulse 2s infinite;">●</span> AI ANALYSIS ACTIVE</div>
         </div>
 
-        <!-- 1. 김프(코인) 뷰 -->
         <div id="view-coin" class="view-section active">
             <div class="main-content">
                 <div class="pro-card">
                     <div class="card-header">
-                        <span>🌐 글로벌 통합 시황</span>
-                        <input type="text" id="globalSearch" placeholder="코인 검색..." style="width:180px; padding:5px; background:#0b0e11; border:1px solid var(--border); color:white; border-radius:4px;">
+                        <span>🌐 GLOBAL MARKET SYNC</span>
+                        <input type="text" id="globalSearch" placeholder="Search Assets..." style="width:180px; margin-bottom:0; padding:6px 12px; font-size:11px;">
                     </div>
                     <table id="globalTable">
-                        <thead><tr><th>종목</th><th>Binance (펀비)</th><th>Bybit (펀비)</th><th>OKX (펀비)</th><th>Upbit (실시간)</th><th style="text-align:right;">김프 (%)</th></tr></thead>
+                        <thead><tr><th>ASSET</th><th>Binance (FUND)</th><th>Bybit (FUND)</th><th>OKX (FUND)</th><th>Upbit (KRW)</th><th style="text-align:right;">KIMP (%)</th></tr></thead>
                         <tbody id="globalBody"></tbody>
                     </table>
                 </div>
-                <aside id="side-calc"></aside>
+                <aside id="side-coin"></aside>
             </div>
         </div>
 
-        <!-- 2. 김프(금) 뷰 (신규) -->
-        <div id="view-gold" class="view-section">
-            <div class="pro-card">
-                <div class="card-header">🟡 국제/국내 금 시세 비교 (Gold KIMP)</div>
-                <div style="padding:40px; text-align:center; color:var(--text-muted);">금 시세 데이터 연동 준비 중...</div>
-            </div>
-        </div>
-
-        <!-- 3. 지표 뷰 (신규) -->
-        <div id="view-indicators" class="view-section">
-            <div class="pro-card">
-                <div class="card-header">📊 시장 핵심 지표</div>
-                <div style="padding:40px; text-align:center; color:var(--text-muted);">Fear & Greed, BTC Dominance 준비 중...</div>
-            </div>
-        </div>
-
-        <!-- 4. 시황/분석 뷰 (신규) -->
-        <div id="view-analysis" class="view-section">
-            <div class="pro-card">
-                <div class="card-header">🤖 AI 실시간 시장 분석</div>
-                <div style="padding:40px; text-align:center; color:var(--accent);">AI 모델 연결 중... 현재 시장을 분석하고 있습니다.</div>
-            </div>
-        </div>
-
-        <!-- 5. 뉴스 뷰 (신규) -->
-        <div id="view-news" class="view-section">
-            <div class="pro-card">
-                <div class="card-header">📰 블록체인 최신 뉴스</div>
-                <div style="padding:40px; text-align:center; color:var(--text-muted);">뉴스 피드 로딩 중...</div>
-            </div>
-        </div>
-
-        <!-- 6. 매매일지 뷰 (기존 기능) -->
         <div id="view-journal" class="view-section">
-             <div class="main-content">
+            <div class="main-content">
                 <div class="pro-card">
-                    <div class="card-header">📋 나의 매매 복기장</div>
-                    <table id="journalTable"><thead><tr><th>차트</th><th>날짜</th><th>종목</th><th>방향</th><th>수익($)</th><th></th></tr></thead><tbody id="dbBody"></tbody></table>
+                    <div class="card-header">📋 TRADING HISTORY</div>
+                    <table id="historyTable"><thead><tr><th>CHART</th><th>DATE</th><th>ASSET</th><th>SIDE</th><th>PNL($)</th><th></th></tr></thead><tbody id="dbBody"></tbody></table>
                 </div>
-                <aside id="side-journal-tool"></aside>
+                <aside id="side-journal"></aside>
             </div>
         </div>
+
+        <div id="view-gold" class="view-section"><div class="pro-card" style="padding:80px; text-align:center; color:var(--text-muted);">Gold Premium Data Loading...</div></div>
+        <div id="view-indicators" class="view-section"><div class="pro-card" style="padding:80px; text-align:center; color:var(--text-muted);">Market Indicators Loading...</div></div>
+        <div id="view-analysis" class="view-section"><div class="pro-card" style="padding:80px; text-align:center; color:var(--accent); font-weight:800;">AI Engine Analyzing Market Trends...</div></div>
     </div>
 
-    <!-- 기존 계산기 템플릿 보존 -->
     <template id="temp-sidebar">
-        <div class="pro-card" style="padding:15px;">
-            <div style="font-size:12px; font-weight:800; margin-bottom:15px; color:var(--accent);">📐 리스크 계산기</div>
-            <input type="text" id="calcAssetName" placeholder="종목명" list="assetList">
-            <div style="display:flex; gap:4px; margin-bottom:10px;"><input type="number" id="calcPrice" placeholder="현재가" oninput="runCalc()"><button onclick="fetchLivePrice('calc_only', this)" style="padding:0 10px; background:var(--accent); border:none; border-radius:4px; cursor:pointer;">⚡</button></div>
-            <div class="calc-input-grid">
-                <input type="number" id="calcEntry" value="150" placeholder="자본">
-                <input type="number" id="calcLev" value="10" placeholder="레버리지">
+        <div class="pro-card" style="padding:20px; border: 1px solid rgba(0,242,255,0.2);">
+            <div style="font-size:12px; font-weight:800; margin-bottom:20px; color:var(--accent); letter-spacing:1px;">📐 RISK CALCULATOR</div>
+            <label>ASSET NAME</label>
+            <input type="text" id="calcAssetName" placeholder="e.g. BTC" list="assetList" onchange="fetchLivePrice('calc_only')">
+            <label>CURRENT PRICE ($)</label>
+            <input type="number" id="calcPrice" placeholder="0.00" oninput="runCalc()">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div><label>CAPITAL ($)</label><input type="number" id="calcEntry" value="150" oninput="runCalc()"></div>
+                <div><label>LEVERAGE</label><input type="number" id="calcLev" value="10" oninput="runCalc()"></div>
             </div>
-            <div class="calc-input-grid">
-                <input type="number" id="calcRiskPct" value="1" placeholder="리스크%">
-                <input type="number" id="calcSl" value="5" placeholder="손절%">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div><label>RISK (%)</label><input type="number" id="calcRiskPct" value="1" oninput="runCalc()"></div>
+                <div><label>STOP LOSS (%)</label><input type="number" id="calcSl" value="5" oninput="runCalc()"></div>
             </div>
-            <div style="background:#161a1e; padding:10px; border-radius:8px; font-size:11px; margin-bottom:10px;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>주문수량:</span><strong id="resQty" style="color:var(--accent);">0.00</strong></div>
-                <div style="display:flex; justify-content:space-between;"><span>필요증거금:</span><strong id="resMargin">0 $</strong></div>
+            <div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:12px; font-size:11px; margin-bottom:15px; border:1px solid var(--border);">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>QTY:</span><b id="resQty" style="color:var(--accent);">0.00</b></div>
+                <div style="display:flex; justify-content:space-between;"><span>MARGIN:</span><b id="resMargin">0.00 $</b></div>
             </div>
-            <button class="btn-action" onclick="applyToLog()">기록장 적용</button>
+            <button class="btn-accent" onclick="applyToLog()">APPLY TO JOURNAL 🖱️</button>
+        </div>
+        <div class="pro-card" style="padding:20px; background: rgba(0,0,0,0.2);">
+            <div style="font-size:12px; font-weight:800; margin-bottom:20px; color:var(--text); letter-spacing:1px;">📝 LOG ENTRY</div>
+            <div style="display:flex; gap:8px; margin-bottom:15px;"><button class="btn-accent" id="btnLong" onclick="setDirection('LONG')" style="flex:1; background:var(--success); color:white;">LONG</button><button class="btn-accent" id="btnShort" onclick="setDirection('SHORT')" style="flex:1; background:var(--danger); color:white; opacity:0.5;">SHORT</button></div>
+            <div id="pasteZone" style="border:2px dashed var(--border); height:60px; border-radius:10px; font-size:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; background-size:cover; margin-bottom:15px; color:var(--text-muted);">Paste Chart (Ctrl+V)</div>
+            <input type="text" id="assetName" list="assetList" placeholder="Asset Symbol">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <input type="number" id="entryPrice" placeholder="Entry" oninput="updatePnlPreview()">
+                <input type="number" id="exitPrice" placeholder="Exit" oninput="updatePnlPreview()">
+            </div>
+            <input type="number" id="tradeQty" placeholder="Quantity" oninput="updatePnlPreview()">
+            <div style="margin:15px 0; font-weight:900; text-align:center; font-size:20px; font-family:'JetBrains Mono';" id="pnlValue">0.00 $</div>
+            <button class="btn-accent" onclick="addRecord()" style="background:var(--text); color:var(--bg);">SAVE RECORD</button>
         </div>
     </template>
 
     <datalist id="assetList"></datalist>
+    <div id="imgModal" class="modal" onclick="this.style.display='none'"><img id="modalImg" style="max-width:90%; max-height:90%; border-radius:10px; box-shadow: 0 0 50px rgba(0,242,255,0.2);"></div>
 
     <script>
-        let usdtRate = 1400, watchlist = ['BTC','ETH','SOL','XRP','DOGE','PEPE','SUI','AVAX','ADA','LINK'];
-        let records = JSON.parse(localStorage.getItem('trading_v10_master')) || [];
+        let db, records = JSON.parse(localStorage.getItem('trading_v11_master')) || [], usdtRate = 1400, watchlist = ['BTC','ETH','SOL','XRP','DOGE','PEPE','SUI','AVAX','ADA','LINK'], currentDirection = 'LONG', tempImageData = null;
+        const request = indexedDB.open("TradingDB_v11", 1);
+        request.onupgradeneeded = e => { e.target.result.createObjectStore("images", { keyPath: "id" }); };
+        request.onsuccess = e => { db = e.target.result; renderRecords(); };
 
         function switchView(viewId) {
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            const activeMenu = Array.from(document.querySelectorAll('.menu-item')).find(el => el.innerText.includes(viewId === 'coin' ? '코인' : viewId === 'gold' ? '금' : viewId));
+            const activeMenu = Array.from(document.querySelectorAll('.menu-item')).find(el => el.innerText.includes(viewId==='coin'?'코인':viewId==='gold'?'금':viewId));
             if(activeMenu) activeMenu.classList.add('active');
-
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
             document.getElementById(`view-${viewId}`).classList.add('active');
-
-            // 사이드바 로딩
-            if(viewId === 'coin') document.getElementById('side-calc').innerHTML = document.getElementById('temp-sidebar').innerHTML;
-            if(viewId === 'journal') document.getElementById('side-journal-tool').innerHTML = document.getElementById('temp-sidebar').innerHTML;
-            
+            const targetSide = viewId === 'journal' ? 'side-journal' : 'side-coin';
+            document.getElementById('side-coin').innerHTML = ''; document.getElementById('side-journal').innerHTML = '';
+            if(viewId === 'coin' || viewId === 'journal') document.getElementById(targetSide).innerHTML = document.getElementById('temp-sidebar').innerHTML;
             if(viewId === 'coin') updateGlobalPrices();
+            fetchSymbols();
         }
 
         async function fetchExchangeRate() {
@@ -203,15 +176,15 @@
                 const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.upbit.com/v1/ticker?markets=KRW-USDT'));
                 const data = await res.json(); const ticker = JSON.parse(data.contents);
                 if(ticker && ticker[0]) { usdtRate = ticker[0].trade_price; document.getElementById('sumRate').innerText = usdtRate.toLocaleString(); }
-            } catch(e) { document.getElementById('sumRate').innerText = "1,400 (기본)"; }
+            } catch(e) { document.getElementById('sumRate').innerText = "1,400 (Fixed)"; }
         }
 
         async function updateGlobalPrices() {
             if(!document.getElementById('view-coin').classList.contains('active')) return;
             const search = document.getElementById('globalSearch').value.toUpperCase();
             const assets = search ? [search] : watchlist;
-            const upbitUrl = encodeURIComponent('https://api.upbit.com/v1/ticker?markets=' + assets.map(a => 'KRW-'+a).join(','));
             try {
+                const upbitUrl = encodeURIComponent('https://api.upbit.com/v1/ticker?markets=' + assets.map(a => 'KRW-'+a).join(','));
                 const [bP, bF, byT, byF, okT, okF, upRes] = await Promise.all([
                     fetch('https://api.binance.com/api/v3/ticker/price').then(r => r.json()),
                     fetch('https://fapi.binance.com/fapi/v1/premiumIndex').then(r => r.json()),
@@ -233,7 +206,7 @@
                     const uPrice = (upD.find && upD.find(t => t.market === 'KRW-'+s))?.trade_price || 0;
                     const kimp = (price > 0 && uPrice > 0) ? ((uPrice/usdtRate - price)/price*100).toFixed(2) : '-';
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `<td><b>${s}</b></td><td>${price.toLocaleString()}$<br><small>(${bFund}%)</small></td><td>${byPrice.toLocaleString()}$<br><small>(${byFund}%)</small></td><td>${okPrice.toLocaleString()}$<br><small>(${okFund}%)</small></td><td style="color:var(--gold);">${uPrice?uPrice.toLocaleString()+'원':'-'}</td><td style="text-align:right;" class="${kimp>=0?'pnl-up':'pnl-down'}">${kimp}%</td>`;
+                    tr.innerHTML = `<td><b>${s}</b></td><td>${price.toLocaleString()}$<br><small>(${bFund}%)</small></td><td>${byPrice.toLocaleString()}$<br><small>(${byFund}%)</small></td><td>${okPrice.toLocaleString()}$<br><small>(${okFund}%)</small></td><td style="color:var(--accent); font-weight:700;">${uPrice?uPrice.toLocaleString()+'원':'-'}</td><td style="text-align:right;" class="${kimp>=0?'pnl-up':'pnl-down'}">${kimp}%</td>`;
                     body.appendChild(tr);
                     if(s === 'BTC') document.getElementById('sumKimp').innerText = kimp + '%';
                 });
@@ -244,10 +217,12 @@
             try {
                 const res = await fetch('https://api.binance.com/api/v3/exchangeInfo');
                 const data = await res.json();
-                const list = document.getElementById('assetList'); list.innerHTML = '';
-                data.symbols.filter(s => s.symbol.endsWith('USDT')).forEach(s => {
-                    const option = document.createElement('option'); option.value = s.symbol.replace('USDT', ''); list.appendChild(option);
-                });
+                const list = document.getElementById('assetList'); if(list) {
+                    list.innerHTML = '';
+                    data.symbols.filter(s => s.symbol.endsWith('USDT')).forEach(s => {
+                        const option = document.createElement('option'); option.value = s.symbol.replace('USDT', ''); list.appendChild(option);
+                    });
+                }
             } catch(e) {}
         }
 
@@ -260,7 +235,8 @@
         }
 
         async function fetchLivePrice(target, btn) {
-            const asset = document.getElementById('calcAssetName').value.toUpperCase();
+            const field = document.getElementById('calcAssetName'); if(!field) return;
+            const asset = field.value.toUpperCase();
             if(!asset) return; if(btn) btn.innerText = '...';
             try {
                 const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${asset}USDT`);
@@ -269,6 +245,58 @@
                 runCalc();
             } catch(e) {} if(btn) btn.innerText = '⚡';
         }
+
+        function applyToLog() {
+            document.getElementById('assetName').value = document.getElementById('calcAssetName').value.toUpperCase();
+            document.getElementById('entryPrice').value = document.getElementById('calcPrice').value;
+            document.getElementById('tradeQty').value = document.getElementById('resQty').innerText;
+            updatePnlPreview();
+        }
+
+        function updatePnlPreview() {
+            const e = Number(document.getElementById('entryPrice').value), ex = Number(document.getElementById('exitPrice').value), q = Number(document.getElementById('tradeQty').value);
+            const p = currentDirection === 'LONG' ? (ex-e)*q : (e-ex)*q;
+            const el = document.getElementById('pnlValue');
+            if(el) { el.innerText = p.toFixed(2) + ' $'; el.className = p>=0 ? 'pnl-up' : 'pnl-down'; }
+        }
+
+        function setDirection(dir) { 
+            currentDirection = dir; 
+            document.getElementById('btnLong').style.opacity = dir === 'LONG' ? '1' : '0.5';
+            document.getElementById('btnShort').style.opacity = dir === 'SHORT' ? '1' : '0.5';
+            updatePnlPreview(); 
+        }
+
+        document.addEventListener('paste', e => {
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let item of items) { if (item.kind === 'file') {
+                const reader = new FileReader();
+                reader.onload = ev => { tempImageData = ev.target.result; const zone = document.getElementById('pasteZone'); if(zone) { zone.style.backgroundImage = `url(${tempImageData})`; zone.innerText = ''; } };
+                reader.readAsDataURL(item.getAsFile());
+            }}
+        });
+
+        async function addRecord() {
+            const r = { id:Date.now(), asset:document.getElementById('assetName').value.toUpperCase(), side:currentDirection, entry:Number(document.getElementById('entryPrice').value), exit:Number(document.getElementById('exitPrice').value), qty:Number(document.getElementById('tradeQty').value), pnl:0, hasImage:!!tempImageData };
+            r.pnl = r.side === 'LONG' ? (r.exit - r.entry) * r.qty : (r.entry - r.exit) * r.qty;
+            if(tempImageData) { const tx = db.transaction("images", "readwrite"); tx.objectStore("images").add({ id:r.id, data:tempImageData }); }
+            records.unshift(r); localStorage.setItem('trading_v11_master', JSON.stringify(records));
+            tempImageData = null; renderRecords();
+        }
+
+        async function renderRecords() {
+            const body = document.getElementById('dbBody'); if(!body) return; body.innerHTML = '';
+            for(let r of records) {
+                let imgH = '-'; if(r.hasImage) { const img = await getImg(r.id); if(img) imgH = `<img src="${img}" class="chart-thumb" onclick="showM('${img}')">`; }
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${imgH}</td><td>${new Date(r.id).toLocaleDateString()}</td><td><b>${r.asset}</b></td><td class="${r.side==='LONG'?'pnl-up':'pnl-down'}">${r.side}</td><td style="text-align:right;" class="${r.pnl>=0?'pnl-up':'pnl-down'}">${r.pnl.toFixed(2)}</td><td><span onclick="deleteR(${r.id})" style="cursor:pointer; opacity:0.3;">🗑️</span></td>`;
+                body.appendChild(tr);
+            }
+        }
+
+        function getImg(id) { return new Promise(res => { if(!db) return res(null); const tx = db.transaction("images", "readonly"); const req = tx.objectStore("images").get(id); req.onsuccess = e => res(e.target.result ? e.target.result.data : null); }); }
+        function showM(src) { document.getElementById('modalImg').src = src; document.getElementById('imgModal').style.display = 'flex'; }
+        function deleteR(id) { if(confirm('삭제?')) { records = records.filter(r => r.id !== id); localStorage.setItem('trading_v11_master', JSON.stringify(records)); renderRecords(); } }
 
         window.onload = () => { 
             fetchExchangeRate(); fetchSymbols();
