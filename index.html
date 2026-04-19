@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>트레이딩 멀티 허브 | Master Journal v9.1</title>
+    <title>트레이딩 마스터 매매일지 | 정밀 포지션 계산기 및 복기 솔루션</title>
+    <meta name="description" content="바이낸스, 업비트 실시간 시세 연동 포지션 사이징 계산기 및 트레이딩 복기 매매일지 솔루션. 리스크 관리와 원칙 매매를 위한 최적의 도구입니다.">
+    <meta name="keywords" content="매매일지, 코인계산기, 포지션사이징, 바이낸스 API, 업비트 시세, 트레이딩복기, 비트코인 일기">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -171,6 +173,8 @@
             <div class="result-box">
                 <div class="result-row"><span>진입 규모:</span><strong id="resTotal">0 $</strong></div>
                 <div class="result-row"><span>주문 수량:</span><strong id="resQty" class="gold-text">0.00</strong></div>
+                <div class="result-row"><span>목표가 (TP):</span><strong id="resTpPrice" class="pnl-up">0.00</strong></div>
+                <div class="result-row"><span>손절가 (SL):</span><strong id="resSlPrice" class="pnl-down">0.00</strong></div>
                 <div class="result-row"><span>성공 시 수익:</span><strong id="resTpAmt" class="pnl-up">+0 $</strong></div>
                 <div class="result-row"><span>실패 시 손실:</span><strong id="resSlAmt" class="pnl-down">-0 $</strong></div>
             </div>
@@ -252,12 +256,28 @@
             const rr = Number(document.getElementById('calcRr').value) || 2;
 
             const totalSize = entry * lev;
+            const qty = price > 0 ? (totalSize / price) : 0;
+            
             document.getElementById('resTotal').innerText = `${totalSize.toLocaleString()} $`;
             if(price > 0) {
-                document.getElementById('resQty').innerText = (totalSize / price).toFixed(5);
+                document.getElementById('resQty').innerText = qty.toFixed(5);
+                
                 const lossAmt = totalSize * (sl / 100);
-                document.getElementById('resTpAmt').innerText = `+${(lossAmt * rr).toFixed(2)} $`;
-                document.getElementById('resSlAmt').innerText = `-${lossAmt.toFixed(2)} $`;
+                const winAmt = lossAmt * rr;
+                
+                // 목표가/손절가 계산 (기본 LONG 기준 시각화)
+                const tpPrice = price * (1 + (sl * rr / 100));
+                const slPrice = price * (1 - (sl / 100));
+                
+                document.getElementById('resTpPrice').innerText = tpPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4});
+                document.getElementById('resSlPrice').innerText = slPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4});
+                
+                // ROE (자본 대비 수익률) 계산
+                const tpRoe = (sl * rr * lev).toFixed(1);
+                const slRoe = (sl * lev).toFixed(1);
+                
+                document.getElementById('resTpAmt').innerText = `+${winAmt.toFixed(2)} $ (${tpRoe}%)`;
+                document.getElementById('resSlAmt').innerText = `-${lossAmt.toFixed(2)} $ (${slRoe}%)`;
             }
         }
 
