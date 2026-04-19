@@ -284,13 +284,28 @@
 
         function renderTable() {
             if(!document.getElementById('view-coin').classList.contains('active')) { setTimeout(renderTable, 1000); return; }
-            const search = document.getElementById('globalSearch').value.toUpperCase();
+            const searchInput = document.getElementById('globalSearch');
+            const search = searchInput ? searchInput.value.toUpperCase() : '';
             const body = document.getElementById('globalBody');
+            if(!body) return;
+            
             let html = '';
+            let matchCount = 0;
+
+            if (krwMarkets.length === 0) {
+                body.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:100px;">시장 데이터를 불러오는 중...</td></tr>';
+                setTimeout(renderTable, 2000);
+                return;
+            }
+
             krwMarkets.forEach(m => {
-                const t = tickerData[m.market]; if(!t) return;
+                const t = tickerData[m.market]; 
                 const symbol = m.market.replace('KRW-', '');
                 if(search && !symbol.includes(search) && !m.korean_name.includes(search)) return;
+                
+                matchCount++;
+                if(!t) return;
+
                 const bPrice = binancePrices[symbol] || 0;
                 let kimp = (bPrice > 0) ? (((t.trade_price / usdtRate) - bPrice) / bPrice * 100).toFixed(2) : "-";
                 const changeRate = (t.signed_change_rate * 100).toFixed(2);
@@ -320,7 +335,12 @@
                     <td style="text-align:right; color:var(--text-muted); font-size:11px;">${volume}M</td>
                 </tr>`;
             });
-            body.innerHTML = html || '<tr><td colspan="7" style="text-align:center; padding:100px;">데이터를 기다리는 중...</td></tr>';
+            
+            if (matchCount === 0 && search) {
+                body.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:100px;">검색 결과가 없습니다.</td></tr>';
+            } else {
+                body.innerHTML = html || '<tr><td colspan="7" style="text-align:center; padding:100px;">실시간 가격 데이터를 수신 중...</td></tr>';
+            }
             setTimeout(renderTable, 1000);
         }
 
