@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 김프 매매일지 | v12.8 Mastery</title>
+    <title>AI 김프 매매일지 | v13.0 Ultimate Hub</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,44 +17,41 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Pretendard", sans-serif; }
         body { background-color: var(--bg); color: var(--text); font-size: 13px; }
         
-        /* 1. 최상단 티커 */
         .top-ticker-bar { background: #000; border-bottom: 1px solid var(--border); padding: 8px 0; }
         .ticker-container { max-width: 1250px; margin: 0 auto; display: flex; justify-content: center; gap: 25px; font-size: 11px; color: var(--text-muted); }
         .ticker-item b { color: var(--accent); margin-left: 3px; }
         
-        /* 2. 헤더 섹션: 로고와 메뉴가 한 줄로 */
         header { background: var(--nav-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
         .nav-container { max-width: 1250px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; height: 65px; }
-        
         .logo { font-size: 18px; font-weight: 900; background: var(--ai-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; cursor: pointer; white-space: nowrap; margin-right: 60px; }
-        
         .main-menu { display: flex; gap: 20px; align-items: center; }
         .menu-item { color: var(--text-muted); font-weight: 700; cursor: pointer; font-size: 13px; transition: 0.3s; white-space: nowrap; padding: 5px 0; border-bottom: 2px solid transparent; }
         .menu-item:hover, .menu-item.active { color: var(--accent); border-bottom-color: var(--accent); }
-        
-        .header-right { display: flex; align-items: center; gap: 20px; }
-        .btn-journal { background: var(--ai-gradient); color: #000; padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 11px; cursor: pointer; border: none; transition: 0.3s; white-space: nowrap; }
-        
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .btn-journal { background: var(--ai-gradient); color: #000; padding: 6px 14px; border-radius: 6px; font-weight: 800; font-size: 11px; cursor: pointer; border: none; transition: 0.3s; white-space: nowrap; }
         .utility-bar { display: flex; gap: 15px; font-size: 11px; color: var(--text-muted); border-left: 1px solid var(--border); padding-left: 20px; }
-        .utility-bar span { cursor: pointer; white-space: nowrap; }
-        .utility-bar span:hover { color: var(--accent); }
+        .utility-bar span { cursor: pointer; }
 
-        /* 광고 슬롯 스타일 */
         .ad-placeholder { background: rgba(255,255,255,0.02); border: 1px dashed var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 12px; font-weight: 800; text-align: center; }
         
-        /* 메인 레이아웃 */
         .main-wrapper { max-width: 1550px; margin: 20px auto; display: flex; gap: 20px; padding: 0 20px; }
         .left-ad-area { width: 300px; flex-shrink: 0; }
         .center-content { flex: 1; min-width: 850px; }
         .right-sidebar-area { width: 340px; flex-shrink: 0; }
 
-        .pro-card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; }
+        .section-title { font-size: 14px; font-weight: 800; color: var(--accent); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .pro-card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 25px; }
         .card-header { padding: 15px 20px; font-weight: 800; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.01); }
         
         table { width: 100%; border-collapse: collapse; }
         th { background: rgba(0,0,0,0.2); padding: 12px 15px; text-align: left; color: var(--text-muted); font-size: 11px; }
         td { padding: 12px 15px; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; }
         tr:hover { background: rgba(255,255,255,0.02); }
+
+        /* 차트 티커 전용 스타일 */
+        .chart-ticker-wrap { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+        .chart-ticker-wrap::-webkit-scrollbar { display: none; }
+        .mini-chart-box { flex: 0 0 205px; height: 120px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
 
         input, textarea { width: 100%; background: #05070a; border: 1px solid var(--border); padding: 10px; border-radius: 8px; color: var(--text); font-size: 13px; margin-bottom: 10px; outline: none; }
         .btn-accent { background: var(--ai-gradient); color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: 800; width: 100%; cursor: pointer; }
@@ -87,14 +84,9 @@
                     <div class="menu-item" onclick="switchView('analysis')">AI 시황분석</div>
                 </nav>
             </div>
-
             <div class="header-right">
                 <button class="btn-journal" onclick="switchView('journal')">📉 매매일지 작성하기</button>
-                <div class="utility-bar">
-                    <span>내정보</span>
-                    <span>언어선택(한국어)</span>
-                    <span style="color:var(--accent); font-weight:800;">로그인</span>
-                </div>
+                <div class="utility-bar"><span>내정보</span><span>언어선택(한국어)</span><span style="color:var(--accent); font-weight:800;">로그인</span></div>
             </div>
         </div>
     </header>
@@ -107,45 +99,65 @@
         <main class="center-content">
             <div class="ad-placeholder" style="width:850px; height:350px; margin: 0 auto 25px;">② 중앙 메인 광고<br>(850 x 350)</div>
 
-            <!-- 시장지표 섹션 -->
+            <!-- [1순위] 시장지표 섹션 -->
             <div style="margin-bottom: 25px;">
-                <div style="font-size: 14px; font-weight: 800; color: var(--accent); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                    📊 시장지표 <small style="font-size: 10px; color: var(--text-muted); font-weight: 400;">Global Market Real-time</small>
-                </div>
-                <div class="pro-card" style="padding: 0; border: 1px solid rgba(0,242,255,0.1); background: transparent; overflow: hidden;">
-                    <!-- TradingView Widget BEGIN -->
+                <div class="section-title">📊 시장지표 <small style="font-size:10px; color:var(--text-muted); font-weight:400;">Market Ticker Tape</small></div>
+                <div class="pro-card" style="padding: 0; border: 1px solid rgba(0,242,255,0.1); background: transparent; height: 46px;">
                     <div class="tradingview-widget-container">
                         <div class="tradingview-widget-container__widget"></div>
                         <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-                        {
-                        "symbols": [
+                        { "symbols": [
                             { "proName": "BINANCE:BTCUSDT", "title": "BTC/USDT" },
                             { "proName": "BINANCE:ETHUSDT", "title": "ETH/USDT" },
                             { "proName": "FX_IDC:USDKRW", "title": "USD/KRW" },
                             { "proName": "NASDAQ:IXIC", "title": "Nasdaq" },
-                            { "proName": "TVC:GOLD", "title": "Gold" },
-                            { "proName": "BINANCE:SOLUSDT", "title": "SOL/USDT" }
-                        ],
-                        "showSymbolLogo": true,
-                        "colorTheme": "dark",
-                        "isTransparent": true,
-                        "displayMode": "adaptive",
-                        "locale": "ko"
-                        }
+                            { "proName": "TVC:GOLD", "title": "Gold" }
+                        ], "showSymbolLogo": true, "colorTheme": "dark", "isTransparent": true, "displayMode": "adaptive", "locale": "ko" }
                         </script>
                     </div>
-                    <!-- TradingView Widget END -->
+                </div>
+                
+                <!-- 이전 스타일의 요약 데이터 바 결합 -->
+                <div style="display: flex; gap: 30px; padding: 10px 20px; background: rgba(0,242,255,0.02); border-radius: 8px; border: 1px solid rgba(0,242,255,0.1); font-size: 12px; align-items: center;">
+                    <div>USDT 환율 <b id="sumRate" style="color:var(--accent)">1,400</b></div>
+                    <div>비트코인 김프 <b id="sumKimp" style="color:var(--accent)">0.00%</b></div>
+                    <div style="margin-left:auto; font-size:10px; color:var(--success); font-weight:800;">LIVE ANALYSIS ●</div>
                 </div>
             </div>
 
+            <!-- [2순위] 실시간 차트 티커 섹션 -->
+            <div style="margin-bottom: 25px;">
+                <div class="section-title">📈 실시간 차트 <small style="font-size:10px; color:var(--text-muted); font-weight:400;">Mini Trend Views</small></div>
+                <div class="chart-ticker-wrap">
+                    <!-- BTC Mini -->
+                    <div class="mini-chart-box">
+                        <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=ko&symbol=BINANCE%3ABTCUSDT&gridLineColor=rgba(42,46,52,0)&fontColor=rgba(209,212,216,1)&underLineColor=rgba(33,150,243,0.3)&trendLineColor=rgba(33,150,243,1)&colorTheme=dark&autosize=true" frameborder="0" style="width:100%; height:100%;"></iframe>
+                    </div>
+                    <!-- ETH Mini -->
+                    <div class="mini-chart-box">
+                        <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=ko&symbol=BINANCE%3AETHUSDT&gridLineColor=rgba(42,46,52,0)&fontColor=rgba(209,212,216,1)&underLineColor=rgba(33,150,243,0.3)&trendLineColor=rgba(33,150,243,1)&colorTheme=dark&autosize=true" frameborder="0" style="width:100%; height:100%;"></iframe>
+                    </div>
+                    <!-- SOL Mini -->
+                    <div class="mini-chart-box">
+                        <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=ko&symbol=BINANCE%3ASOLUSDT&gridLineColor=rgba(42,46,52,0)&fontColor=rgba(209,212,216,1)&underLineColor=rgba(33,150,243,0.3)&trendLineColor=rgba(33,150,243,1)&colorTheme=dark&autosize=true" frameborder="0" style="width:100%; height:100%;"></iframe>
+                    </div>
+                    <!-- XRP Mini -->
+                    <div class="mini-chart-box">
+                        <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=ko&symbol=BINANCE%3AXRPUSDT&gridLineColor=rgba(42,46,52,0)&fontColor=rgba(209,212,216,1)&underLineColor=rgba(33,150,243,0.3)&trendLineColor=rgba(33,150,243,1)&colorTheme=dark&autosize=true" frameborder="0" style="width:100%; height:100%;"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [3순위] 글로벌 실시간 시황 섹션 -->
             <div id="view-coin" class="view-section active">
+                <div class="section-title">🌐 글로벌 실시간 시황 <small style="font-size:10px; color:var(--text-muted); font-weight:400;">3s Sync</small></div>
                 <div class="pro-card">
                     <div class="card-header">
-                        <span>🌐 글로벌 실시간 시황</span>
+                        <span>전 거래소 통합 모니터링</span>
                         <input type="text" id="globalSearch" placeholder="코인 검색..." style="width:180px; margin-bottom:0; padding:6px 12px; font-size:11px;">
                     </div>
                     <table id="globalTable">
-                        <thead><tr><th>ASSET</th><th>Binance (FUND)</th><th>Bybit (FUND)</th><th>OKX (FUND)</th><th>Upbit (KRW)</th><th style="text-align:right;">KIMP (%)</th></tr></thead>
+                        <thead><tr><th>종목</th><th>Binance (펀비)</th><th>Bybit (펀비)</th><th>OKX (펀비)</th><th>Upbit (원화)</th><th style="text-align:right;">김프 (%)</th></tr></thead>
                         <tbody id="globalBody"></tbody>
                     </table>
                 </div>
@@ -173,7 +185,7 @@
     <template id="temp-sidebar">
         <div class="pro-card" style="padding:20px; border: 1px solid rgba(0,242,255,0.15);">
             <div style="font-size:12px; font-weight:800; margin-bottom:15px; color:var(--accent);">📐 리스크 계산기</div>
-            <input type="text" id="calcAssetName" placeholder="종목명 (BTC, ETH...)" list="assetList" onchange="fetchLivePrice('calc_only')">
+            <input type="text" id="calcAssetName" placeholder="종목명" list="assetList" onchange="fetchLivePrice('calc_only')">
             <input type="number" id="calcPrice" placeholder="현재가 ($)" oninput="runCalc()">
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                 <input type="number" id="calcEntry" value="150" placeholder="자본"><input type="number" id="calcLev" value="10" placeholder="레버리지">
@@ -218,7 +230,7 @@
             document.getElementById(`view-${viewId}`).classList.add('active');
             const targetSide = viewId === 'journal' ? 'side-journal' : 'side-coin';
             document.getElementById('side-coin').innerHTML = ''; document.getElementById('side-journal').innerHTML = '';
-            const sidebar = document.getElementById(targetSide);
+            const sidebar = document.getElementById(targetId);
             if(sidebar) sidebar.innerHTML = document.getElementById('temp-sidebar').innerHTML;
             if(viewId === 'coin') updateGlobalPrices();
             fetchSymbols();
@@ -261,6 +273,7 @@
                     const tr = document.createElement('tr');
                     tr.innerHTML = `<td><b>${s}</b></td><td>${price.toLocaleString()}$<br><small>(${bFund}%)</small></td><td>${byPrice.toLocaleString()}$<br><small>(${byFund}%)</small></td><td>${okPrice.toLocaleString()}$<br><small>(${okFund}%)</small></td><td style="color:var(--accent); font-weight:700;">${uPrice?uPrice.toLocaleString()+'원':'-'}</td><td style="text-align:right;" class="${kimp>=0?'pnl-up':'pnl-down'}">${kimp}%</td>`;
                     body.appendChild(tr);
+                    if(s === 'BTC') document.getElementById('sumKimp').innerText = kimp + '%';
                 });
             } catch(e) {}
         }
