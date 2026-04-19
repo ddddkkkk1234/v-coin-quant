@@ -141,8 +141,8 @@
                 <div class="result-row"><span>주문 수량:</span><strong id="resQty" class="gold-text">0.00</strong></div>
                 <div class="result-row"><span>목표/손절가:</span><span><b class="pnl-up" id="resTpPrice">0</b>/<b class="pnl-down" id="resSlPrice">0</b></span></div>
             </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
-                <button class="btn-apply" style="background:var(--hover); color:var(--text);" onclick="runCalc()">계산하기</button>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
+                <button class="btn-apply" style="background:var(--hover); color:var(--text);" onclick="runCalc()">단순 계산 📊</button>
                 <button class="btn-apply" onclick="applyToLog()">기록장에 적용 🖱️</button>
             </div>
         </div>
@@ -243,16 +243,18 @@
             });
         }
 
-        async function fetchSymbols(exchange) {
+        async function fetchSymbols() {
             const list = document.getElementById('assetList'); if(!list) return;
             list.innerHTML = '';
             try {
                 const res = await fetch('https://api.binance.com/api/v3/exchangeInfo');
                 const data = await res.json();
                 data.symbols.filter(s => s.symbol.endsWith('USDT')).forEach(s => {
-                    const option = document.createElement('option'); option.value = s.symbol.replace('USDT', ''); list.appendChild(option);
+                    const option = document.createElement('option');
+                    option.value = s.symbol.replace('USDT', '');
+                    list.appendChild(option);
                 });
-            } catch(e) {}
+            } catch(e) { console.error("Symbols failed", e); }
         }
 
         async function fetchLivePrice(target, btn) {
