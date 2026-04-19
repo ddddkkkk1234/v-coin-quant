@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 김프 매매일지 | v12.7 Ads Preview</title>
+    <title>AI 김프 매매일지 | v12.8 Mastery</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,42 +17,45 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Pretendard", sans-serif; }
         body { background-color: var(--bg); color: var(--text); font-size: 13px; }
         
+        /* 1. 최상단 티커 */
         .top-ticker-bar { background: #000; border-bottom: 1px solid var(--border); padding: 8px 0; }
         .ticker-container { max-width: 1250px; margin: 0 auto; display: flex; justify-content: center; gap: 25px; font-size: 11px; color: var(--text-muted); }
         .ticker-item b { color: var(--accent); margin-left: 3px; }
         
+        /* 2. 헤더 섹션: 로고와 메뉴가 한 줄로 */
         header { background: var(--nav-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
-        .nav-container { max-width: 1250px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
-        .logo { font-size: 18px; font-weight: 900; background: var(--ai-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; cursor: pointer; white-space: nowrap; }
+        .nav-container { max-width: 1250px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; height: 65px; }
+        
+        .logo { font-size: 18px; font-weight: 900; background: var(--ai-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; cursor: pointer; white-space: nowrap; margin-right: 60px; }
+        
         .main-menu { display: flex; gap: 20px; align-items: center; }
         .menu-item { color: var(--text-muted); font-weight: 700; cursor: pointer; font-size: 13px; transition: 0.3s; white-space: nowrap; padding: 5px 0; border-bottom: 2px solid transparent; }
         .menu-item:hover, .menu-item.active { color: var(--accent); border-bottom-color: var(--accent); }
-        .header-right { display: flex; align-items: center; gap: 15px; }
-        .btn-journal { background: var(--ai-gradient); color: #000; padding: 6px 14px; border-radius: 6px; font-weight: 800; font-size: 11px; cursor: pointer; border: none; transition: 0.3s; }
-        .utility-bar { display: flex; gap: 12px; font-size: 11px; color: var(--text-muted); border-left: 1px solid var(--border); padding-left: 15px; }
-        .utility-bar span { cursor: pointer; }
+        
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        .btn-journal { background: var(--ai-gradient); color: #000; padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 11px; cursor: pointer; border: none; transition: 0.3s; white-space: nowrap; }
+        
+        .utility-bar { display: flex; gap: 15px; font-size: 11px; color: var(--text-muted); border-left: 1px solid var(--border); padding-left: 20px; }
+        .utility-bar span { cursor: pointer; white-space: nowrap; }
+        .utility-bar span:hover { color: var(--accent); }
 
-        /* 광고 배너 스타일 */
+        /* 광고 슬롯 스타일 */
         .ad-placeholder { background: rgba(255,255,255,0.02); border: 1px dashed var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 12px; font-weight: 800; text-align: center; }
-        .ad-placeholder:hover { border-color: var(--accent); color: var(--accent); }
         
-        /* 3단 레이아웃 설정 */
+        /* 메인 레이아웃 */
         .main-wrapper { max-width: 1550px; margin: 20px auto; display: flex; gap: 20px; padding: 0 20px; }
-        
         .left-ad-area { width: 300px; flex-shrink: 0; }
         .center-content { flex: 1; min-width: 850px; }
         .right-sidebar-area { width: 340px; flex-shrink: 0; }
 
-        .market-summary { max-width: 850px; margin: 0 auto 20px; display: flex; justify-content: center; gap: 30px; background: var(--card-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border); font-size: 12px; }
-        .summary-item b { color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 14px; margin-left: 5px; }
-
         .pro-card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; }
-        .card-header { padding: 15px 20px; font-weight: 800; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .card-header { padding: 15px 20px; font-weight: 800; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.01); }
         
         table { width: 100%; border-collapse: collapse; }
         th { background: rgba(0,0,0,0.2); padding: 12px 15px; text-align: left; color: var(--text-muted); font-size: 11px; }
         td { padding: 12px 15px; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; }
-        
+        tr:hover { background: rgba(255,255,255,0.02); }
+
         input, textarea { width: 100%; background: #05070a; border: 1px solid var(--border); padding: 10px; border-radius: 8px; color: var(--text); font-size: 13px; margin-bottom: 10px; outline: none; }
         .btn-accent { background: var(--ai-gradient); color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: 800; width: 100%; cursor: pointer; }
 
@@ -75,42 +78,34 @@
 
     <header>
         <div class="nav-container">
-            <a class="logo" onclick="location.reload()">AI 김프 매매일지</a>
-            <nav class="main-menu">
-                <div class="menu-item active" onclick="switchView('coin')">김프(코인)</div>
-                <div class="menu-item" onclick="switchView('gold')">김프(금)</div>
-                <div class="menu-item" onclick="switchView('indicators')">시장지표</div>
-                <div class="menu-item" onclick="switchView('analysis')">AI 시황분석</div>
-            </nav>
+            <div style="display:flex; align-items:center;">
+                <a class="logo" onclick="location.reload()">AI 김프 매매일지</a>
+                <nav class="main-menu">
+                    <div class="menu-item active" onclick="switchView('coin')">김프(코인)</div>
+                    <div class="menu-item" onclick="switchView('gold')">김프(금)</div>
+                    <div class="menu-item" onclick="switchView('indicators')">시장지표</div>
+                    <div class="menu-item" onclick="switchView('analysis')">AI 시황분석</div>
+                </nav>
+            </div>
+
             <div class="header-right">
                 <button class="btn-journal" onclick="switchView('journal')">📉 매매일지 작성하기</button>
-                <div class="utility-bar"><span>내정보</span><span>언어선택(한국어)</span><span style="color:var(--accent); font-weight:800;">로그인</span></div>
+                <div class="utility-bar">
+                    <span>내정보</span>
+                    <span>언어선택(한국어)</span>
+                    <span style="color:var(--accent); font-weight:800;">로그인</span>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- 3단 광고 & 콘텐츠 레이아웃 -->
     <div class="main-wrapper">
-        
-        <!-- ① 왼쪽 사이드 광고 (300 x 400) -->
         <aside class="left-ad-area">
-            <div class="ad-placeholder" style="width:300px; height:400px; position:sticky; top:80px;">
-                ① 왼쪽 사이드 광고<br>(300 x 400)
-            </div>
+            <div class="ad-placeholder" style="width:300px; height:400px; position:sticky; top:80px;">① 왼쪽 사이드 광고<br>(300 x 400)</div>
         </aside>
 
-        <!-- 중앙 메인 콘텐츠 -->
         <main class="center-content">
-            <!-- ② 중앙 메인 광고 (850 x 350) -->
-            <div class="ad-placeholder" style="width:850px; height:350px; margin: 0 auto 20px;">
-                ② 중앙 메인 광고<br>(850 x 350)
-            </div>
-
-            <div class="market-summary">
-                <div class="summary-item">USDT/KRW: <b id="sumRate">1,400</b></div>
-                <div class="summary-item">BTC KIMP: <b id="sumKimp">0.00%</b></div>
-                <div class="summary-item" style="color:var(--accent); font-weight:800;">● AI ANALYSIS ACTIVE</div>
-            </div>
+            <div class="ad-placeholder" style="width:850px; height:350px; margin: 0 auto 25px;">② 중앙 메인 광고<br>(850 x 350)</div>
 
             <div id="view-coin" class="view-section active">
                 <div class="pro-card">
@@ -131,34 +126,47 @@
                     <table id="historyTable"><thead><tr><th>CHART</th><th>DATE</th><th>ASSET</th><th>SIDE</th><th>PNL($)</th><th></th></tr></thead><tbody id="dbBody"></tbody></table>
                 </div>
             </div>
+            
+            <div id="view-gold" class="view-section"><div class="pro-card" style="padding:80px; text-align:center; color:var(--text-muted);">금 프리미엄 데이터 로딩 중...</div></div>
+            <div id="view-indicators" class="view-section"><div class="pro-card" style="padding:80px; text-align:center; color:var(--text-muted);">시장 핵심 지표 로딩 중...</div></div>
+            <div id="view-analysis" class="view-section"><div class="pro-card" style="padding:80px; text-align:center; color:var(--accent); font-weight:800;">AI 엔진이 실시간 시황을 분석 중입니다...</div></div>
         </main>
 
-        <!-- ③ 오른쪽 사이드바 & 광고 (300 x 600) -->
         <aside class="right-sidebar-area">
             <div id="side-coin" style="margin-bottom:20px;"></div>
             <div id="side-journal" style="margin-bottom:20px;"></div>
-            
-            <div class="ad-placeholder" style="width:300px; height:600px;">
-                ③ 오른쪽 사이드 광고<br>(300 x 600)
-            </div>
+            <div class="ad-placeholder" style="width:300px; height:600px;">③ 오른쪽 사이드 광고<br>(300 x 600)</div>
         </aside>
-
     </div>
 
-    <!-- 사이드바 템플릿 -->
     <template id="temp-sidebar">
         <div class="pro-card" style="padding:20px; border: 1px solid rgba(0,242,255,0.15);">
             <div style="font-size:12px; font-weight:800; margin-bottom:15px; color:var(--accent);">📐 리스크 계산기</div>
-            <input type="text" id="calcAssetName" placeholder="종목명" list="assetList" onchange="fetchLivePrice('calc_only')">
+            <input type="text" id="calcAssetName" placeholder="종목명 (BTC, ETH...)" list="assetList" onchange="fetchLivePrice('calc_only')">
             <input type="number" id="calcPrice" placeholder="현재가 ($)" oninput="runCalc()">
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <input type="number" id="calcEntry" value="150" placeholder="자본">
-                <input type="number" id="calcLev" value="10" placeholder="레버리지">
+                <input type="number" id="calcEntry" value="150" placeholder="자본"><input type="number" id="calcLev" value="10" placeholder="레버리지">
             </div>
-            <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:10px; font-size:11px; margin-bottom:15px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <input type="number" id="calcRiskPct" value="1" placeholder="리스크%"><input type="number" id="calcSl" value="5" placeholder="손절%">
+            </div>
+            <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:10px; font-size:11px; margin-bottom:15px; border:1px solid var(--border);">
                 <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>주문수량:</span><b id="resQty" style="color:var(--accent);">0.00</b></div>
+                <div style="display:flex; justify-content:space-between;"><span>필요증거금:</span><b id="resMargin">0.00 $</b></div>
             </div>
-            <button class="btn-accent" onclick="applyToLog()">기록장에 적용</button>
+            <button class="btn-accent" onclick="applyToLog()">기록장에 적용하기 🖱️</button>
+        </div>
+        <div class="pro-card" style="padding:20px; background: rgba(255,255,255,0.01);">
+            <div style="font-size:12px; font-weight:800; margin-bottom:15px;">📝 매매 복기 작성</div>
+            <div style="display:flex; gap:8px; margin-bottom:12px;"><button class="btn-accent" id="btnLong" onclick="setDirection('LONG')" style="flex:1; background:var(--success); color:white;">LONG</button><button class="btn-accent" id="btnShort" onclick="setDirection('SHORT')" style="flex:1; background:var(--danger); color:white; opacity:0.5;">SHORT</button></div>
+            <div id="pasteZone" style="border:2px dashed var(--border); height:50px; border-radius:8px; font-size:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; background-size:cover; margin-bottom:12px; color:var(--text-muted);">차트 붙여넣기 (Ctrl+V)</div>
+            <input type="text" id="assetName" list="assetList" placeholder="종목 심볼">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <input type="number" id="entryPrice" placeholder="진입가"><input type="number" id="exitPrice" placeholder="청산가">
+            </div>
+            <input type="number" id="tradeQty" placeholder="수량">
+            <div style="margin:10px 0; font-weight:900; text-align:center; font-size:18px; font-family:'JetBrains Mono';" id="pnlValue">0.00 $</div>
+            <button class="btn-accent" onclick="addRecord()">기록 저장 완료</button>
         </div>
     </template>
 
@@ -173,13 +181,13 @@
 
         function switchView(viewId) {
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            const activeMenu = Array.from(document.querySelectorAll('.menu-item')).find(el => el.innerText.includes(viewId==='coin'?'코인':viewId==='gold'?'금':viewId));
+            const activeMenu = Array.from(document.querySelectorAll('.menu-item')).find(el => el.innerText.includes(viewId==='coin'?'코인':viewId==='gold'?'금':viewId==='indicators'?'지표':viewId==='analysis'?'분석':viewId));
             if(activeMenu) activeMenu.classList.add('active');
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
             document.getElementById(`view-${viewId}`).classList.add('active');
-            const targetId = viewId === 'journal' ? 'side-journal' : 'side-coin';
+            const targetSide = viewId === 'journal' ? 'side-journal' : 'side-coin';
             document.getElementById('side-coin').innerHTML = ''; document.getElementById('side-journal').innerHTML = '';
-            const sidebar = document.getElementById(targetId);
+            const sidebar = document.getElementById(targetSide);
             if(sidebar) sidebar.innerHTML = document.getElementById('temp-sidebar').innerHTML;
             if(viewId === 'coin') updateGlobalPrices();
             fetchSymbols();
@@ -222,7 +230,6 @@
                     const tr = document.createElement('tr');
                     tr.innerHTML = `<td><b>${s}</b></td><td>${price.toLocaleString()}$<br><small>(${bFund}%)</small></td><td>${byPrice.toLocaleString()}$<br><small>(${byFund}%)</small></td><td>${okPrice.toLocaleString()}$<br><small>(${okFund}%)</small></td><td style="color:var(--accent); font-weight:700;">${uPrice?uPrice.toLocaleString()+'원':'-'}</td><td style="text-align:right;" class="${kimp>=0?'pnl-up':'pnl-down'}">${kimp}%</td>`;
                     body.appendChild(tr);
-                    if(s === 'BTC') document.getElementById('sumKimp').innerText = kimp + '%';
                 });
             } catch(e) {}
         }
