@@ -337,18 +337,27 @@
                     const oPrice = parseFloat(okxTickers.data.find(t => t.instId === symbol + '-USDT')?.last || 0);
                     const uPrice = upbitData.find(t => t.market === 'KRW-' + symbol)?.trade_price || 0;
                     
+                    // 데이터가 하나도 없으면 스킵
                     if (bPrice === 0 && byPrice === 0 && uPrice === 0) return;
 
                     const bf = (parseFloat(bFund.find(f => f.symbol === symbol + 'USDT')?.lastFundingRate || 0) * 100).toFixed(4);
                     const byf = (parseFloat(byFund.result.list.find(f => f.symbol === symbol + 'USDT')?.fundingRate || 0) * 100).toFixed(4);
                     const of = (parseFloat(oFund.data.find(f => f.instId === symbol + '-USDT-SWAP')?.fundingRate || 0) * 100).toFixed(4);
 
-                    const kimp = bPrice > 0 ? ((uPrice / usdtRate - bPrice) / bPrice * 100) : 0;
-                    if (kimp !== 0) { kimpSum += kimp; validCount++; kimpList.push({ symbol, kimp }); }
+                    // 김프 계산 (업비트 가격이 있을 때만 정확히 계산)
+                    let kimpDisplay = "-";
+                    let kimpValue = 0;
+                    if (uPrice > 0 && bPrice > 0) {
+                        kimpValue = ((uPrice / usdtRate - bPrice) / bPrice * 100);
+                        kimpDisplay = kimpValue.toFixed(2) + "%";
+                        kimpSum += kimpValue;
+                        validCount++;
+                        kimpList.push({ symbol, kimp: kimpValue });
+                    }
 
-                    if (symbol === 'BTC') {
-                        topKimpEl.innerText = kimp.toFixed(2) + '%';
-                        topKimpEl.className = kimp >= 0 ? 'pnl-up' : 'pnl-down';
+                    if (symbol === 'BTC' && uPrice > 0) {
+                        topKimpEl.innerText = kimpDisplay;
+                        topKimpEl.className = kimpValue >= 0 ? 'pnl-up' : 'pnl-down';
                     }
 
                     const tr = document.createElement('tr');
@@ -358,7 +367,7 @@
                         <td>${byPrice > 0 ? byPrice.toLocaleString() + ' $' : '-'} <br><small style="color:var(--text-muted)">${byf}%</small></td>
                         <td>${oPrice > 0 ? oPrice.toLocaleString() + ' $' : '-'} <br><small style="color:var(--text-muted)">${of}%</small></td>
                         <td>${uPrice > 0 ? uPrice.toLocaleString() + ' 원' : '-'}</td>
-                        <td style="text-align:right; font-weight:800;" class="${kimp >= 0 ? 'pnl-up' : 'pnl-down'}">${kimp !== 0 ? kimp.toFixed(2) + '%' : '-'}</td>
+                        <td style="text-align:right; font-weight:800;" class="${kimpValue >= 0 ? 'pnl-up' : 'pnl-down'}">${kimpDisplay}</td>
                     `;
                     body.appendChild(tr);
                 });
@@ -375,11 +384,16 @@
         async function fetchExchangeRate() {
             try {
                 const res = await fetch('https://api.upbit.com/v1/ticker?markets=KRW-USDT');
+                if (!res.ok) throw new Error();
                 const data = await res.json();
-                usdtRate = data[0].trade_price;
-                document.getElementById('liveRate').innerText = usdtRate.toLocaleString();
-                updateGlobalPrices(); // 환율 로드 후 즉시 시세 업데이트
-            } catch(e){}
+                if (data && data[0]) {
+                    usdtRate = data[0].trade_price;
+                    document.getElementById('liveRate').innerText = usdtRate.toLocaleString();
+                    if (currentTab === 'global') updateGlobalPrices();
+                }
+            } catch(e){
+                document.getElementById('liveRate').innerText = "1,350 (고정)";
+            }
         }
 
         function runCalc() {
