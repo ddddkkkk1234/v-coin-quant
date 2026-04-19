@@ -96,20 +96,43 @@
             <!-- 1. 김프(코인) 전용 뷰 -->
             <div id="view-coin" class="view-section active">
                 <div class="ad-placeholder" style="width:850px; height:350px; margin: 0 auto 25px;">② 중앙 메인 광고<br>(850 x 350)</div>
-                <div style="margin-bottom: 25px;">
-                    <div class="section-title">📊 시장지표 <small style="font-size:10px; color:var(--text-muted); font-weight:400;">Market Ticker Tape</small></div>
-                    <div class="pro-card" style="padding: 0; border: 1px solid rgba(0,242,255,0.1); background: transparent; height: 46px;">
-                        <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>{ "symbols": [ { "proName": "BINANCE:BTCUSDT", "title": "BTC/USDT" }, { "proName": "BINANCE:ETHUSDT", "title": "ETH/USDT" }, { "proName": "FX_IDC:USDKRW", "title": "USD/KRW" }, { "proName": "NASDAQ:IXIC", "title": "Nasdaq" }, { "proName": "TVC:GOLD", "title": "Gold" } ], "showSymbolLogo": true, "colorTheme": "dark", "isTransparent": true, "displayMode": "adaptive", "locale": "ko" }</script></div>
+
+                <div class="section-title">🌐 글로벌 실시간 시황 <small style="font-size:10px; color:var(--text-muted); font-weight:400;">기준: 업비트 | 비교: 바이낸스</small></div>
+
+                <!-- 컨트롤 바 -->
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:var(--card-bg); padding:12px 20px; border-radius:12px; border:1px solid var(--border);">
+                    <div style="display:flex; gap:20px; align-items:center;">
+                        <div style="font-size:12px;">기준 <b style="color:var(--accent)">업비트</b> <span style="margin:0 5px; opacity:0.3;">↔</span> 비교 <b style="color:var(--accent)">바이낸스</b></div>
+                        <div style="font-size:12px; color:var(--text-muted); border-left:1px solid var(--border); padding-left:15px;">총 암호화폐: <b style="color:var(--text)" id="totalCoinCount">0</b>개</div>
+                    </div>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <input type="text" id="globalSearch" placeholder="코인 검색 (이름/심볼)..." style="width:220px; margin-bottom:0; padding:8px 12px; font-size:11px; background:#05070a;">
+                        <button style="background:none; border:1px solid var(--border); color:var(--text-muted); padding:7px 12px; border-radius:8px; cursor:pointer; font-size:11px; font-weight:700;">⚙️ 환경설정</button>
                     </div>
                 </div>
-                <div style="margin-bottom: 25px;">
-                    <div class="section-title">📈 실시간 차트 분석 <small style="font-size:10px; color:var(--text-muted); font-weight:400;">Advanced Real-time View</small></div>
-                    <div class="pro-card" style="padding: 0; border: 1px solid var(--border); height: 500px; background: #131722;"><div class="tradingview-widget-container" style="height:100%;width:100%"><div id="tradingview_chart" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script><script type="text/javascript">new TradingView.widget({ "autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "60", "timezone": "Asia/Seoul", "theme": "dark", "style": "1", "locale": "ko", "toolbar_bg": "#f1f3f6", "enable_publishing": false, "hide_top_toolbar": false, "hide_legend": false, "save_image": false, "container_id": "tradingview_chart" });</script></div></div>
-                </div>
-                <div class="section-title">🌐 글로벌 실시간 시황 <small style="font-size:10px; color:var(--text-muted); font-weight:400;">3s Sync</small></div>
+
+                <!-- 신규 뼈대 테이블 -->
                 <div class="pro-card">
-                    <div class="card-header"><span>전 거래소 통합 모니터링</span><input type="text" id="globalSearch" placeholder="코인 검색..." style="width:180px; margin-bottom:0; padding:6px 12px; font-size:11px;"></div>
-                    <table id="globalTable"><thead><tr><th>ASSET</th><th>Binance (FUND)</th><th>Bybit (FUND)</th><th>OKX (FUND)</th><th>Upbit (KRW)</th><th style="text-align:right;">KIMP (%)</th></tr></thead><tbody id="globalBody"></tbody></table>
+                    <table id="globalTable">
+                        <thead>
+                            <tr>
+                                <th>이름</th>
+                                <th>현재가</th>
+                                <th>김프 (%)</th>
+                                <th>전일대비</th>
+                                <th>52주 고가대비</th>
+                                <th>52주 저가대비</th>
+                                <th style="text-align:right;">거래액(일)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="globalBody">
+                            <tr>
+                                <td colspan="7" style="text-align:center; padding:100px; color:var(--text-muted);">
+                                    전문가용 실시간 시황 데이터를 불러오는 중입니다...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
