@@ -206,35 +206,60 @@
 
         async function updateGlobalPrices() {
             if(!document.getElementById('view-coin').classList.contains('active')) return;
-            const search = document.getElementById('globalSearch').value.toUpperCase();
-            const assets = search ? [search] : watchlist;
+            const searchInput = document.getElementById('globalSearch');
+            const searchQuery = searchInput ? searchInput.value.toUpperCase() : "";
+            
             try {
-                const upbitUrl = encodeURIComponent('https://api.upbit.com/v1/ticker?markets=' + assets.map(a => 'KRW-'+a).join(','));
-                const [bP, bF, byT, byF, okT, okF, upRes] = await Promise.all([
-                    fetch('https://api.binance.com/api/v3/ticker/price').then(r => r.json()),
-                    fetch('https://fapi.binance.com/fapi/v1/premiumIndex').then(r => r.json()),
-                    fetch('https://api.bybit.com/v5/market/tickers?category=spot').then(r => r.json()),
-                    fetch('https://api.bybit.com/v5/market/tickers?category=linear').then(r => r.json()),
-                    fetch('https://www.okx.com/api/v5/market/tickers?instType=SPOT').then(r => r.json()),
-                    fetch('https://www.okx.com/api/v5/market/tickers?instType=SWAP').then(r => r.json()),
-                    fetch('https://api.allorigins.win/get?url=' + upbitUrl).then(r => r.json())
-                ]);
-                const upD = JSON.parse(upRes.contents) || [];
-                const body = document.getElementById('globalBody'); body.innerHTML = '';
-                assets.forEach(s => {
-                    const price = parseFloat(bP.find(t => t.symbol === s+'USDT')?.price || 0);
-                    const bFund = (parseFloat(bF.find(f => f.symbol === s+'USDT')?.lastFundingRate || 0)*100).toFixed(4);
-                    const byPrice = parseFloat(byT.result.list.find(t => t.symbol === s+'USDT')?.lastPrice || 0);
-                    const byFund = (parseFloat(byF.result.list.find(f => f.symbol === s+'USDT')?.fundingRate || 0)*100).toFixed(4);
-                    const okPrice = parseFloat(okT.data.find(t => t.instId === s+'-USDT')?.last || 0);
-                    const okFund = (parseFloat(okF.data.find(f => f.instId === s+'-USDT-SWAP')?.fundingRate || 0)*100).toFixed(4);
-                    const uPrice = (upD.find && upD.find(t => t.market === 'KRW-'+s))?.trade_price || 0;
-                    const kimp = (price > 0 && uPrice > 0) ? ((uPrice/usdtRate - price)/price*100).toFixed(2) : '-';
+                // 1. 업비트 전 종목 리스트 및 시세 데이터 로드
+                const marketsRes = await fetch('https://api.upbit.com/v1/market/all');
+                const allMarkets = await marketsRes.json();
+                const krwMarkets = allMarkets.filter(m => m.market.startsWith('KRW-'));
+                
+                const tickerRes = await fetch('https://api.upbit.com/v1/ticker?markets=' + krwMarkets.map(m => m.market).join(','));
+                const upbitTickers = await tickerRes.json();
+                
+                // 2. 바이낸스 시세 (김프 계산용)
+                const binanceRes = await fetch('https://api.binance.com/api/v3/ticker/price');
+                const binancePrices = await binanceRes.json();
+
+                const body = document.getElementById('globalBody');
+                body.innerHTML = '';
+                let count = 0;
+
+                upbitTickers.forEach(t => {
+                    const symbol = t.market.replace('KRW-', '');
+                    const marketInfo = krwMarkets.find(m => m.market === t.market);
+                    const name = marketInfo ? marketInfo.korean_name : symbol;
+                    
+                    if (searchQuery && !symbol.includes(searchQuery) && !name.includes(searchQuery)) return;
+
+                    const bPrice = parseFloat(binancePrices.find(bp => bp.symbol === symbol + 'USDT')?.price || 0);
+                    let kimp = "-";
+                    if (bPrice > 0 && usdtRate > 0) {
+                        kimp = (((t.trade_price / usdtRate) - bPrice) / bPrice * 100).toFixed(2) + "%";
+                    }
+
+                    const changeRate = (t.signed_change_rate * 100).toFixed(2);
+                    const changeClass = t.change === 'RISE' ? 'pnl-up' : (t.change === 'FALL' ? 'pnl-down' : '');
+                    const high52 = (((t.trade_price - t.highest_52_week_price) / t.highest_52_week_price) * 100).toFixed(2);
+                    const low52 = (((t.trade_price - t.lowest_52_week_price) / t.lowest_52_week_price) * 100).toFixed(2);
+                    const accTrade = Math.floor(t.acc_trade_price_24h / 1000000).toLocaleString() + "백만";
+
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `<td><b>${s}</b></td><td>${price.toLocaleString()}$<br><small>(${bFund}%)</small></td><td>${byPrice.toLocaleString()}$<br><small>(${byFund}%)</small></td><td>${okPrice.toLocaleString()}$<br><small>(${okFund}%)</small></td><td style="color:var(--accent); font-weight:700;">${uPrice?uPrice.toLocaleString()+'원':'-'}</td><td style="text-align:right;" class="${kimp>=0?'pnl-up':'pnl-down'}">${kimp}%</td>`;
+                    tr.innerHTML = `
+                        <td><b>${name}</b><br><small style="color:var(--text-muted)">${symbol}</small></td>
+                        <td>${t.trade_price.toLocaleString()}원</td>
+                        <td class="${parseFloat(kimp) >= 0 ? 'pnl-up' : 'pnl-down'}" style="font-weight:800;">${kimp}</td>
+                        <td class="${changeClass}">${t.change === 'RISE' ? '+' : ''}${changeRate}%</td>
+                        <td class="pnl-down">${high52}%</td>
+                        <td class="pnl-up">+${low52}%</td>
+                        <td style="text-align:right; color:var(--text-muted); font-size:11px;">${accTrade}</td>
+                    `;
                     body.appendChild(tr);
+                    count++;
                 });
-            } catch(e) {}
+                document.getElementById('totalCoinCount').innerText = count;
+            } catch(e) { console.error("Update failed", e); }
         }
 
         async function fetchSymbols() {
