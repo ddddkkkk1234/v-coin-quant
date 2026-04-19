@@ -116,35 +116,35 @@
                         </script>
                     </div>
                 </div>
-                
-                <!-- 이전 스타일의 요약 데이터 바 결합 -->
-                <div style="display: flex; gap: 30px; padding: 10px 20px; background: rgba(0,242,255,0.02); border-radius: 8px; border: 1px solid rgba(0,242,255,0.1); font-size: 12px; align-items: center;">
-                    <div>USDT 환율 <b id="sumRate" style="color:var(--accent)">1,400</b></div>
-                    <div>비트코인 김프 <b id="sumKimp" style="color:var(--accent)">0.00%</b></div>
-                    <div style="margin-left:auto; font-size:10px; color:var(--success); font-weight:800;">LIVE ANALYSIS ●</div>
-                </div>
             </div>
 
-            <!-- [2순위] 실시간 차트 티커 섹션 -->
+            <!-- [2순위] 대형 실시간 차트 섹션 -->
             <div style="margin-bottom: 25px;">
-                <div class="section-title">📈 실시간 차트 <small style="font-size:10px; color:var(--text-muted); font-weight:400;">Mini Trend Views</small></div>
-                <div class="chart-ticker-wrap">
-                    <!-- BTC Mini -->
-                    <div class="mini-chart-box">
-                        <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=ko&symbol=BINANCE%3ABTCUSDT&gridLineColor=rgba(42,46,52,0)&fontColor=rgba(209,212,216,1)&underLineColor=rgba(33,150,243,0.3)&trendLineColor=rgba(33,150,243,1)&colorTheme=dark&autosize=true" frameborder="0" style="width:100%; height:100%;"></iframe>
+                <div class="section-title">📈 실시간 차트 분석 <small style="font-size:10px; color:var(--text-muted); font-weight:400;">Advanced Real-time View</small></div>
+                <div class="pro-card" style="padding: 0; border: 1px solid var(--border); height: 500px; background: #131722;">
+                    <!-- TradingView Widget BEGIN -->
+                    <div class="tradingview-widget-container" style="height:100%;width:100%">
+                        <div id="tradingview_chart" style="height:100%;width:100%"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                        <script type="text/javascript">
+                        new TradingView.widget({
+                            "autosize": true,
+                            "symbol": "BINANCE:BTCUSDT",
+                            "interval": "60",
+                            "timezone": "Asia/Seoul",
+                            "theme": "dark",
+                            "style": "1",
+                            "locale": "ko",
+                            "toolbar_bg": "#f1f3f6",
+                            "enable_publishing": false,
+                            "hide_top_toolbar": false,
+                            "hide_legend": false,
+                            "save_image": false,
+                            "container_id": "tradingview_chart"
+                        });
+                        </script>
                     </div>
-                    <!-- ETH Mini -->
-                    <div class="mini-chart-box">
-                        <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=ko&symbol=BINANCE%3AETHUSDT&gridLineColor=rgba(42,46,52,0)&fontColor=rgba(209,212,216,1)&underLineColor=rgba(33,150,243,0.3)&trendLineColor=rgba(33,150,243,1)&colorTheme=dark&autosize=true" frameborder="0" style="width:100%; height:100%;"></iframe>
-                    </div>
-                    <!-- SOL Mini -->
-                    <div class="mini-chart-box">
-                        <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=ko&symbol=BINANCE%3ASOLUSDT&gridLineColor=rgba(42,46,52,0)&fontColor=rgba(209,212,216,1)&underLineColor=rgba(33,150,243,0.3)&trendLineColor=rgba(33,150,243,1)&colorTheme=dark&autosize=true" frameborder="0" style="width:100%; height:100%;"></iframe>
-                    </div>
-                    <!-- XRP Mini -->
-                    <div class="mini-chart-box">
-                        <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=ko&symbol=BINANCE%3AXRPUSDT&gridLineColor=rgba(42,46,52,0)&fontColor=rgba(209,212,216,1)&underLineColor=rgba(33,150,243,0.3)&trendLineColor=rgba(33,150,243,1)&colorTheme=dark&autosize=true" frameborder="0" style="width:100%; height:100%;"></iframe>
-                    </div>
+                    <!-- TradingView Widget END -->
                 </div>
             </div>
 
