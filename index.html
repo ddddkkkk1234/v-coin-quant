@@ -168,10 +168,21 @@
                             </div>
                         </div>
 
+                        <!-- 거래소 노출 설정 -->
+                        <div id="exchangeToggleBox" style="display:none; margin-bottom:15px; background:var(--hover); padding:10px; border-radius:12px; border:1px solid var(--border);">
+                            <label style="margin-bottom:8px; display:block; font-size:11px; font-weight:800; color:var(--text-muted);">🏦 노출 거래소 설정</label>
+                            <div style="display:flex; gap:8px;">
+                                <span class="tag-btn active" id="toggle-binance" onclick="toggleColumn(1, 'binance')">Binance</span>
+                                <span class="tag-btn active" id="toggle-bybit" onclick="toggleColumn(2, 'bybit')">Bybit</span>
+                                <span class="tag-btn active" id="toggle-okx" onclick="toggleColumn(3, 'okx')">OKX</span>
+                                <span class="tag-btn active" id="toggle-upbit" onclick="toggleColumn(4, 'upbit')">Upbit</span>
+                            </div>
+                        </div>
+
                         <!-- 실시간 검색바 -->
                         <div class="field" id="globalSearchBox" style="display:none; margin-bottom:15px;">
-                            <label>🔍 실시간 코인 검색 (Binance, Bybit, OKX, Upbit 통합)</label>
-                            <input type="text" id="globalSearch" placeholder="BTC, ETH, SOL, PEPE... 심볼 입력" oninput="updateGlobalPrices()" style="border-radius:8px; padding:12px; border:2px solid var(--accent);">
+                            <label>🔍 실시간 코인 검색</label>
+                            <input type="text" id="globalSearch" placeholder="BTC, ETH, SOL..." oninput="updateGlobalPrices()" style="border-radius:8px; padding:12px; border:2px solid var(--accent);">
                         </div>
 
                         <table style="display:none;" id="globalTable">
@@ -260,6 +271,25 @@
 
         let globalInterval = null;
 
+        function toggleColumn(colIdx, exchangeId) {
+            const btn = document.getElementById(`toggle-${exchangeId}`);
+            const table = document.getElementById('globalTable');
+            const isShowing = btn.classList.toggle('active');
+            
+            // 헤더와 모든 행의 해당 인덱스 열을 토글
+            const displayMode = isShowing ? '' : 'none';
+            
+            // 헤더 토글
+            table.querySelectorAll('th')[colIdx].style.display = displayMode;
+            
+            // 바디 행 토글
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells[colIdx]) cells[colIdx].style.display = displayMode;
+            });
+        }
+
         function switchTab(tabId) {
             currentTab = tabId;
             document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
@@ -273,6 +303,7 @@
             const otherMsg = document.getElementById('otherMsg');
             const gDashboard = document.getElementById('globalDashboard');
             const gSearchBox = document.getElementById('globalSearchBox');
+            const exToggleBox = document.getElementById('exchangeToggleBox');
 
             if (globalInterval) { clearInterval(globalInterval); globalInterval = null; }
 
@@ -290,6 +321,7 @@
                     globalTable.style.display = 'table';
                     gDashboard.style.display = 'grid';
                     gSearchBox.style.display = 'block';
+                    exToggleBox.style.display = 'block';
                     otherMsg.style.display = 'none';
                     updateGlobalPrices();
                     globalInterval = setInterval(updateGlobalPrices, 3000);
@@ -297,6 +329,7 @@
                     globalTable.style.display = 'none';
                     gDashboard.style.display = 'none';
                     gSearchBox.style.display = 'none';
+                    exToggleBox.style.display = 'none';
                     otherMsg.style.display = 'block';
                     fetchSymbols(tabId);
                 }
