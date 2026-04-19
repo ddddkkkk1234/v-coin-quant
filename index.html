@@ -9,78 +9,45 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
-        :root {
-            --bg: #05070a; --card-bg: #0f172a; --text: #f8fafc; --text-muted: #94a3b8;
-            --border: #1e293b; --hover: #1e293b; --accent: #00f2ff; --success: #22c55e;
-            --danger: #ef4444; --nav-bg: #0f172a; --ai-gradient: linear-gradient(135deg, #00f2ff 0%, #3b82f6 100%);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Pretendard", sans-serif; }
-        body { background-color: var(--bg); color: var(--text); font-size: 13px; }
+        /* 추가 스타일: 티커 바 및 헤더 중앙 정렬 */
+        .top-ticker-bar { background: #000; border-bottom: 1px solid var(--border); padding: 8px 0; }
+        .ticker-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: center; gap: 30px; font-size: 11px; color: var(--text-muted); }
+        .ticker-item b { color: var(--accent); margin-left: 4px; }
         
         header { background: var(--nav-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
-        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; height: 65px; }
-        .logo { font-size: 20px; font-weight: 900; background: var(--ai-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; cursor: pointer; }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; py: 15px; height: auto; }
+        .logo { font-size: 24px; font-weight: 900; background: var(--ai-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; cursor: pointer; margin-bottom: 15px; margin-top: 15px; }
         
-        .main-menu { display: flex; gap: 20px; }
-        .menu-item { color: var(--text-muted); font-weight: 700; cursor: pointer; font-size: 13px; padding: 22px 0; border-bottom: 3px solid transparent; transition: 0.3s; }
-        .menu-item:hover, .menu-item.active { color: var(--accent); border-bottom-color: var(--accent); }
+        .main-menu { display: flex; gap: 30px; justify-content: center; width: 100%; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; padding-bottom: 10px; }
+        .menu-item { color: var(--text-muted); font-weight: 700; cursor: pointer; font-size: 14px; transition: 0.3s; }
+        .menu-item:hover, .menu-item.active { color: var(--accent); }
         
-        .nav-right { display: flex; align-items: center; gap: 20px; }
-        .btn-journal { background: var(--ai-gradient); color: #000; padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 12px; cursor: pointer; border: none; transition: 0.3s; }
-        .btn-journal:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); }
-
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        
-        .market-summary { display: flex; gap: 25px; background: var(--card-bg); padding: 15px 25px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--border); font-size: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-        .summary-item b { color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 14px; margin-left: 5px; }
-
-        .main-content { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
-        .pro-card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 25px; transition: 0.3s; }
-        .card-header { padding: 18px 20px; font-weight: 800; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); }
-        
-        table { width: 100%; border-collapse: collapse; }
-        th { background: rgba(0,0,0,0.2); padding: 14px 15px; text-align: left; color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
-        td { padding: 14px 15px; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; }
-        tr:hover { background: rgba(255,255,255,0.03); }
-
-        input, textarea { width: 100%; background: #05070a; border: 1px solid var(--border); padding: 12px; border-radius: 8px; color: var(--text); font-size: 13px; margin-bottom: 12px; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(0, 242, 255, 0.1); }
-        
-        .btn-accent { background: var(--ai-gradient); color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: 800; width: 100%; cursor: pointer; transition: 0.3s; }
-        .btn-accent:hover { opacity: 0.9; box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
-
-        .pnl-up { color: var(--success); } .pnl-down { color: var(--danger); }
-        .view-section { display: none; } .view-section.active { display: block; animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .chart-thumb { width: 45px; height: 30px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .nav-right { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 15px; }
     </style>
 </head>
-    <!-- 시장 요약 티커 바 -->
+<body>
+    <!-- 시장 요약 티커 바 (중앙 정렬) -->
     <div class="top-ticker-bar">
         <div class="ticker-container">
             <div class="ticker-item">환율 <b>1,467</b></div>
             <div class="ticker-item">테더(USDT) <span class="pnl-up">1,486.0 (+0.41%)</span></div>
             <div class="ticker-item">BTC 점유율 <span class="pnl-up">59.54% (+0.03%)</span></div>
-            <div class="ticker-item">시가총액 <span class="pnl-up">3,728조 5,835 (2.11%)</span></div>
-            <div class="ticker-item">24시간 거래량 <span class="pnl-down">300조 279억 (-65.99%)</span></div>
+            <div class="ticker-item">시가총액 <span class="pnl-up">3,728조 (2.11%)</span></div>
+            <div class="ticker-item">24시간 거래량 <span class="pnl-down">300조 (-65.99%)</span></div>
         </div>
     </div>
 
     <header>
         <div class="nav-container">
-            <div class="nav-left">
-                <div class="logo">AI KIMP JOURNAL</div>
-                <nav class="main-menu">
-                    <div class="menu-item active" onclick="switchView('coin')">김프(코인)</div>
-                    <div class="menu-item" onclick="switchView('gold')">김프(금)</div>
-                    <div class="menu-item" onclick="switchView('indicators')">지표</div>
-                    <div class="menu-item" onclick="switchView('analysis')">AI 시황분석</div>
-                </nav>
-            </div>
+            <div class="logo" onclick="location.reload()">AI 김프 매매일지</div>
+            <nav class="main-menu">
+                <div class="menu-item active" onclick="switchView('coin')">김프(코인)</div>
+                <div class="menu-item" onclick="switchView('gold')">김프(금)</div>
+                <div class="menu-item" onclick="switchView('indicators')">시장지표</div>
+                <div class="menu-item" onclick="switchView('analysis')">AI 시황분석</div>
+            </nav>
             <div class="nav-right">
-                <button class="btn-journal" onclick="switchView('journal')">📉 TRADING JOURNAL</button>
+                <button class="btn-journal" onclick="switchView('journal')" style="padding: 6px 12px; font-size: 11px;">📉 매매일지 작성</button>
             </div>
         </div>
     </header>
