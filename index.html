@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 김프 매매일지 | v12.5 Mastery</title>
+    <title>AI 김프 매매일지 | v12.6 Mastery</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -19,36 +19,32 @@
         
         /* 1. 최상단 티커: 중앙 밀착 */
         .top-ticker-bar { background: #000; border-bottom: 1px solid var(--border); padding: 8px 0; }
-        .ticker-container { max-width: 900px; margin: 0 auto; display: flex; justify-content: center; gap: 20px; font-size: 11px; color: var(--text-muted); }
+        .ticker-container { max-width: 1250px; margin: 0 auto; display: flex; justify-content: center; gap: 25px; font-size: 11px; color: var(--text-muted); }
         .ticker-item b { color: var(--accent); margin-left: 3px; }
         
-        /* 2. 헤더 섹션: 중앙 집중 및 컴팩트 */
-        header { background: var(--nav-bg); border-bottom: 1px solid var(--border); padding: 15px 0; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
-        .nav-container { max-width: 900px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        /* 2. 헤더 섹션: 완벽한 한 줄(One-Line) 배치 */
+        header { background: var(--nav-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+        .nav-container { max-width: 1250px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
         
-        /* 우측 상단 유틸리티: 한 줄 정렬 */
-        .utility-bar { position: absolute; right: 0; top: 0; display: flex; gap: 12px; font-size: 11px; color: var(--text-muted); }
-        .utility-bar span { cursor: pointer; transition: 0.2s; }
-        .utility-bar span:hover { color: var(--accent); }
-
-        .logo { font-size: 30px; font-weight: 900; background: var(--ai-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1.5px; cursor: pointer; margin-top: 10px; margin-bottom: 15px; }
+        .logo { font-size: 18px; font-weight: 900; background: var(--ai-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; cursor: pointer; white-space: nowrap; margin-right: 30px; }
         
-        /* 메인 메뉴 & 버튼: 한 줄 느낌으로 배치 */
-        .menu-row { display: flex; align-items: center; gap: 30px; margin-bottom: 10px; }
-        .main-menu { display: flex; gap: 25px; }
-        .menu-item { color: var(--text-muted); font-weight: 700; cursor: pointer; font-size: 14px; transition: 0.3s; padding-bottom: 4px; border-bottom: 2px solid transparent; }
+        .main-menu { display: flex; gap: 20px; align-items: center; flex: 1; }
+        .menu-item { color: var(--text-muted); font-weight: 700; cursor: pointer; font-size: 13px; transition: 0.3s; white-space: nowrap; padding: 5px 0; border-bottom: 2px solid transparent; }
         .menu-item:hover, .menu-item.active { color: var(--accent); border-bottom-color: var(--accent); }
         
-        .btn-journal { background: var(--ai-gradient); color: #000; padding: 6px 18px; border-radius: 20px; font-weight: 800; font-size: 11px; cursor: pointer; border: none; transition: 0.3s; }
-        .btn-journal:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(0,242,255,0.3); }
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .btn-journal { background: var(--ai-gradient); color: #000; padding: 6px 14px; border-radius: 6px; font-weight: 800; font-size: 11px; cursor: pointer; border: none; transition: 0.3s; white-space: nowrap; }
+        
+        .utility-bar { display: flex; gap: 12px; font-size: 11px; color: var(--text-muted); border-left: 1px solid var(--border); padding-left: 15px; }
+        .utility-bar span { cursor: pointer; white-space: nowrap; }
+        .utility-bar span:hover { color: var(--accent); }
 
-        /* 3. 광고 배너: 한 줄로 시원하게 배치 */
-        .ad-banner-wrap { max-width: 900px; margin: 15px auto; display: flex; gap: 10px; justify-content: center; }
+        /* 3. 광고 배너: 한 줄 배치 */
+        .ad-banner-wrap { max-width: 900px; margin: 15px auto; display: flex; gap: 10px; }
         .ad-box { flex: 1; height: 60px; background: rgba(255,255,255,0.02); border-radius: 10px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text-muted); cursor: pointer; }
         .ad-box:hover { border-color: var(--accent); color: var(--accent); }
 
-        /* 4. 메인 콘텐츠 컨테이너 */
-        .container { max-width: 1200px; margin: 0 auto; padding: 10px 20px 50px; }
+        .container { max-width: 1250px; margin: 0 auto; padding: 10px 20px 50px; }
         
         .market-summary { max-width: 900px; margin: 0 auto 20px; display: flex; justify-content: center; gap: 30px; background: var(--card-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border); font-size: 12px; }
         .summary-item b { color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 14px; margin-left: 5px; }
@@ -72,57 +68,50 @@
     </style>
 </head>
 <body>
-    <!-- 최상단 실시간 지표 티커 -->
     <div class="top-ticker-bar">
         <div class="ticker-container">
             <div class="ticker-item">실시간 환율 <b>1,467</b></div>
             <div class="ticker-item">테더(USDT) <span class="pnl-up">1,486 (+0.41%)</span></div>
             <div class="ticker-item">BTC 점유율 <span class="pnl-up">59.54% (+0.03%)</span></div>
-            <div class="ticker-item">시가총액 <span class="pnl-up">3,728조</span></div>
+            <div class="ticker-item">전체 시가총액 <span class="pnl-up">3,728조</span></div>
             <div class="ticker-item">24H 거래량 <span class="pnl-down">300조</span></div>
         </div>
     </div>
 
     <header>
         <div class="nav-container">
-            <!-- 우측 상단 유틸리티 바 -->
-            <div class="utility-bar">
-                <span>내정보</span>
-                <span>언어선택(한국어)</span>
-                <span style="color:var(--accent); font-weight:800;">로그인</span>
-            </div>
-
-            <!-- 중앙 메인 로고 -->
             <a class="logo" onclick="location.reload()">AI 김프 매매일지</a>
             
-            <!-- 중앙 메뉴 및 액션 버튼 (한 줄 구성) -->
-            <div class="menu-row">
-                <nav class="main-menu">
-                    <div class="menu-item active" onclick="switchView('coin')">김프(코인)</div>
-                    <div class="menu-item" onclick="switchView('gold')">김프(금)</div>
-                    <div class="menu-item" onclick="switchView('indicators')">시장지표</div>
-                    <div class="menu-item" onclick="switchView('analysis')">AI 시황분석</div>
-                </nav>
+            <nav class="main-menu">
+                <div class="menu-item active" onclick="switchView('coin')">김프(코인)</div>
+                <div class="menu-item" onclick="switchView('gold')">김프(금)</div>
+                <div class="menu-item" onclick="switchView('indicators')">시장지표</div>
+                <div class="menu-item" onclick="switchView('analysis')">AI 시황분석</div>
+            </nav>
+
+            <div class="header-right">
                 <button class="btn-journal" onclick="switchView('journal')">📉 매매일지 작성하기</button>
+                <div class="utility-bar">
+                    <span>내정보</span>
+                    <span>언어선택(한국어)</span>
+                    <span style="color:var(--accent); font-weight:800;">로그인</span>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- 중앙 집중형 광고 배너 (한 줄 배치) -->
     <div class="ad-banner-wrap">
         <div class="ad-box">📢 광고 문의: 텔레그램 @KIMP_AI</div>
         <div class="ad-box">🚀 바이낸스 공식 제휴 수수료 20% 페이백</div>
     </div>
 
     <div class="container">
-        <!-- 시장 요약 브리핑 -->
         <div class="market-summary">
             <div class="summary-item">USDT/KRW: <b id="sumRate">1,400</b></div>
             <div class="summary-item">BTC KIMP: <b id="sumKimp">0.00%</b></div>
             <div class="summary-item" style="color:var(--accent); font-weight:800;">● AI ANALYSIS ACTIVE</div>
         </div>
 
-        <!-- 메인 콘텐츠 섹션 (김프 코인) -->
         <div id="view-coin" class="view-section active">
             <div class="main-content">
                 <div class="pro-card">
@@ -139,7 +128,6 @@
             </div>
         </div>
 
-        <!-- 매매일지 섹션 -->
         <div id="view-journal" class="view-section">
             <div class="main-content">
                 <div class="pro-card">
@@ -150,13 +138,11 @@
             </div>
         </div>
 
-        <!-- 기타 섹션 (뼈대) -->
         <div id="view-gold" class="view-section"><div class="pro-card" style="padding:80px; text-align:center; color:var(--text-muted);">금 프리미엄 데이터 로딩 중...</div></div>
         <div id="view-indicators" class="view-section"><div class="pro-card" style="padding:80px; text-align:center; color:var(--text-muted);">시장 핵심 지표 로딩 중...</div></div>
         <div id="view-analysis" class="view-section"><div class="pro-card" style="padding:80px; text-align:center; color:var(--accent); font-weight:800;">AI 엔진이 실시간 시황을 분석 중입니다...</div></div>
     </div>
 
-    <!-- 사이드바 템플릿 (계산기/복기폼) -->
     <template id="temp-sidebar">
         <div class="pro-card" style="padding:20px; border: 1px solid rgba(0,242,255,0.15);">
             <div style="font-size:12px; font-weight:800; margin-bottom:15px; color:var(--accent);">📐 리스크 계산기</div>
