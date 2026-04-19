@@ -163,22 +163,20 @@
             <div class="field"><label>종목 검색</label><input type="text" id="calcAssetName" list="assetList" placeholder="BTC, ETH..." onchange="fetchLivePrice('calc_only')"></div>
             <div class="field"><label>현재 시세 (딸깍 ⚡)</label><div style="display:flex; gap:4px;"><input type="number" id="calcPrice" placeholder="현재가" oninput="runCalc()"><button onclick="fetchLivePrice('calc_only', this)" class="btn-fetch">⚡</button></div></div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <div class="field"><label>내 자본($)</label><input type="number" id="calcEntry" value="100" oninput="runCalc()"></div>
-                <div class="field"><label>레버리지</label><input type="number" id="calcLev" value="10" oninput="runCalc()"></div>
+                <div class="field"><label>총 자본($)</label><input type="number" id="calcEntry" value="150" oninput="runCalc()"></div>
+                <div class="field"><label>리스크 (%)</label><input type="number" id="calcRiskPct" value="1" oninput="runCalc()"></div>
             </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div class="field"><label>손절 폭 (%)</label><input type="number" id="calcSl" value="5" oninput="runCalc()"></div>
                 <div class="field"><label>손익비 (1:X)</label><input type="number" id="calcRr" value="2" oninput="runCalc()"></div>
             </div>
             <div class="result-box">
-                <div class="result-row"><span>포지션 가치:</span><strong id="resTotal">0 $</strong></div>
+                <div class="result-row"><span>리스크 금액 (1%):</span><strong id="resRiskAmt" class="pnl-down">0 $</strong></div>
+                <div class="result-row"><span>권장 레버리지:</span><strong id="resRecLev" class="gold-text">1x</strong></div>
                 <div class="result-row"><span>주문 수량 (Qty):</span><strong id="resQty" class="gold-text">0.00</strong></div>
                 <div class="result-row"><span>목표/손절가:</span><span><b class="pnl-up" id="resTpPrice">0</b> / <b class="pnl-down" id="resSlPrice">0</b></span></div>
                 <div class="result-row"><span>성공 시 수익:</span><strong id="resTpAmt" class="pnl-up">+0 $</strong></div>
                 <div class="result-row"><span>실패 시 손실:</span><strong id="resSlAmt" class="pnl-down">-0 $</strong></div>
-                <div id="calcDetail" style="font-size: 10px; color: var(--text-muted); margin-top: 8px; border-top: 1px solid var(--border); padding-top: 5px; text-align: center;">
-                    수량 × 가격변동으로 계산된 결과입니다.
-                </div>
             </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
                 <button class="btn-save" style="background:var(--hover); color:var(--text); margin-top:0;" onclick="runCalc()">계산하기</button>
@@ -252,35 +250,39 @@
 
         function runCalc() {
             const price = Number(document.getElementById('calcPrice').value) || 0;
-            const entry = Number(document.getElementById('calcEntry').value) || 0;
-            const lev = Number(document.getElementById('calcLev').value) || 0;
-            const sl = Number(document.getElementById('calcSl').value) || 5;
+            const totalCapital = Number(document.getElementById('calcEntry').value) || 0;
+            const riskPct = Number(document.getElementById('calcRiskPct').value) || 1;
+            const slPct = Number(document.getElementById('calcSl').value) || 5;
             const rr = Number(document.getElementById('calcRr').value) || 2;
 
-            const totalSize = entry * lev;
-            const qty = price > 0 ? (totalSize / price) : 0;
+            if (price <= 0 || totalCapital <= 0) return;
+
+            // 1. 감수할 리스크 금액 ($) 계산
+            const riskAmt = totalCapital * (riskPct / 100);
             
-            document.getElementById('resTotal').innerText = `${totalSize.toLocaleString()} $`;
-            if(price > 0) {
-                document.getElementById('resQty').innerText = qty.toFixed(5);
-                
-                const lossAmt = totalSize * (sl / 100);
-                const winAmt = lossAmt * rr;
-                
-                // 목표가/손절가 계산 (기본 LONG 기준 시각화)
-                const tpPrice = price * (1 + (sl * rr / 100));
-                const slPrice = price * (1 - (sl / 100));
-                
-                document.getElementById('resTpPrice').innerText = tpPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4});
-                document.getElementById('resSlPrice').innerText = slPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4});
-                
-                // ROE (자본 대비 수익률) 계산
-                const tpRoe = (sl * rr * lev).toFixed(1);
-                const slRoe = (sl * lev).toFixed(1);
-                
-                document.getElementById('resTpAmt').innerText = `+${winAmt.toFixed(2)} $ (${tpRoe}%)`;
-                document.getElementById('resSlAmt').innerText = `-${lossAmt.toFixed(2)} $ (${slRoe}%)`;
-            }
+            // 2. 적정 레버리지 역산 (레버리지 = 리스크% / 손절%)
+            // 예: 1% 리스크를 5% 손절폭으로 잡으려면, 자본의 20%만 투입하거나(1배 기준) 
+            // 전체 자본을 다 쓴다면 0.2배 레버리지가 필요함. 
+            // 여기서는 총 자본 대비 투입 규모를 결정하는 '권장 레버리지'를 계산.
+            const recLev = (riskPct / slPct); 
+            const positionValue = totalCapital * recLev;
+            const qty = positionValue / price;
+
+            // UI 업데이트
+            document.getElementById('resRiskAmt').innerText = `${riskAmt.toFixed(2)} $ (${riskPct}%)`;
+            document.getElementById('resRecLev').innerText = `${recLev.toFixed(2)}x`;
+            document.getElementById('resQty').innerText = qty.toFixed(5);
+
+            // 목표가/손절가 및 예상 수익/손실
+            const tpPrice = price * (1 + (slPct * rr / 100));
+            const slPrice = price * (1 - (slPct / 100));
+            
+            document.getElementById('resTpPrice').innerText = tpPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4});
+            document.getElementById('resSlPrice').innerText = slPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4});
+
+            const winAmt = riskAmt * rr;
+            document.getElementById('resTpAmt').innerText = `+${winAmt.toFixed(2)} $`;
+            document.getElementById('resSlAmt').innerText = `-${riskAmt.toFixed(2)} $`;
         }
 
         function applyToLog() {
