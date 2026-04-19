@@ -107,17 +107,34 @@
         <main class="center-content">
             <div class="ad-placeholder" style="width:850px; height:350px; margin: 0 auto 25px;">② 중앙 메인 광고<br>(850 x 350)</div>
 
-            <!-- 시장 핵심 지표 바 (테이블 바로 위 배치) -->
-            <div class="pro-card" style="margin-bottom: 20px; padding: 15px 25px; background: rgba(0,242,255,0.03); border: 1px solid rgba(0,242,255,0.15);">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="font-size: 11px; font-weight: 800; color: var(--accent); letter-spacing: 1px;">MARKET INDICATORS</div>
-                    <div style="display: flex; gap: 30px;">
-                        <div class="summary-item" style="font-size: 12px;">환율 <b id="sumRate">1,400</b></div>
-                        <div class="summary-item" style="font-size: 12px;">BTC 점유율 <b style="color:var(--success)">59.54%</b></div>
-                        <div class="summary-item" style="font-size: 12px;">공포/탐욕 <b style="color:var(--gold)">74 (Greed)</b></div>
-                        <div class="summary-item" style="font-size: 12px;">김프(BTC) <b id="sumKimp">0.00%</b></div>
+            <!-- 시장지표 섹션 -->
+            <div style="margin-bottom: 25px;">
+                <div style="font-size: 14px; font-weight: 800; color: var(--accent); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                    📊 시장지표 <small style="font-size: 10px; color: var(--text-muted); font-weight: 400;">Global Market Real-time</small>
+                </div>
+                <div class="pro-card" style="padding: 0; border: 1px solid rgba(0,242,255,0.1); background: transparent; overflow: hidden;">
+                    <!-- TradingView Widget BEGIN -->
+                    <div class="tradingview-widget-container">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                        {
+                        "symbols": [
+                            { "proName": "BINANCE:BTCUSDT", "title": "BTC/USDT" },
+                            { "proName": "BINANCE:ETHUSDT", "title": "ETH/USDT" },
+                            { "proName": "FX_IDC:USDKRW", "title": "USD/KRW" },
+                            { "proName": "NASDAQ:IXIC", "title": "Nasdaq" },
+                            { "proName": "TVC:GOLD", "title": "Gold" },
+                            { "proName": "BINANCE:SOLUSDT", "title": "SOL/USDT" }
+                        ],
+                        "showSymbolLogo": true,
+                        "colorTheme": "dark",
+                        "isTransparent": true,
+                        "displayMode": "adaptive",
+                        "locale": "ko"
+                        }
+                        </script>
                     </div>
-                    <div style="font-size: 10px; color: var(--success); font-weight: 800;">LIVE ●</div>
+                    <!-- TradingView Widget END -->
                 </div>
             </div>
 
