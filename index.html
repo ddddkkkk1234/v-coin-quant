@@ -356,45 +356,17 @@
                     fetch('https://www.okx.com/api/v5/market/tickers?instType=SWAP').then(r => r.json())
                 ]);
 
-                // 업비트 데이터 로드 (CORS 차단 대비 에러 처리 강화)
-                let upbitData = [];
-                try {
-                    const upbitMarkets = assets.map(a => 'KRW-'+a).join(',');
-                    const uRes = await fetch('https://api.upbit.com/v1/ticker?markets=' + upbitMarkets, { cache: 'no-store' });
-                    if (uRes.ok) upbitData = await uRes.json();
-                } catch(e) { console.warn("Upbit API is blocked by CORS or Network issue"); }
-
                 body.innerHTML = '';
-                let kimpSum = 0, kimpList = [], validCount = 0;
-
                 assets.forEach(symbol => {
                     const bPrice = parseFloat(binancePrices.find(t => t.symbol === symbol + 'USDT')?.price || 0);
                     const byPrice = parseFloat(bybitTickers.result.list.find(t => t.symbol === symbol + 'USDT')?.lastPrice || 0);
                     const oPrice = parseFloat(okxTickers.data.find(t => t.instId === symbol + '-USDT')?.last || 0);
-                    const uPrice = upbitData.find(t => t.market === 'KRW-' + symbol)?.trade_price || 0;
                     
-                    if (bPrice === 0 && byPrice === 0 && uPrice === 0) return;
+                    if (bPrice === 0 && byPrice === 0) return;
 
                     const bf = (parseFloat(bFund.find(f => f.symbol === symbol + 'USDT')?.lastFundingRate || 0) * 100).toFixed(4);
                     const byf = (parseFloat(byFund.result.list.find(f => f.symbol === symbol + 'USDT')?.fundingRate || 0) * 100).toFixed(4);
                     const of = (parseFloat(oFund.data.find(f => f.instId === symbol + '-USDT-SWAP')?.fundingRate || 0) * 100).toFixed(4);
-
-                    let kimpDisplay = "-";
-                    let kimpValue = 0;
-                    let upbitDisplay = uPrice > 0 ? uPrice.toLocaleString() + ' 원' : '<small style="opacity:0.5;">접속불가</small>';
-
-                    if (uPrice > 0 && bPrice > 0) {
-                        kimpValue = ((uPrice / usdtRate - bPrice) / bPrice * 100);
-                        kimpDisplay = kimpValue.toFixed(2) + "%";
-                        kimpSum += kimpValue;
-                        validCount++;
-                        kimpList.push({ symbol, kimp: kimpValue });
-                    }
-
-                    if (symbol === 'BTC') {
-                        topKimpEl.innerText = kimpValue !== 0 ? kimpDisplay : "연결안됨";
-                        topKimpEl.className = kimpValue >= 0 ? 'pnl-up' : 'pnl-down';
-                    }
 
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
@@ -402,35 +374,28 @@
                         <td>${bPrice > 0 ? bPrice.toLocaleString() + ' $' : '-'} <br><small style="color:var(--text-muted)">${bf}%</small></td>
                         <td>${byPrice > 0 ? byPrice.toLocaleString() + ' $' : '-'} <br><small style="color:var(--text-muted)">${byf}%</small></td>
                         <td>${oPrice > 0 ? oPrice.toLocaleString() + ' $' : '-'} <br><small style="color:var(--text-muted)">${of}%</small></td>
-                        <td>${upbitDisplay}</td>
-                        <td style="text-align:right; font-weight:800;" class="${kimpValue >= 0 ? 'pnl-up' : 'pnl-down'}">${kimpDisplay}</td>
+                        <td>-</td>
+                        <td style="text-align:right; font-weight:800; opacity:0.3;">-</td>
                     `;
                     body.appendChild(tr);
                 });
 
-                if (validCount > 0) {
-                    document.getElementById('avgKimp').innerText = (kimpSum / validCount).toFixed(2) + '%';
-                    kimpList.sort((a, b) => b.kimp - a.kimp);
-                    document.getElementById('maxKimpAsset').innerText = `${kimpList[0].symbol} (${kimpList[0].kimp.toFixed(2)}%)`;
-                    document.getElementById('minKimpAsset').innerText = `${kimpList[kimpList.length-1].symbol} (${kimpList[kimpList.length-1].kimp.toFixed(2)}%)`;
-                } else {
-                    document.getElementById('avgKimp').innerText = "업비트 연결 확인 필요";
-                }
+                document.getElementById('avgKimp').innerText = "업비트 연결해제";
             } catch (e) { console.error("Global price sync failed", e); }
         }
 
         async function fetchExchangeRate() {
             try {
-                const res = await fetch('https://api.upbit.com/v1/ticker?markets=KRW-USDT');
-                if (!res.ok) throw new Error();
+                const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.upbit.com/v1/ticker?markets=KRW-USDT'));
                 const data = await res.json();
-                if (data && data[0]) {
-                    usdtRate = data[0].trade_price;
+                const ticker = JSON.parse(data.contents);
+                if (ticker && ticker[0]) {
+                    usdtRate = ticker[0].trade_price;
                     document.getElementById('liveRate').innerText = usdtRate.toLocaleString();
-                    if (currentTab === 'global') updateGlobalPrices();
                 }
             } catch(e){
-                document.getElementById('liveRate').innerText = "1,350 (고정)";
+                usdtRate = 1400;
+                document.getElementById('liveRate').innerText = "1,400 (기본)";
             }
         }
 
