@@ -171,12 +171,14 @@
                 <div class="field"><label>손익비 (1:X)</label><input type="number" id="calcRr" value="2" oninput="runCalc()"></div>
             </div>
             <div class="result-box">
-                <div class="result-row"><span>진입 규모:</span><strong id="resTotal">0 $</strong></div>
-                <div class="result-row"><span>주문 수량:</span><strong id="resQty" class="gold-text">0.00</strong></div>
-                <div class="result-row"><span>목표가 (TP):</span><strong id="resTpPrice" class="pnl-up">0.00</strong></div>
-                <div class="result-row"><span>손절가 (SL):</span><strong id="resSlPrice" class="pnl-down">0.00</strong></div>
+                <div class="result-row"><span>포지션 가치:</span><strong id="resTotal">0 $</strong></div>
+                <div class="result-row"><span>주문 수량 (Qty):</span><strong id="resQty" class="gold-text">0.00</strong></div>
+                <div class="result-row"><span>목표/손절가:</span><span><b class="pnl-up" id="resTpPrice">0</b> / <b class="pnl-down" id="resSlPrice">0</b></span></div>
                 <div class="result-row"><span>성공 시 수익:</span><strong id="resTpAmt" class="pnl-up">+0 $</strong></div>
                 <div class="result-row"><span>실패 시 손실:</span><strong id="resSlAmt" class="pnl-down">-0 $</strong></div>
+                <div id="calcDetail" style="font-size: 10px; color: var(--text-muted); margin-top: 8px; border-top: 1px solid var(--border); padding-top: 5px; text-align: center;">
+                    수량 × 가격변동으로 계산된 결과입니다.
+                </div>
             </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
                 <button class="btn-save" style="background:var(--hover); color:var(--text); margin-top:0;" onclick="runCalc()">계산하기</button>
