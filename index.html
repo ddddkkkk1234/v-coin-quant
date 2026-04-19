@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 김프 매매일지 | v14.0 Real-time Stream</title>
+    <title>AI 김프 매매일지 | v14.1 Mastery</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -37,7 +37,7 @@
         .main-wrapper { max-width: 1550px; margin: 20px auto; display: flex; gap: 20px; padding: 0 20px; }
         .left-ad-area { width: 300px; flex-shrink: 0; }
         .center-content { flex: 1; min-width: 850px; }
-        .right-sidebar-area { width: 340px; flex-shrink: 0; }
+        .right-sidebar-area { width: 320px; flex-shrink: 0; }
 
         .section-title { font-size: 14px; font-weight: 800; color: var(--accent); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
         .pro-card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 25px; }
@@ -47,6 +47,12 @@
         th { background: rgba(0,0,0,0.2); padding: 12px 15px; text-align: left; color: var(--text-muted); font-size: 11px; }
         td { padding: 12px 15px; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; }
         tr:hover { background: rgba(255,255,255,0.02); }
+
+        .coin-icon { width: 22px; height: 22px; border-radius: 50%; vertical-align: middle; margin-right: 8px; background: #fff; }
+        .chart-btn { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; cursor: pointer; margin-left: 4px; border: 1px solid var(--border); transition: 0.2s; }
+        .chart-btn.upbit { color: #fff; background: #0066ff; }
+        .chart-btn.binance { color: #000; background: #fcd535; border-color: #fcd535; }
+        .chart-btn:hover { transform: scale(1.1); }
 
         input, textarea { width: 100%; background: #05070a; border: 1px solid var(--border); padding: 10px; border-radius: 8px; color: var(--text); font-size: 13px; margin-bottom: 10px; outline: none; }
         .btn-accent { background: var(--ai-gradient); color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: 800; width: 100%; cursor: pointer; }
@@ -95,6 +101,16 @@
         <main class="center-content">
             <div id="view-coin" class="view-section active">
                 <div class="ad-placeholder" style="width:850px; height:350px; margin: 0 auto 25px;">② 중앙 메인 광고<br>(850 x 350)</div>
+                <div class="section-title">📊 시장지표 <small style="font-size:10px; color:var(--text-muted); font-weight:400;">Market Ticker Tape</small></div>
+                <div class="pro-card" style="padding: 0; border: 1px solid rgba(0,242,255,0.1); background: transparent; height: 46px; margin-bottom: 25px;">
+                    <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>{ "symbols": [ { "proName": "BINANCE:BTCUSDT", "title": "BTC/USDT" }, { "proName": "BINANCE:ETHUSDT", "title": "ETH/USDT" }, { "proName": "FX_IDC:USDKRW", "title": "USD/KRW" }, { "proName": "NASDAQ:IXIC", "title": "Nasdaq" }, { "proName": "TVC:GOLD", "title": "Gold" } ], "showSymbolLogo": true, "colorTheme": "dark", "isTransparent": true, "displayMode": "adaptive", "locale": "ko" }</script></div>
+                </div>
+
+                <div class="section-title">📈 실시간 차트 분석 <small id="activeChartTitle" style="font-size:10px; color:var(--text-muted); font-weight:400;">UPBIT:BTCKRW</small></div>
+                <div class="pro-card" style="padding: 0; border: 1px solid var(--border); height: 500px; background: #131722; margin-bottom: 25px;">
+                    <div id="tv_chart_container" style="height:100%; width:100%"></div>
+                </div>
+
                 <div class="section-title">🌐 글로벌 실시간 시황 <small style="font-size:10px; color:var(--text-muted); font-weight:400;">기준: 업비트 | 비교: 바이낸스</small></div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:var(--card-bg); padding:12px 20px; border-radius:12px; border:1px solid var(--border);">
                     <div style="display:flex; gap:20px; align-items:center;">
@@ -103,17 +119,17 @@
                     </div>
                     <div style="display:flex; gap:10px; align-items:center;">
                         <input type="text" id="globalSearch" placeholder="코인 검색 (이름/심볼)..." style="width:220px; margin-bottom:0; padding:8px 12px; font-size:11px; background:#05070a;">
-                        <button style="background:none; border:1px solid var(--border); color:var(--text-muted); padding:7px 12px; border-radius:8px; cursor:pointer; font-size:11px; font-weight:700;">⚙️ 환경설정</button>
                     </div>
                 </div>
                 <div class="pro-card">
                     <table id="globalTable">
                         <thead><tr><th>이름</th><th>현재가</th><th>김프 (%)</th><th>전일대비</th><th>52주 고가대비</th><th>52주 저가대비</th><th style="text-align:right;">거래액(일)</th></tr></thead>
-                        <tbody id="globalBody"><tr><td colspan="7" style="text-align:center; padding:100px; color:var(--text-muted);">실시간 데이터를 스트리밍 중입니다...</td></tr></tbody>
+                        <tbody id="globalBody"></tbody>
                     </table>
                 </div>
             </div>
             <div id="view-journal" class="view-section">
+                <!-- 매매일지 레이아웃 유지 -->
                 <div class="section-title">📉 TRADING WORKSTATION</div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
                     <div class="pro-card" style="padding:20px; border: 1px solid rgba(0,242,255,0.15);">
@@ -137,9 +153,10 @@
                 </div>
                 <div class="pro-card"><table id="historyTable"><thead><tr><th>CHART</th><th>DATE</th><th>ASSET</th><th>SIDE</th><th>PNL($)</th><th></th></tr></thead><tbody id="dbBody"></tbody></table></div>
             </div>
-            <div id="view-gold" class="view-section"><div class="pro-card" style="padding:80px; text-align:center;">금 시세 데이터 준비 중...</div></div>
+            <!-- 기타 탭 뼈대 -->
+            <div id="view-gold" class="view-section"><div class="pro-card" style="padding:80px; text-align:center;">금 프리미엄 로딩 중...</div></div>
             <div id="view-indicators" class="view-section"><div class="pro-card" style="padding:80px; text-align:center;">시장 지표 분석 중...</div></div>
-            <div id="view-analysis" class="view-section"><div class="pro-card" style="padding:80px; text-align:center;">AI 시황 브리핑 준비 중...</div></div>
+            <div id="view-analysis" class="view-section"><div class="pro-card" style="padding:80px; text-align:center;">AI 시황 브리핑 중...</div></div>
         </main>
 
         <aside class="right-sidebar-area">
@@ -150,46 +167,45 @@
     <datalist id="assetList"></datalist>
     <div id="imgModal" class="modal" onclick="this.style.display='none'"><img id="modalImg" style="max-width:90%; max-height:90%; border-radius:10px;"></div>
 
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script>
         let db, records = JSON.parse(localStorage.getItem('trading_v11_master')) || [], usdtRate = 1467;
         let krwMarkets = [], binancePrices = {}, tickerData = {};
-        let socket;
+        let socket, activeWidget;
+
+        function loadChart(symbol, exchange) {
+            const chartSymbol = exchange === 'upbit' ? `UPBIT:${symbol}KRW` : `BINANCE:${symbol}USDT`;
+            document.getElementById('activeChartTitle').innerText = chartSymbol;
+            new TradingView.widget({ "autosize": true, "symbol": chartSymbol, "interval": "60", "timezone": "Asia/Seoul", "theme": "dark", "style": "1", "locale": "ko", "toolbar_bg": "#f1f3f6", "enable_publishing": false, "hide_top_toolbar": false, "hide_legend": false, "save_image": false, "container_id": "tv_chart_container" });
+        }
 
         async function initMarketData() {
             try {
-                // 1. 환율 획득 (AllOrigins Proxy)
                 const rateRes = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.upbit.com/v1/ticker?markets=KRW-USDT'));
                 const rateJson = await rateRes.json();
                 const rateTicker = JSON.parse(rateJson.contents);
                 if(rateTicker && rateTicker[0]) usdtRate = rateTicker[0].trade_price;
 
-                // 2. 종목 리스트 획득 (AllOrigins Proxy)
                 const marketsRes = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.upbit.com/v1/market/all'));
                 const marketsJson = await marketsRes.json();
                 const allMarkets = JSON.parse(marketsJson.contents);
                 krwMarkets = allMarkets.filter(m => m.market.startsWith('KRW-'));
                 document.getElementById('totalCoinCount').innerText = krwMarkets.length;
 
-                // 3. 바이낸스 초기 가격 획득
                 const bRes = await fetch('https://api.binance.com/api/v3/ticker/price');
                 const bJson = await bRes.json();
                 bJson.forEach(p => { if(p.symbol.endsWith('USDT')) binancePrices[p.symbol.replace('USDT','')] = parseFloat(p.price); });
 
                 connectWebSocket();
                 renderTable();
-            } catch(e) { console.error("Init failed", e); }
+                loadChart('BTC', 'upbit');
+            } catch(e) {}
         }
 
         function connectWebSocket() {
             socket = new WebSocket('wss://api.upbit.com/websocket/v1');
-            socket.onopen = () => {
-                const query = [{"ticket":"test"},{"type":"ticker","codes":krwMarkets.map(m => m.market)}];
-                socket.send(JSON.stringify(query));
-            };
-            socket.onmessage = async (e) => {
-                const data = JSON.parse(await e.data.text());
-                tickerData[data.code] = data;
-            };
+            socket.onopen = () => { const query = [{"ticket":"test"},{"type":"ticker","codes":krwMarkets.map(m => m.market)}]; socket.send(JSON.stringify(query)); };
+            socket.onmessage = async (e) => { const data = JSON.parse(await e.data.text()); tickerData[data.code] = data; };
             socket.onclose = () => setTimeout(connectWebSocket, 3000);
         }
 
@@ -198,26 +214,33 @@
             const search = document.getElementById('globalSearch').value.toUpperCase();
             const body = document.getElementById('globalBody');
             let html = '';
-
             krwMarkets.forEach(m => {
-                const t = tickerData[m.market];
-                if(!t) return;
+                const t = tickerData[m.market]; if(!t) return;
                 const symbol = m.market.replace('KRW-', '');
                 if(search && !symbol.includes(search) && !m.korean_name.includes(search)) return;
-
                 const bPrice = binancePrices[symbol] || 0;
-                let kimp = "-";
-                if(bPrice > 0) kimp = (((t.trade_price / usdtRate) - bPrice) / bPrice * 100).toFixed(2);
-                
+                let kimp = (bPrice > 0) ? (((t.trade_price / usdtRate) - bPrice) / bPrice * 100).toFixed(2) : "-";
                 const changeRate = (t.signed_change_rate * 100).toFixed(2);
                 const high52 = (((t.trade_price - t.highest_52_week_price) / t.highest_52_week_price) * 100).toFixed(2);
                 const low52 = (((t.trade_price - t.lowest_52_week_price) / t.lowest_52_week_price) * 100).toFixed(2);
                 const volume = Math.floor(t.acc_trade_price_24h / 1000000).toLocaleString();
+                const icon = `https://static.upbit.com/logos/${symbol}.png`;
 
                 html += `<tr>
-                    <td><b>${m.korean_name}</b><br><small style="color:var(--text-muted)">${symbol}</small></td>
+                    <td>
+                        <div style="display:flex; align-items:center;">
+                            <img src="${icon}" class="coin-icon" onerror="this.style.display='none'">
+                            <div>
+                                <b>${m.korean_name}</b> <small style="color:var(--text-muted)">${symbol}</small>
+                                <div style="margin-top:4px;">
+                                    <span class="chart-btn upbit" onclick="loadChart('${symbol}', 'upbit')">U</span>
+                                    <span class="chart-btn binance" onclick="loadChart('${symbol}', 'binance')">B</span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
                     <td>${t.trade_price.toLocaleString()}원</td>
-                    <td class="${kimp >= 0 ? 'pnl-up' : 'pnl-down'}" style="font-weight:800;">${kimp}%</td>
+                    <td class="${parseFloat(kimp) >= 0 ? 'pnl-up' : 'pnl-down'}" style="font-weight:800;">${kimp}%</td>
                     <td class="${t.change === 'RISE' ? 'pnl-up' : 'pnl-down'}">${t.change === 'RISE' ? '+' : ''}${changeRate}%</td>
                     <td class="pnl-down">${high52}%</td>
                     <td class="pnl-up">+${low52}%</td>
@@ -233,25 +256,28 @@
             const m = document.getElementById(`m-${v}`); if(m) m.classList.add('active');
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById(`view-${v}`).classList.add('active');
+            if(v === 'coin') renderTable();
         }
 
         async function fetchSymbols() {
             try {
                 const res = await fetch('https://api.binance.com/api/v3/exchangeInfo');
                 const data = await res.json();
-                const list = document.getElementById('assetList'); list.innerHTML = '';
-                data.symbols.filter(s => s.symbol.endsWith('USDT')).forEach(s => {
-                    const option = document.createElement('option'); option.value = s.symbol.replace('USDT', ''); list.appendChild(option);
-                });
+                const list = document.getElementById('assetList'); if(list) {
+                    list.innerHTML = '';
+                    data.symbols.filter(s => s.symbol.endsWith('USDT')).forEach(s => {
+                        const option = document.createElement('option'); option.value = s.symbol.replace('USDT', ''); list.appendChild(option);
+                    });
+                }
             } catch(e) {}
         }
 
         function runCalc() {
             const p = Number(document.getElementById('calcPrice').value), cap = Number(document.getElementById('calcEntry').value), lev = Number(document.getElementById('calcLev').value), risk = Number(document.getElementById('calcRiskPct').value), sl = Number(document.getElementById('calcSl').value);
             if(!p || !cap) return;
-            const riskAmt = cap * (risk/100), posVal = riskAmt / (sl/100), margin = posVal / lev, qty = posVal / p;
-            document.getElementById('resQty').innerText = qty.toFixed(5);
-            document.getElementById('resMargin').innerText = margin.toFixed(2) + ' $';
+            const posVal = (cap * (risk/100)) / (sl/100);
+            document.getElementById('resQty').innerText = (posVal / p).toFixed(5);
+            document.getElementById('resMargin').innerText = (posVal / lev).toFixed(2) + ' $';
         }
 
         async function fetchLivePrice(t, b) {
