@@ -17,143 +17,67 @@
 
     <style>
         :root {
-            --bg: #05070a;
-            --card-bg: #0f172a;
-            --nav-bg: #0f172a;
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: #1e293b;
-            --accent: #00f2ff;
-            --success: #22c55e;
-            --danger: #ef4444;
-            --warning: #f59e0b;
+            --bg: #05070a; --card-bg: #0f172a; --nav-bg: #0f172a; --text: #f8fafc;
+            --text-muted: #94a3b8; --border: #1e293b; --accent: #00f2ff;
+            --success: #22c55e; --danger: #ef4444; --warning: #f59e0b;
             --ai-gradient: linear-gradient(135deg, #00f2ff 0%, #3b82f6 100%);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Pretendard", sans-serif; }
         body { background-color: var(--bg); color: var(--text); font-size: 13px; overflow-x: hidden; }
 
-        /* 네비게이션 */
-        header { 
-            background: var(--nav-bg); 
-            border-bottom: 1px solid var(--border); 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
-            backdrop-filter: blur(10px); 
-        }
-        .nav-container { 
-            max-width: 1750px; 
-            margin: 0 auto; 
-            padding: 0 20px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            height: 65px; 
-        }
-        .logo { 
-            font-size: 26px; 
-            font-weight: 900; 
-            background: var(--ai-gradient); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            letter-spacing: -1.5px; 
-            cursor: pointer;
-        }
+        header { background: var(--nav-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
+        .nav-container { max-width: 1750px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; height: 65px; }
+        .logo { font-size: 26px; font-weight: 900; background: var(--ai-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1.5px; cursor: pointer; }
+        
         .main-menu { display: flex; gap: 20px; align-items: center; margin-left: 40px; }
-        .menu-item { 
-            color: var(--text-muted); 
-            font-weight: 700; 
-            cursor: pointer; 
-            font-size: 13.5px; 
-            transition: 0.3s; 
-            padding: 22px 0; 
-            border-bottom: 2px solid transparent; 
-            white-space: nowrap;
-        }
+        .menu-item { color: var(--text-muted); font-weight: 700; cursor: pointer; font-size: 13.5px; transition: 0.3s; padding: 22px 0; border-bottom: 2px solid transparent; white-space: nowrap; position: relative; }
         .menu-item:hover, .menu-item.active { color: var(--accent); border-bottom-color: var(--accent); }
-        .menu-item i { margin-right: 6px; font-size: 12px; }
+        .menu-item.disabled { opacity: 0.5; cursor: not-allowed; }
+        .badge-dev { font-size: 8px; background: var(--border); color: var(--text-muted); padding: 1px 4px; border-radius: 4px; margin-left: 4px; vertical-align: middle; font-weight: normal; }
 
         .header-right { display: flex; align-items: center; gap: 15px; }
-        .utility-icons { 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-            color: var(--text-muted); 
-            border-left: 1px solid var(--border); 
-            padding-left: 20px; 
-        }
+        .utility-icons { display: flex; align-items: center; gap: 15px; color: var(--text-muted); border-left: 1px solid var(--border); padding-left: 20px; }
         .u-icon { cursor: pointer; transition: 0.2s; font-size: 18px; }
         .u-icon:hover { color: var(--accent); }
         
-        .btn-journal-nav { 
-            background: var(--ai-gradient); color: #000; padding: 8px 16px; border-radius: 8px; 
-            font-weight: 800; font-size: 12px; cursor: pointer; border: none; display: flex; align-items: center; gap: 6px;
-            transition: 0.3s; box-shadow: 0 4px 15px rgba(0, 242, 255, 0.2);
-        }
+        .btn-journal-nav { background: var(--ai-gradient); color: #000; padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer; border: none; display: flex; align-items: center; gap: 6px; transition: 0.3s; box-shadow: 0 4px 15px rgba(0, 242, 255, 0.2); }
         .btn-journal-nav:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 242, 255, 0.4); opacity: 0.9; }
 
-        /* 레이아웃 구조 */
-        .main-container { 
-            max-width: 1750px; 
-            margin: 20px auto; 
-            display: grid; 
-            grid-template-columns: 300px 1fr 340px; 
-            gap: 20px; 
-            padding: 0 20px; 
-        }
+        .main-container { max-width: 1750px; margin: 20px auto; display: grid; grid-template-columns: 300px 1fr 340px; gap: 20px; padding: 0 20px; }
         .left-area, .right-area { display: flex; flex-direction: column; gap: 20px; }
-        .center-area { min-width: 0; }
         .right-area, .left-area-content { position: sticky; top: 85px; height: calc(100vh - 110px); }
         .left-area-content { overflow-y: auto; padding-right: 5px; }
 
-        /* 고급 미니 사이드바 스타일 */
         .pro-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 15px; }
-        .card-header { 
-            padding: 10px 15px; font-weight: 800; border-bottom: 1px solid var(--border); 
-            display: flex; justify-content: space-between; align-items: center; 
-            background: rgba(255,255,255,0.02); font-size: 10px; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 1px;
-        }
+        .card-header { padding: 10px 15px; font-weight: 800; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
         .card-body { padding: 15px; }
 
         .mini-stat { margin-bottom: 18px; }
-        .mini-stat:last-child { margin-bottom: 0; }
         .mini-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
         .mini-value { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--text); }
-        .mini-sub { font-size: 10px; margin-left: 5px; font-weight: normal; }
-
-        /* 롱숏 바 */
         .ls-bar-container { height: 6px; background: #1e293b; border-radius: 10px; overflow: hidden; display: flex; margin: 8px 0; }
         .ls-long { background: var(--success); height: 100%; transition: 0.5s; }
         .ls-short { background: var(--danger); height: 100%; transition: 0.5s; }
-
-        /* 공포탐욕 바 */
         .fng-bar-mini { height: 4px; background: #1e293b; border-radius: 10px; margin-top: 6px; position: relative; }
         .fng-dot { position: absolute; width: 8px; height: 8px; background: #fff; border-radius: 50%; top: -2px; box-shadow: 0 0 10px rgba(255,255,255,0.5); transition: 0.5s; }
 
-        /* 거래 알림 애니메이션 */
-        .alert-item { 
-            padding: 10px; border-bottom: 1px solid var(--border); font-size: 11px; line-height: 1.4;
-            transition: 0.3s; animation: fadeIn 0.5s ease-out;
-        }
-        .alert-item:last-child { border-bottom: none; }
+        .alert-item { padding: 10px; border-bottom: 1px solid var(--border); font-size: 11px; line-height: 1.4; animation: fadeIn 0.5s ease-out; }
         .alert-tag { font-weight: 800; padding: 2px 4px; border-radius: 4px; font-size: 9px; margin-right: 5px; }
         .tag-buy { background: rgba(34, 197, 94, 0.1); color: var(--success); }
-        .tag-sell { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* 테이블 */
         table { width: 100%; border-collapse: collapse; }
         th { background: rgba(0,0,0,0.3); padding: 12px 10px; text-align: left; color: var(--text-muted); font-size: 11px; }
         td { padding: 12px 10px; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; }
+        tr:hover { background: rgba(255,255,255,0.03); cursor: pointer; }
         .coin-icon { width: 20px; height: 20px; border-radius: 50%; vertical-align: middle; margin-right: 8px; }
 
-        .view-section { display: none; }
-        .view-section.active { display: block; }
         .pnl-up { color: var(--success); }
         .pnl-down { color: var(--danger); }
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -164,9 +88,9 @@
                 <div class="logo" onclick="location.reload()">K-LOG</div>
                 <nav class="main-menu">
                     <div class="menu-item active" id="m-coin" onclick="switchView('coin')">암호화폐</div>
-                    <div class="menu-item" id="m-longshort" onclick="switchView('longshort')">롱-숏</div>
-                    <div class="menu-item" id="m-ranking" onclick="switchView('ranking')">실시간 순위</div>
-                    <div class="menu-item" id="m-stock" onclick="switchView('stock')">주식</div>
+                    <div class="menu-item disabled" id="m-longshort">롱-숏<span class="badge-dev">준비중</span></div>
+                    <div class="menu-item disabled" id="m-ranking">실시간 순위<span class="badge-dev">준비중</span></div>
+                    <div class="menu-item disabled" id="m-stock">주식<span class="badge-dev">준비중</span></div>
                     <div class="menu-item" id="m-news" onclick="switchView('news')">뉴스</div>
                     <div class="menu-item" id="m-calendar" onclick="switchView('calendar')">경제 캘린더</div>
                     <div class="menu-item" id="m-analysis" onclick="switchView('analysis')"><i class="fa-solid fa-wand-magic-sparkles"></i> AI 시황분석</div>
@@ -183,113 +107,67 @@
     </header>
 
     <div class="main-container">
-        <!-- [왼쪽] 시장 인사이트 -->
         <aside class="left-area">
             <div class="left-area-content">
                 <div class="pro-card">
                     <div class="card-header">📈 Market Insight</div>
                     <div class="card-body">
-                        <!-- 롱숏 비율 -->
                         <div class="mini-stat">
-                            <div class="mini-label">
-                                <span>롱·숏 비율(24H)</span>
-                                <span style="font-size:9px;"><b class="pnl-up">49.8%</b> · <b class="pnl-down">50.2%</b></span>
-                            </div>
-                            <div class="ls-bar-container">
-                                <div id="lsLongBar" class="ls-long" style="width: 49.8%;"></div>
-                                <div id="lsShortBar" class="ls-short" style="width: 50.2%;"></div>
-                            </div>
+                            <div class="mini-label"><span>롱·숏 비율(24H)</span><span style="font-size:9px;"><b class="pnl-up">49.8%</b> · <b class="pnl-down">50.2%</b></span></div>
+                            <div class="ls-bar-container"><div id="lsLongBar" class="ls-long" style="width: 49.8%;"></div><div id="lsShortBar" class="ls-short" style="width: 50.2%;"></div></div>
                         </div>
-
-                        <!-- 거래량 -->
                         <div class="mini-stat">
                             <div class="mini-label">거래량(24H)</div>
-                            <div class="mini-value">
-                                <span id="totalVol">--</span>
-                                <span class="mini-sub pnl-up" id="volChange">--%</span>
-                            </div>
+                            <div class="mini-value"><span id="totalVol">--</span> <span class="mini-sub pnl-up" id="volChange">--%</span></div>
                         </div>
-
-                        <!-- 시가총액 -->
                         <div class="mini-stat">
                             <div class="mini-label">시가총액</div>
-                            <div class="mini-value">
-                                <span id="totalCap">--</span>
-                                <span class="mini-sub pnl-down" id="capChange">--%</span>
-                            </div>
+                            <div class="mini-value"><span id="totalCap">--</span> <span class="mini-sub pnl-down" id="capChange">--%</span></div>
                         </div>
-
-                        <!-- 공포탐욕지수 (2번 제안: 작고 고급스럽게) -->
                         <div class="mini-stat" style="margin-bottom:0; border-top:1px solid var(--border); padding-top:15px;">
                             <div class="mini-label">공포·탐욕 지수</div>
-                            <div class="mini-value" style="font-size:16px;">
-                                <span id="fngValMini">--</span> <span class="mini-sub" id="fngLabelMini" style="font-size:12px; font-weight:800;">Loading...</span>
-                            </div>
-                            <div class="fng-bar-mini">
-                                <div id="fngDotMini" class="fng-dot" style="left: 0%;"></div>
-                            </div>
+                            <div class="mini-value" style="font-size:16px;"><span id="fngValMini">--</span> <span class="mini-sub" id="fngLabelMini" style="font-size:12px; font-weight:800;">Loading...</span></div>
+                            <div class="fng-bar-mini"><div id="fngDotMini" class="fng-dot" style="left: 0%;"></div></div>
                         </div>
                     </div>
                 </div>
-
                 <div class="pro-card">
                     <div class="card-header">🔔 Real-time Alerts</div>
                     <div id="alertList" style="max-height:300px; overflow-y:auto;">
-                        <!-- 실시간 알림이 여기에 추가됨 -->
-                        <div class="alert-item">
-                            <span class="alert-tag tag-buy">WHALE</span>
-                            <b>BTC</b> 120억 규모 매수 발생 (업비트)
-                        </div>
-                        <div class="alert-item">
-                            <span class="alert-tag tag-sell">PUMP</span>
-                            <b>XRP</b> 5분간 +2.4% 급등 중
-                        </div>
+                        <div class="alert-item"><span class="alert-tag tag-buy">WHALE</span><b>BTC</b> 120억 규모 매수 발생 (업비트)</div>
                     </div>
                 </div>
             </div>
         </aside>
 
-        <!-- [중앙] 메인 컨텐츠 -->
         <main class="center-area">
             <div id="view-coin" class="view-section active">
-                <div class="pro-card" style="margin-bottom:20px; height:480px;">
-                    <div id="tv_chart_container" style="height:100%; width:100%"></div>
-                </div>
-                
+                <div class="pro-card" style="margin-bottom:20px; height:480px;"><div id="tv_chart_container" style="height:100%; width:100%"></div></div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                     <div style="font-size:15px; font-weight:800; color:var(--accent);">🌐 실시간 프리미엄 시황</div>
-                    <div style="font-size:11px; color:var(--text-muted);">USDT: <b id="usdtDisplay">1,480</b> | 환율: <b>1,467</b></div>
+                    <div style="font-size:11px; color:var(--text-muted);">USDT: <b id="usdtDisplay">--</b> | 환율: <b>1,467</b></div>
                 </div>
-
                 <div class="pro-card">
                     <table>
-                        <thead>
-                            <tr><th>코인명</th><th>현재가(원)</th><th>김프(%)</th><th>바이낸스($)</th><th>전일대비</th><th style="text-align:right;">거래대금</th></tr>
-                        </thead>
+                        <thead><tr><th>코인명</th><th>현재가(원)</th><th>김프(%)</th><th>바이낸스($)</th><th>전일대비</th><th style="text-align:right;">거래대금(24H)</th></tr></thead>
                         <tbody id="globalBody"></tbody>
                     </table>
                 </div>
             </div>
+            <div id="view-news" class="view-section"><div class="pro-card" style="padding:100px; text-align:center;">실시간 뉴스를 불러오는 중...</div></div>
+            <div id="view-journal" class="view-section"><div class="pro-card" style="padding:100px; text-align:center;">매매일지 목록 (준비 중)</div></div>
         </main>
 
-        <!-- [오른쪽] 워크스테이션 -->
         <aside class="right-area">
             <div class="pro-card">
                 <div class="card-header">📐 Risk Calculator</div>
                 <div class="card-body">
-                    <input type="text" id="calcAssetName" placeholder="종목 심볼">
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                        <input type="number" id="calcPrice" placeholder="현재가 ($)">
-                        <input type="number" id="calcLev" value="10">
-                    </div>
-                    <button class="btn-accent">데이터 적용</button>
+                    <input type="text" id="calcAssetName" placeholder="심볼 (예: BTC)">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"><input type="number" id="calcPrice" placeholder="현재가 ($)"><input type="number" id="calcLev" value="10"></div>
+                    <button class="btn-accent" style="margin-top:5px;">데이터 적용</button>
                 </div>
             </div>
-
-            <div class="pro-card" style="flex:1; display:flex; flex-direction:column;">
-                <div class="card-header">💬 Trollbox</div>
-                <div style="flex:1; padding:15px; font-size:11px; color:var(--text-muted);">로그인이 필요합니다.</div>
-            </div>
+            <div class="pro-card" style="flex:1; display:flex; flex-direction:column;"><div class="card-header">💬 Trollbox</div><div style="flex:1; padding:15px; font-size:11px; color:var(--text-muted);">로그인이 필요합니다.</div></div>
         </aside>
     </div>
 
@@ -298,28 +176,21 @@
 
         async function init() {
             try {
-                // 1. 환율 및 테더
                 const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.upbit.com/v1/ticker?markets=KRW-USDT'));
                 const rj = await r.json(); usdtRate = JSON.parse(rj.contents)[0].trade_price;
                 document.getElementById('usdtDisplay').innerText = usdtRate.toLocaleString();
 
-                // 2. 글로벌 마켓 통계 (CoinGecko)
                 const gRes = await fetch('https://api.coingecko.com/api/v3/global');
                 const gData = await gRes.json();
-                const global = gData.data;
-                document.getElementById('totalCap').innerText = (global.total_market_cap.krw / 1000000000000).toFixed(1) + '조';
-                document.getElementById('capChange').innerText = global.market_cap_change_percentage_24h_usd.toFixed(2) + '%';
-                document.getElementById('totalVol').innerText = (global.total_volume.krw / 1000000000000).toFixed(1) + '조';
+                document.getElementById('totalCap').innerText = (gData.data.total_market_cap.krw / 1000000000000).toFixed(1) + '조';
+                document.getElementById('totalVol').innerText = (gData.data.total_volume.krw / 1000000000000).toFixed(1) + '조';
 
-                // 3. 공포탐욕지수
                 const fRes = await fetch('https://api.alternative.me/fng/');
                 const fData = await fRes.json();
-                const fVal = fData.data[0].value;
-                document.getElementById('fngValMini').innerText = fVal;
+                document.getElementById('fngValMini').innerText = fData.data[0].value;
                 document.getElementById('fngLabelMini').innerText = '— ' + fData.data[0].value_classification;
-                document.getElementById('fngDotMini').style.left = fVal + '%';
+                document.getElementById('fngDotMini').style.left = fData.data[0].value + '%';
 
-                // 4. 업비트 & 바이낸스 데이터
                 const mRes = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.upbit.com/v1/market/all'));
                 const mData = await mRes.json(); krwMarkets = JSON.parse(mData.contents).filter(x => x.market.startsWith('KRW-'));
 
@@ -339,10 +210,11 @@
         }
 
         function renderTable() {
-            const body = document.getElementById('globalBody');
-            if(!body) return;
+            const body = document.getElementById('globalBody'); if(!body) return;
             let html = '';
+            // 거래대금 순 정렬 (지리게!)
             krwMarkets.sort((a,b) => (tickerData[b.market]?.acc_trade_price_24h || 0) - (tickerData[a.market]?.acc_trade_price_24h || 0));
+            
             krwMarkets.forEach(m => {
                 const t = tickerData[m.market]; if(!t) return;
                 const symbol = m.market.replace('KRW-', '');
@@ -352,7 +224,7 @@
                     <td><img src="https://static.upbit.com/logos/${symbol}.png" class="coin-icon"><b>${m.korean_name}</b> <small style="color:var(--text-muted)">${symbol}</small></td>
                     <td>${t.trade_price.toLocaleString()}</td>
                     <td class="${parseFloat(kimp)>=0?'pnl-up':'pnl-down'}">${kimp}%</td>
-                    <td>${bPrice ? bPrice.toLocaleString() + ' $' : '-'}</td>
+                    <td>${bPrice ? bPrice.toLocaleString() : '-'}</td>
                     <td class="${t.signed_change_rate>=0?'pnl-up':'pnl-down'}">${(t.signed_change_rate*100).toFixed(2)}%</td>
                     <td style="text-align:right;">${Math.floor(t.acc_trade_price_24h/1000000).toLocaleString()}M</td>
                 </tr>`;
@@ -362,10 +234,7 @@
         }
 
         function loadChart(symbol) {
-            new TradingView.widget({
-                "autosize": true, "symbol": `UPBIT:${symbol}KRW`, "interval": "60", "timezone": "Asia/Seoul",
-                "theme": "dark", "style": "1", "locale": "ko", "container_id": "tv_chart_container"
-            });
+            new TradingView.widget({ "autosize": true, "symbol": `UPBIT:${symbol}KRW`, "interval": "60", "timezone": "Asia/Seoul", "theme": "dark", "style": "1", "locale": "ko", "container_id": "tv_chart_container" });
         }
 
         function switchView(v) {
