@@ -85,15 +85,35 @@
         .utility-icons { 
             display: flex; 
             align-items: center; 
-            gap: 18px; 
-            font-size: 18px; 
+            gap: 15px; 
             color: var(--text-muted); 
             border-left: 1px solid var(--border); 
             padding-left: 20px; 
         }
-        .u-icon { cursor: pointer; transition: 0.2s; }
+        .u-icon { cursor: pointer; transition: 0.2s; font-size: 18px; }
         .u-icon:hover { color: var(--accent); }
-        .u-text { font-size: 11px; font-weight: 700; cursor: pointer; }
+        .u-text { font-size: 12px; font-weight: 700; cursor: pointer; }
+
+        .btn-journal-nav { 
+            background: var(--ai-gradient); 
+            color: #000; 
+            padding: 8px 16px; 
+            border-radius: 8px; 
+            font-weight: 800; 
+            font-size: 12px; 
+            cursor: pointer; 
+            border: none; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 242, 255, 0.2);
+        }
+        .btn-journal-nav:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(0, 242, 255, 0.4); 
+            opacity: 0.9;
+        }
 
         /* 3. 레이아웃 구조 (3단) */
         .main-container { 
@@ -180,27 +200,6 @@
 </head>
 <body>
 
-    <!-- 1. 실시간 티커 바 -->
-    <div class="top-ticker-bar">
-        <div class="tradingview-widget-container">
-            <div class="tradingview-widget-container__widget"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-            {
-                "symbols": [
-                    {"proName": "BINANCE:BTCUSDT", "title": "비트코인"},
-                    {"proName": "BINANCE:ETHUSDT", "title": "이더리움"},
-                    {"proName": "BINANCE:XRPUSDT", "title": "리플"},
-                    {"proName": "BINANCE:SOLUSDT", "title": "솔라나"},
-                    {"proName": "FX_IDC:USDKRW", "title": "원/달러 환율"},
-                    {"proName": "CRYPTOCAP:BTC.D", "title": "BTC 점유율"},
-                    {"proName": "NASDAQ:IXIC", "title": "나스닥100"}
-                ],
-                "showSymbolLogo": true, "colorTheme": "dark", "isTransparent": true, "displayMode": "adaptive", "locale": "ko"
-            }
-            </script>
-        </div>
-    </div>
-
     <!-- 2. 네비게이션 -->
     <header>
         <div class="nav-container">
@@ -214,11 +213,13 @@
                     <div class="menu-item" id="m-news" onclick="switchView('news')">뉴스</div>
                     <div class="menu-item" id="m-calendar" onclick="switchView('calendar')">경제 캘린더</div>
                     <div class="menu-item" id="m-analysis" onclick="switchView('analysis')"><i class="fa-solid fa-wand-magic-sparkles"></i> AI 시황분석</div>
-                    <div class="menu-item" id="m-journal" onclick="switchView('journal')"><i class="fa-solid fa-book"></i> 매매일지</div>
                 </nav>
             </div>
             <div class="header-right">
                 <div class="utility-icons">
+                    <button class="btn-journal-nav" onclick="switchView('journal')">
+                        <i class="fa-solid fa-book"></i> 매매일지
+                    </button>
                     <span class="u-text">내정보</span>
                     <i class="fa-solid fa-gear u-icon" title="환경설정"></i>
                     <i class="fa-solid fa-circle-user u-icon" style="font-size: 22px;" title="로그인"></i>
@@ -280,6 +281,7 @@
             <!-- 다른 탭들 (뉴스, 주식 등) 자리 -->
             <div id="view-news" class="view-section"><div class="pro-card" style="padding:50px; text-align:center;">최신 코인 뉴스를 불러오는 중...</div></div>
             <div id="view-stock" class="view-section"><div class="pro-card" style="padding:50px; text-align:center;">미국/국내 주식 시황 준비 중...</div></div>
+            <div id="view-journal" class="view-section"><div class="pro-card" style="padding:50px; text-align:center;">저장된 매매 일지 목록을 불러오는 중...</div></div>
         </main>
 
         <!-- [오른쪽] 매매일지 워크스테이션 -->
@@ -327,7 +329,7 @@
             <div class="pro-card trollbox">
                 <div class="card-header">💬 트롤박스 (실시간)</div>
                 <div class="chat-messages" id="chatBox">
-                    <div class="chat-msg"><b>운영자:</b> K-LOG v2에 오신 것을 환영합니다!</div>
+                    <div class="chat-msg"><b>운영자:</b> K-LOG v2.1에 오신 것을 환영합니다!</div>
                     <div class="chat-msg"><b>고래형:</b> 오늘 김프 3% 넘었네요 ㄷㄷ</div>
                     <div class="chat-msg"><b>단타왕:</b> 나스닥 반등 가즈아~</div>
                 </div>
@@ -348,7 +350,9 @@
 
         function switchView(v) {
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(`m-${v}`).classList.add('active');
+            const m = document.getElementById(`m-${v}`);
+            if(m) m.classList.add('active');
+            
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             const target = document.getElementById(`view-${v}`);
             if(target) target.classList.add('active');
