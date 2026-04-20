@@ -98,7 +98,7 @@
             max-width: 1750px; 
             margin: 20px auto; 
             display: grid; 
-            grid-template-columns: 320px 1fr 340px; 
+            grid-template-columns: 300px 1fr 340px; 
             gap: 20px; 
             padding: 0 20px; 
         }
@@ -106,52 +106,54 @@
         .center-area { min-width: 0; }
         .right-area, .left-area-content { position: sticky; top: 85px; height: calc(100vh - 110px); }
         .left-area-content { overflow-y: auto; padding-right: 5px; }
-        .left-area-content::-webkit-scrollbar { width: 4px; }
-        .left-area-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
-        /* 카드 공통 */
-        .pro-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; }
+        /* 고급 미니 사이드바 스타일 */
+        .pro-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 15px; }
         .card-header { 
-            padding: 12px 15px; font-weight: 800; border-bottom: 1px solid var(--border); 
+            padding: 10px 15px; font-weight: 800; border-bottom: 1px solid var(--border); 
             display: flex; justify-content: space-between; align-items: center; 
-            background: rgba(255,255,255,0.02); font-size: 11px; color: var(--accent);
-            text-transform: uppercase; letter-spacing: 0.5px;
+            background: rgba(255,255,255,0.02); font-size: 10px; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 1px;
         }
         .card-body { padding: 15px; }
 
-        /* 지표 스타일 */
-        .stat-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 12px; }
-        .stat-label { color: var(--text-muted); }
-        .stat-value { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
-        
-        /* 공포탐욕지수 */
-        .fng-container { text-align: center; padding: 10px 0; }
-        .fng-value { font-size: 28px; font-weight: 900; margin-bottom: 5px; }
-        .fng-label { font-size: 11px; font-weight: 800; text-transform: uppercase; }
+        .mini-stat { margin-bottom: 18px; }
+        .mini-stat:last-child { margin-bottom: 0; }
+        .mini-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .mini-value { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--text); }
+        .mini-sub { font-size: 10px; margin-left: 5px; font-weight: normal; }
 
-        /* 알림 리스트 */
-        .alert-list { font-size: 11px; display: flex; flex-direction: column; gap: 8px; }
-        .alert-item { padding: 8px; background: rgba(0,0,0,0.2); border-radius: 6px; border-left: 3px solid var(--accent); }
-        .alert-time { color: var(--text-muted); font-size: 9px; margin-bottom: 2px; }
+        /* 롱숏 바 */
+        .ls-bar-container { height: 6px; background: #1e293b; border-radius: 10px; overflow: hidden; display: flex; margin: 8px 0; }
+        .ls-long { background: var(--success); height: 100%; transition: 0.5s; }
+        .ls-short { background: var(--danger); height: 100%; transition: 0.5s; }
+
+        /* 공포탐욕 바 */
+        .fng-bar-mini { height: 4px; background: #1e293b; border-radius: 10px; margin-top: 6px; position: relative; }
+        .fng-dot { position: absolute; width: 8px; height: 8px; background: #fff; border-radius: 50%; top: -2px; box-shadow: 0 0 10px rgba(255,255,255,0.5); transition: 0.5s; }
+
+        /* 거래 알림 애니메이션 */
+        .alert-item { 
+            padding: 10px; border-bottom: 1px solid var(--border); font-size: 11px; line-height: 1.4;
+            transition: 0.3s; animation: fadeIn 0.5s ease-out;
+        }
+        .alert-item:last-child { border-bottom: none; }
+        .alert-tag { font-weight: 800; padding: 2px 4px; border-radius: 4px; font-size: 9px; margin-right: 5px; }
+        .tag-buy { background: rgba(34, 197, 94, 0.1); color: var(--success); }
+        .tag-sell { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* 테이블 */
         table { width: 100%; border-collapse: collapse; }
-        th { background: rgba(0,0,0,0.3); padding: 12px 10px; text-align: left; color: var(--text-muted); font-size: 11px; position: sticky; top: 0; z-index: 10; }
+        th { background: rgba(0,0,0,0.3); padding: 12px 10px; text-align: left; color: var(--text-muted); font-size: 11px; }
         td { padding: 12px 10px; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; }
-        tr:hover { background: rgba(255,255,255,0.03); cursor: pointer; }
         .coin-icon { width: 20px; height: 20px; border-radius: 50%; vertical-align: middle; margin-right: 8px; }
-
-        .pnl-up { color: var(--success); }
-        .pnl-down { color: var(--danger); }
-        
-        input { 
-            width: 100%; background: #05070a; border: 1px solid var(--border); padding: 10px; 
-            border-radius: 8px; color: var(--text); font-size: 12px; margin-bottom: 10px; outline: none; 
-        }
-        .btn-accent { background: var(--ai-gradient); color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: 800; width: 100%; cursor: pointer; }
 
         .view-section { display: none; }
         .view-section.active { display: block; }
+        .pnl-up { color: var(--success); }
+        .pnl-down { color: var(--danger); }
     </style>
 </head>
 <body>
@@ -181,68 +183,66 @@
     </header>
 
     <div class="main-container">
-        <!-- [왼쪽] 시장 대시보드 -->
+        <!-- [왼쪽] 시장 인사이트 -->
         <aside class="left-area">
             <div class="left-area-content">
-                <!-- 1. 공포탐욕지수 -->
                 <div class="pro-card">
-                    <div class="card-header">😨 공포·탐욕 지수</div>
+                    <div class="card-header">📈 Market Insight</div>
                     <div class="card-body">
-                        <div class="fng-container">
-                            <div id="fngValue" class="fng-value">--</div>
-                            <div id="fngLabel" class="fng-label">Loading...</div>
-                            <div style="width:100%; height:6px; background:#1e293b; border-radius:10px; margin-top:15px; position:relative;">
-                                <div id="fngBar" style="position:absolute; height:100%; width:0%; border-radius:10px; transition:0.5s;"></div>
+                        <!-- 롱숏 비율 -->
+                        <div class="mini-stat">
+                            <div class="mini-label">
+                                <span>롱·숏 비율(24H)</span>
+                                <span style="font-size:9px;"><b class="pnl-up">49.8%</b> · <b class="pnl-down">50.2%</b></span>
+                            </div>
+                            <div class="ls-bar-container">
+                                <div id="lsLongBar" class="ls-long" style="width: 49.8%;"></div>
+                                <div id="lsShortBar" class="ls-short" style="width: 50.2%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- 거래량 -->
+                        <div class="mini-stat">
+                            <div class="mini-label">거래량(24H)</div>
+                            <div class="mini-value">
+                                <span id="totalVol">--</span>
+                                <span class="mini-sub pnl-up" id="volChange">--%</span>
+                            </div>
+                        </div>
+
+                        <!-- 시가총액 -->
+                        <div class="mini-stat">
+                            <div class="mini-label">시가총액</div>
+                            <div class="mini-value">
+                                <span id="totalCap">--</span>
+                                <span class="mini-sub pnl-down" id="capChange">--%</span>
+                            </div>
+                        </div>
+
+                        <!-- 공포탐욕지수 (2번 제안: 작고 고급스럽게) -->
+                        <div class="mini-stat" style="margin-bottom:0; border-top:1px solid var(--border); padding-top:15px;">
+                            <div class="mini-label">공포·탐욕 지수</div>
+                            <div class="mini-value" style="font-size:16px;">
+                                <span id="fngValMini">--</span> <span class="mini-sub" id="fngLabelMini" style="font-size:12px; font-weight:800;">Loading...</span>
+                            </div>
+                            <div class="fng-bar-mini">
+                                <div id="fngDotMini" class="fng-dot" style="left: 0%;"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2. 시장 주요 지표 -->
                 <div class="pro-card">
-                    <div class="card-header">📈 시장 주요 지표</div>
-                    <div class="card-body">
-                        <div class="stat-row">
-                            <span class="stat-label">BTC 도미넌스</span>
-                            <span class="stat-value pnl-up" id="btcDom">--%</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">실시간 환율</span>
-                            <span class="stat-value" id="krwRate">--</span>
-                        </div>
-                        <div class="stat-row" style="margin-bottom:0;">
-                            <span class="stat-label">테더(USDT)</span>
-                            <span class="stat-value pnl-up" id="usdtPrice">--</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3. 롱숏 비율 (BTC) -->
-                <div class="pro-card">
-                    <div class="card-header">📊 BTC 롱-숏 비율 (24H)</div>
-                    <div class="card-body">
-                        <div style="display:flex; height:25px; border-radius:6px; overflow:hidden; margin-bottom:10px;">
-                            <div id="longBar" style="width:50%; background:var(--success); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold;">LONG</div>
-                            <div id="shortBar" style="width:50%; background:var(--danger); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold;">SHORT</div>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:bold;">
-                            <span class="pnl-up" id="longPct">50%</span>
-                            <span class="pnl-down" id="shortPct">50%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 4. 실시간 고래 알림 -->
-                <div class="pro-card">
-                    <div class="card-header">🔔 실시간 거래 알림</div>
-                    <div class="card-body alert-list" id="alertBox">
+                    <div class="card-header">🔔 Real-time Alerts</div>
+                    <div id="alertList" style="max-height:300px; overflow-y:auto;">
+                        <!-- 실시간 알림이 여기에 추가됨 -->
                         <div class="alert-item">
-                            <div class="alert-time">방금 전</div>
-                            <div><b>BTC</b> 업비트 50억 규모 매수 발생</div>
+                            <span class="alert-tag tag-buy">WHALE</span>
+                            <b>BTC</b> 120억 규모 매수 발생 (업비트)
                         </div>
-                        <div class="alert-item" style="border-left-color: var(--danger);">
-                            <div class="alert-time">2분 전</div>
-                            <div><b>SOL</b> 바이낸스 대량 입금 감지</div>
+                        <div class="alert-item">
+                            <span class="alert-tag tag-sell">PUMP</span>
+                            <b>XRP</b> 5분간 +2.4% 급등 중
                         </div>
                     </div>
                 </div>
@@ -252,13 +252,13 @@
         <!-- [중앙] 메인 컨텐츠 -->
         <main class="center-area">
             <div id="view-coin" class="view-section active">
-                <div class="pro-card" style="margin-bottom:20px; height:450px;">
+                <div class="pro-card" style="margin-bottom:20px; height:480px;">
                     <div id="tv_chart_container" style="height:100%; width:100%"></div>
                 </div>
                 
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <div style="font-size:15px; font-weight:800; color:var(--accent);">🌐 글로벌 실시간 프리미엄</div>
-                    <input type="text" id="globalSearch" placeholder="코인명/심볼 검색..." style="width:200px; margin-bottom:0;">
+                    <div style="font-size:15px; font-weight:800; color:var(--accent);">🌐 실시간 프리미엄 시황</div>
+                    <div style="font-size:11px; color:var(--text-muted);">USDT: <b id="usdtDisplay">1,480</b> | 환율: <b>1,467</b></div>
                 </div>
 
                 <div class="pro-card">
@@ -270,38 +270,25 @@
                     </table>
                 </div>
             </div>
-            
-            <div id="view-journal" class="view-section">
-                <div class="pro-card" style="padding:100px; text-align:center;">매매일지 목록 (준비 중)</div>
-            </div>
         </main>
 
         <!-- [오른쪽] 워크스테이션 -->
         <aside class="right-area">
             <div class="pro-card">
-                <div class="card-header">📐 리스크 계산기</div>
+                <div class="card-header">📐 Risk Calculator</div>
                 <div class="card-body">
                     <input type="text" id="calcAssetName" placeholder="종목 심볼">
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <input type="number" id="calcPrice" placeholder="현재가 ($)">
                         <input type="number" id="calcLev" value="10">
                     </div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                        <input type="number" id="calcEntry" placeholder="투자금 ($)">
-                        <input type="number" id="calcSl" value="5">
-                    </div>
-                    <button class="btn-accent">계산 결과 적용</button>
+                    <button class="btn-accent">데이터 적용</button>
                 </div>
             </div>
 
             <div class="pro-card" style="flex:1; display:flex; flex-direction:column;">
-                <div class="card-header">💬 트롤박스</div>
-                <div style="flex:1; padding:15px; font-size:11px; color:var(--text-muted);">
-                    로그인 후 채팅에 참여하세요.
-                </div>
-                <div style="padding:10px; border-top:1px solid var(--border);">
-                    <input type="text" placeholder="메시지를 입력하세요..." style="margin-bottom:0;">
-                </div>
+                <div class="card-header">💬 Trollbox</div>
+                <div style="flex:1; padding:15px; font-size:11px; color:var(--text-muted);">로그인이 필요합니다.</div>
             </div>
         </aside>
     </div>
@@ -309,45 +296,35 @@
     <script>
         let krwMarkets = [], binancePrices = {}, tickerData = {}, usdtRate = 1467;
 
-        function switchView(v) {
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            const m = document.getElementById(`m-${v}`); if(m) m.classList.add('active');
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            const target = document.getElementById(`view-${v}`); if(target) target.classList.add('active');
-        }
-
-        function loadChart(symbol) {
-            new TradingView.widget({
-                "autosize": true, "symbol": `UPBIT:${symbol}KRW`, "interval": "60", "timezone": "Asia/Seoul",
-                "theme": "dark", "style": "1", "locale": "ko", "container_id": "tv_chart_container"
-            });
-        }
-
         async function init() {
             try {
-                // 환율 및 티커 데이터 초기화
+                // 1. 환율 및 테더
                 const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.upbit.com/v1/ticker?markets=KRW-USDT'));
                 const rj = await r.json(); usdtRate = JSON.parse(rj.contents)[0].trade_price;
-                document.getElementById('krwRate').innerText = usdtRate.toLocaleString();
-                document.getElementById('usdtPrice').innerText = usdtRate.toLocaleString();
+                document.getElementById('usdtDisplay').innerText = usdtRate.toLocaleString();
 
-                const m = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.upbit.com/v1/market/all'));
-                const mj = await m.json(); krwMarkets = JSON.parse(mj.contents).filter(x => x.market.startsWith('KRW-'));
+                // 2. 글로벌 마켓 통계 (CoinGecko)
+                const gRes = await fetch('https://api.coingecko.com/api/v3/global');
+                const gData = await gRes.json();
+                const global = gData.data;
+                document.getElementById('totalCap').innerText = (global.total_market_cap.krw / 1000000000000).toFixed(1) + '조';
+                document.getElementById('capChange').innerText = global.market_cap_change_percentage_24h_usd.toFixed(2) + '%';
+                document.getElementById('totalVol').innerText = (global.total_volume.krw / 1000000000000).toFixed(1) + '조';
 
-                const b = await fetch('https://api.binance.com/api/v3/ticker/price');
-                const bj = await b.json(); bj.forEach(p => { if(p.symbol.endsWith('USDT')) binancePrices[p.symbol.replace('USDT','')] = parseFloat(p.price); });
+                // 3. 공포탐욕지수
+                const fRes = await fetch('https://api.alternative.me/fng/');
+                const fData = await fRes.json();
+                const fVal = fData.data[0].value;
+                document.getElementById('fngValMini').innerText = fVal;
+                document.getElementById('fngLabelMini').innerText = '— ' + fData.data[0].value_classification;
+                document.getElementById('fngDotMini').style.left = fVal + '%';
 
-                // 공포탐욕지수
-                const f = await fetch('https://api.alternative.me/fng/');
-                const fj = await f.json();
-                const fVal = fj.data[0].value;
-                document.getElementById('fngValue').innerText = fVal;
-                document.getElementById('fngLabel').innerText = fj.data[0].value_classification;
-                document.getElementById('fngBar').style.width = fVal + '%';
-                document.getElementById('fngBar').style.background = `linear-gradient(to right, #ef4444, #f59e0b, #22c55e)`;
-                
-                // 도미넌스 (임시)
-                document.getElementById('btcDom').innerText = '59.8%';
+                // 4. 업비트 & 바이낸스 데이터
+                const mRes = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.upbit.com/v1/market/all'));
+                const mData = await mRes.json(); krwMarkets = JSON.parse(mData.contents).filter(x => x.market.startsWith('KRW-'));
+
+                const bRes = await fetch('https://api.binance.com/api/v3/ticker/price');
+                const bData = await bRes.json(); bData.forEach(p => { if(p.symbol.endsWith('USDT')) binancePrices[p.symbol.replace('USDT','')] = parseFloat(p.price); });
 
                 connectWebSocket();
                 renderTable();
@@ -363,32 +340,39 @@
 
         function renderTable() {
             const body = document.getElementById('globalBody');
-            if(!body || !document.getElementById('view-coin').classList.contains('active')) { setTimeout(renderTable, 1000); return; }
-            
-            const search = document.getElementById('globalSearch').value.toUpperCase();
+            if(!body) return;
             let html = '';
-
+            krwMarkets.sort((a,b) => (tickerData[b.market]?.acc_trade_price_24h || 0) - (tickerData[a.market]?.acc_trade_price_24h || 0));
             krwMarkets.forEach(m => {
-                const t = tickerData[m.market];
+                const t = tickerData[m.market]; if(!t) return;
                 const symbol = m.market.replace('KRW-', '');
-                if(search && !symbol.includes(search) && !m.korean_name.includes(search)) return;
-                if(!t) return;
-
                 const bPrice = binancePrices[symbol] || 0;
-                let kimp = (bPrice > 0) ? (((t.trade_price / usdtRate) - bPrice) / bPrice * 100).toFixed(2) : "-";
-                const volume = Math.floor(t.acc_trade_price_24h / 1000000).toLocaleString();
-
+                let kimp = bPrice > 0 ? (((t.trade_price / usdtRate) - bPrice) / bPrice * 100).toFixed(2) : "-";
                 html += `<tr onclick="loadChart('${symbol}')">
-                    <td><div style="display:flex; align-items:center;"><img src="https://static.upbit.com/logos/${symbol}.png" class="coin-icon"><b>${m.korean_name}</b> <small style="margin-left:5px; color:var(--text-muted);">${symbol}</small></div></td>
+                    <td><img src="https://static.upbit.com/logos/${symbol}.png" class="coin-icon"><b>${m.korean_name}</b> <small style="color:var(--text-muted)">${symbol}</small></td>
                     <td>${t.trade_price.toLocaleString()}</td>
-                    <td class="${parseFloat(kimp)>=0?'pnl-up':'pnl-down'}" style="font-weight:bold;">${kimp}%</td>
-                    <td style="color:var(--text-muted);">${bPrice ? bPrice.toLocaleString() + ' $' : '-'}</td>
+                    <td class="${parseFloat(kimp)>=0?'pnl-up':'pnl-down'}">${kimp}%</td>
+                    <td>${bPrice ? bPrice.toLocaleString() + ' $' : '-'}</td>
                     <td class="${t.signed_change_rate>=0?'pnl-up':'pnl-down'}">${(t.signed_change_rate*100).toFixed(2)}%</td>
-                    <td style="text-align:right; font-size:11px; color:var(--text-muted);">${volume}M</td>
+                    <td style="text-align:right;">${Math.floor(t.acc_trade_price_24h/1000000).toLocaleString()}M</td>
                 </tr>`;
             });
             body.innerHTML = html;
-            setTimeout(renderTable, 1000);
+            setTimeout(renderTable, 2000);
+        }
+
+        function loadChart(symbol) {
+            new TradingView.widget({
+                "autosize": true, "symbol": `UPBIT:${symbol}KRW`, "interval": "60", "timezone": "Asia/Seoul",
+                "theme": "dark", "style": "1", "locale": "ko", "container_id": "tv_chart_container"
+            });
+        }
+
+        function switchView(v) {
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            const m = document.getElementById(`m-${v}`); if(m) m.classList.add('active');
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            const target = document.getElementById(`view-${v}`); if(target) target.classList.add('active');
         }
 
         window.onload = init;
