@@ -189,12 +189,10 @@
                                 <th style="text-align:right;">거래대금(24H)</th>
                             </tr>
                         </thead>
-                        <tbody id="globalBody">
-                            <tr><td colspan="7" style="text-align:center; padding:100px; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> 코인 데이터를 불러오는 중...</td></tr>
-                        </tbody>
+                        <tbody id="globalBody"></tbody>
                     </table>
                     <div id="loadMoreContainer" style="padding: 20px; text-align: center; border-top: 1px solid var(--border); display: none;">
-                        <button onclick="loadMore()" style="background: var(--border); color: var(--text); border: none; padding: 10px 30px; border-radius: 20px; cursor: pointer; font-weight: 700; transition: 0.3s;">더보기 (20개 더보기)</button>
+                        <button onclick="loadMore()" style="background: var(--border); color: var(--text); border: none; padding: 10px 30px; border-radius: 20px; cursor: pointer; font-weight: 700; transition: 0.3s;">더보기 (20개씩 더보기)</button>
                     </div>
                 </div>
             </div>
@@ -222,16 +220,24 @@
         let currentDomestic = 'upbit', currentOverseas = 'binance';
         let isFetching = false, displayLimit = 20;
 
+        // 초고속 로딩을 위한 초기 코인 20개 (리스트를 받기 전 미리 정의)
+        const initialCoins = ["BTC", "ETH", "SOL", "XRP", "DOGE", "ADA", "AVAX", "SHIB", "DOT", "LINK", "TRX", "MATIC", "BCH", "NEAR", "LTC", "APT", "PEPE", "ETC", "STX", "ARB"];
+
         function init() {
             loadChart('BTC');
+            
+            // 1단계: 초기 코인 20개 즉시 호출 (0.5초 이내 로딩 목표)
+            markets = initialCoins.map(s => ({ market: `KRW-${s}`, korean_name: s }));
+            fetchData(); 
+            
+            // 2단계: 나머지 정보 비동기 호출
             fetchUsdtRate();
             fetchGlobalStats();
-            updateMarketList().then(() => {
-                fetchData();
-                setInterval(renderTable, 1000); // 렌더링 주기 1초로 단축 (즉각 반응)
-                setInterval(fetchData, 4000); 
-            });
-            setInterval(fetchUsdtRate, 60000); 
+            updateMarketList().then(() => fetchData()); 
+
+            setInterval(renderTable, 1000);
+            setInterval(fetchData, 4000);
+            setInterval(fetchUsdtRate, 60000);
         }
 
         async function fetchUsdtRate() {
@@ -241,37 +247,37 @@
                 usdtRate = data[0].trade_price;
                 document.getElementById('usdtDisplay').innerText = usdtRate.toLocaleString();
                 document.getElementById('tetherPremium').innerText = ((usdtRate / baseRate - 1) * 100).toFixed(2) + '%';
-            } catch(e) { console.error("Rate error:", e); }
+            } catch(e) {}
         }
 
         async function updateMarketList() {
             try {
                 if(currentDomestic === 'upbit') {
-                    const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.upbit.com/v1/market/all'));
+                    // 업비트는 프록시 없이 직접 호출 가능
+                    const r = await fetch('https://api.upbit.com/v1/market/all');
                     const data = await r.json();
-                    markets = JSON.parse(data.contents).filter(x => x.market.startsWith('KRW-'));
+                    markets = data.filter(x => x.market.startsWith('KRW-'));
                 } else {
                     const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.bithumb.com/public/ticker/ALL_KRW'));
                     const data = await r.json();
-                    const bthData = JSON.parse(data.contents);
-                    markets = Object.keys(bthData.data).filter(k => k !== 'date').map(k => ({ market: `KRW-${k}`, korean_name: k }));
+                    const bthData = JSON.parse(data.contents).data;
+                    markets = Object.keys(bthData).filter(k => k !== 'date').map(k => ({ market: `KRW-${k}`, korean_name: k }));
                 }
             } catch(e) { console.error("Market list error:", e); }
         }
 
         async function fetchData() {
-            if(isFetching) return;
+            if(isFetching || markets.length === 0) return;
             isFetching = true;
             try {
-                const overseasUrl = currentOverseas === 'binance' 
-                    ? 'https://api.binance.com/api/v3/ticker/price'
-                    : 'https://api.bybit.com/v5/market/tickers?category=spot';
-                
+                // 해외 데이터 (바이낸스는 직접 호출)
+                const overseasUrl = currentOverseas === 'binance' ? 'https://api.binance.com/api/v3/ticker/price' : 'https://api.bybit.com/v5/market/tickers?category=spot';
                 const oPromise = fetch(currentOverseas === 'binance' ? overseasUrl : 'https://api.allorigins.win/get?url=' + encodeURIComponent(overseasUrl)).then(r => r.json());
-                
+
+                // 국내 데이터 (업비트는 직접 호출)
                 let dPromise;
                 if(currentDomestic === 'upbit') {
-                    const codes = markets.slice(0, 200).map(m => m.market).join(',');
+                    const codes = markets.slice(0, 250).map(m => m.market).join(',');
                     dPromise = fetch(`https://api.upbit.com/v1/ticker?markets=${codes}`).then(r => r.json());
                 } else {
                     dPromise = fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.bithumb.com/public/ticker/ALL_KRW')).then(r => r.json());
@@ -279,13 +285,15 @@
 
                 const [oData, dData] = await Promise.all([oPromise, dPromise]);
 
-                overseasPrices = {};
+                // 해외 가격 저장
                 if(currentOverseas === 'binance') {
                     oData.forEach(p => { if(p.symbol.endsWith('USDT')) overseasPrices[p.symbol.replace('USDT','')] = parseFloat(p.price); });
                 } else {
-                    JSON.parse(oData.contents).result.list.forEach(p => { if(p.symbol.endsWith('USDT')) overseasPrices[p.symbol.replace('USDT','')] = parseFloat(p.lastPrice); });
+                    const byRes = JSON.parse(oData.contents);
+                    byRes.result.list.forEach(p => { if(p.symbol.endsWith('USDT')) overseasPrices[p.symbol.replace('USDT','')] = parseFloat(p.lastPrice); });
                 }
 
+                // 국내 가격 저장
                 if(currentDomestic === 'upbit') {
                     dData.forEach(t => { tickerData[t.market] = t; });
                 } else {
@@ -295,21 +303,9 @@
                         tickerData[`KRW-${k}`] = { trade_price: parseFloat(bthData[k].closing_price), acc_trade_price_24h: parseFloat(bthData[k].acc_trade_value_24H), signed_change_rate: parseFloat(bthData[k].fluctate_rate_24H) / 100 };
                     });
                 }
-            } catch(e) { console.error("Data error:", e); }
+            } catch(e) {}
             finally { isFetching = false; }
         }
-
-        function changeExchange() {
-            currentDomestic = document.getElementById('domesticEx').value;
-            currentOverseas = document.getElementById('overseasEx').value;
-            document.getElementById('th-domestic').innerText = (currentDomestic === 'upbit' ? '업비트' : '빗썸') + ' (KRW)';
-            document.getElementById('th-overseas').innerText = (currentOverseas === 'binance' ? '바이낸스' : '바이비트') + ' (USDT)';
-            displayLimit = 20;
-            document.getElementById('globalBody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding:100px; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> 거래소 데이터를 전환 중...</td></tr>';
-            updateMarketList().then(() => fetchData());
-        }
-
-        function loadMore() { displayLimit += 20; renderTable(); }
 
         function renderTable() {
             const body = document.getElementById('globalBody'); if(!body || markets.length === 0) return;
@@ -368,6 +364,17 @@
             body.innerHTML = html;
         }
 
+        function changeExchange() {
+            currentDomestic = document.getElementById('domesticEx').value;
+            currentOverseas = document.getElementById('overseasEx').value;
+            document.getElementById('th-domestic').innerText = (currentDomestic === 'upbit' ? '업비트' : '빗썸') + ' (KRW)';
+            document.getElementById('th-overseas').innerText = (currentOverseas === 'binance' ? '바이낸스' : '바이비트') + ' (USDT)';
+            displayLimit = 20;
+            updateMarketList().then(() => fetchData());
+        }
+
+        function loadMore() { displayLimit += 20; renderTable(); }
+
         async function fetchGlobalStats() {
             try {
                 const gRes = await fetch('https://api.coingecko.com/api/v3/global');
@@ -379,7 +386,7 @@
                 document.getElementById('fngValMini').innerText = fData.data[0].value;
                 document.getElementById('fngLabelMini').innerText = '— ' + fData.data[0].value_classification;
                 document.getElementById('fngDotMini').style.left = fData.data[0].value + '%';
-            } catch(e) { console.error(e); }
+            } catch(e) {}
         }
 
         function loadChart(symbol) {
@@ -405,7 +412,7 @@
                     const date = new Date(item.created_at).toLocaleString('ko-KR', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                     newsItems.push(`<div class="pro-card news-card" onclick="window.open('https://upbit.com/service_center/notice?id=${item.id}', '_blank')"><div class="card-header"><span class="alert-tag tag-buy">UPBIT</span> ${date}</div><div class="card-body"><h3 style="font-size:13.5px; color:var(--accent); font-weight:800;">${item.title}</h3></div></div>`);
                 });
-            } catch (e) { console.error(e); }
+            } catch (e) {}
             try {
                 const rssRes = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://kr.investing.com/rss/news_285.rss'));
                 const xmlDoc = new DOMParser().parseFromString((await rssRes.json()).contents, "text/xml");
@@ -415,7 +422,7 @@
                     const pubDate = new Date(item.querySelector("pubDate")?.textContent).toLocaleString('ko-KR', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                     newsItems.push(`<div class="pro-card news-card" onclick="window.open('${item.querySelector("link")?.textContent}', '_blank')"><div class="card-header"><span class="alert-tag" style="background:rgba(59,130,246,0.1); color:#3b82f6;">INVESTING</span> ${pubDate}</div><div class="card-body"><h3 style="font-size:13.5px; font-weight:800;">${title}</h3></div></div>`);
                 });
-            } catch (e) { console.error(e); }
+            } catch (e) {}
             newsContainer.innerHTML = newsItems.length > 0 ? `<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap:15px; padding:5px;">${newsItems.join('')}</div>` : '<div class="pro-card" style="padding:100px; text-align:center;">뉴스 실패</div>';
         }
 
