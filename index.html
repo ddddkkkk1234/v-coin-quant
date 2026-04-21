@@ -126,8 +126,22 @@
 
         <main class="center-area">
             <div id="view-coin" class="view-section active">
-                <div class="pro-card" style="margin-bottom:20px; height:450px;"><div id="tv_chart_container" style="height:100%; width:100%"></div></div>
-                <div style="display:grid; grid-template-columns: 1fr auto; gap:15px; margin-bottom:15px; align-items: end;">
+                <!-- 상단 광고 영역 (120px) -->
+                <div class="pro-card" style="margin-bottom:10px; height:120px; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.2);">
+                    <!-- AdSense Slot -->
+                    <ins class="adsbygoogle"
+                         style="display:block; width:100%; height:120px;"
+                         data-ad-client="ca-pub-5553376072633585"
+                         data-ad-slot="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                    <div style="position:absolute; font-size:10px; color:var(--text-muted); pointer-events:none;">ADVERTISEMENT</div>
+                </div>
+
+                <!-- 차트 영역 (330px) -->
+                <div class="pro-card" style="margin-bottom:20px; height:330px;"><div id="tv_chart_container" style="height:100%; width:100%"></div></div>
+                
+                <!-- 필터 및 환율 정보 바 -->
                     <div style="display:flex; flex-direction:column; gap:8px;">
                         <div style="display:flex; gap:10px;">
                             <select id="domesticEx" style="background:var(--card-bg); border:1px solid var(--border); color:var(--text); padding:8px 12px; border-radius:8px; font-size:12px; cursor:pointer;" onchange="changeExchange()">
@@ -145,10 +159,6 @@
                             </select>
                         </div>
                         <input type="text" id="coinSearch" placeholder="코인명/심볼 검색" style="width:100%; background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:10px; color:var(--text); font-size:12px; outline:none;" oninput="renderTable()">
-                    </div>
-                    <div style="text-align:right; font-size:12px; background:var(--card-bg); border:1px solid var(--border); padding:8px 15px; border-radius:8px;">
-                        USDT: <b id="usdtDisplay" style="color:var(--accent);">--</b>
-                        <span style="margin-left:10px;">테더프리:</span> <b id="tetherPremium" class="pnl-up">--%</b>
                     </div>
                 </div>
                 <div class="pro-card">
@@ -345,6 +355,24 @@
             document.getElementById(`m-${v}`).classList.add('active');
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById(`view-${v}`).classList.add('active');
+        }
+
+        async function fetchGlobalStats() {
+            try {
+                const g = await (await fetch('https://api.coingecko.com/api/v3/global')).json();
+                document.getElementById('totalCap').innerText = (g.data.total_market_cap.krw / 1000000000000).toFixed(1) + '조';
+                document.getElementById('totalVol').innerText = (g.data.total_volume.krw / 1000000000000).toFixed(1) + '조';
+                const f = await (await fetch('https://api.alternative.me/fng/')).json();
+                document.getElementById('fngValMini').innerText = f.data[0].value;
+                document.getElementById('fngDotMini').style.left = f.data[0].value + '%';
+            } catch(e) {}
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
+view-${v}`).classList.add('active');
         }
 
         async function fetchGlobalStats() {
