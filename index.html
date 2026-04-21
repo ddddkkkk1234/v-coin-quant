@@ -209,6 +209,9 @@
         let krwMarkets = [], binancePrices = {}, tickerData = {}, usdtRate = 1467, baseRate = 1445;
 
         async function init() {
+            // 차트부터 즉시 로딩 시작
+            loadChart('BTC');
+
             try {
                 // 1. 환율 정보 (업비트 USDT 기준)
                 const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.upbit.com/v1/ticker?markets=KRW-USDT'));
@@ -334,58 +337,63 @@
 
         async function fetchNews() {
             const newsContainer = document.getElementById('view-news');
-            newsContainer.innerHTML = '<div class="pro-card" style="padding:100px; text-align:center;">실시간 뉴스를 불러오는 중...</div>';
+            newsContainer.innerHTML = '<div class="pro-card" style="padding:100px; text-align:center;"><i class="fa-solid fa-spinner fa-spin"></i> 실시간 뉴스를 불러오는 중...</div>';
             
-            try {
-                // 1. 업비트 공지사항
-                const upbitRes = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api-manager.upbit.com/api/v1/notices?page=1&per_page=10'));
-                const upbitData = JSON.parse((await upbitRes.json()).contents);
-                
-                // 2. 인베스팅닷컴 RSS
-                const rssRes = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://kr.investing.com/rss/news_285.rss'));
-                const rssText = (await rssRes.json()).contents;
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(rssText, "text/xml");
-                const items = xmlDoc.querySelectorAll("item");
+            let html = '<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap:15px; padding:5px;">';
+            let newsItems = [];
 
-                let html = '<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap:15px; padding:5px;">';
+            // 1. 업비트 공지사항 (독립적으로 시도)
+            try {
+                const upbitRes = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api-manager.upbit.com/api/v1/notices?page=1&per_page=5'));
+                const upbitJson = await upbitRes.json();
+                const upbitData = JSON.parse(upbitJson.contents);
                 
                 upbitData.data.list.forEach(item => {
                     const date = new Date(item.created_at).toLocaleString('ko-KR', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
-                    html += `
+                    newsItems.push(`
                         <div class="pro-card news-card" onclick="window.open('https://upbit.com/service_center/notice?id=${item.id}', '_blank')">
                             <div class="card-header"><span class="alert-tag tag-buy">UPBIT</span> ${date}</div>
                             <div class="card-body">
-                                <h3 style="font-size:14px; margin-bottom:8px; color:var(--accent); line-height:1.4;">${item.title}</h3>
+                                <h3 style="font-size:13.5px; margin-bottom:8px; color:var(--accent); line-height:1.4; font-weight:800;">${item.title}</h3>
                                 <p style="font-size:11px; color:var(--text-muted);">업비트 공식 공지사항입니다.</p>
                             </div>
                         </div>
-                    `;
+                    `);
                 });
+            } catch (e) { console.error("Upbit error:", e); }
 
-                items.forEach(item => {
-                    const title = item.querySelector("title").textContent;
-                    const link = item.querySelector("link").textContent;
-                    const pubDateText = item.querySelector("pubDate").textContent;
-                    const pubDate = new Date(pubDateText).toLocaleString('ko-KR', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
-                    const desc = item.querySelector("description").textContent.replace(/<[^>]*>?/gm, '').substring(0, 80) + '...';
+            // 2. 인베스팅닷컴 RSS (독립적으로 시도)
+            try {
+                const rssRes = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://kr.investing.com/rss/news_285.rss'));
+                const rssJson = await rssRes.json();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(rssJson.contents, "text/xml");
+                const items = xmlDoc.querySelectorAll("item");
+
+                items.forEach((item, idx) => {
+                    if(idx > 10) return; // 상위 10개만 표시
+                    const title = item.querySelector("title")?.textContent || "제목 없음";
+                    const link = item.querySelector("link")?.textContent || "#";
+                    const pubDateText = item.querySelector("pubDate")?.textContent;
+                    const pubDate = pubDateText ? new Date(pubDateText).toLocaleString('ko-KR', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}) : "방금 전";
+                    const desc = item.querySelector("description")?.textContent.replace(/<[^>]*>?/gm, '').substring(0, 80) + '...' || "설명 없음";
                     
-                    html += `
+                    newsItems.push(`
                         <div class="pro-card news-card" onclick="window.open('${link}', '_blank')">
                             <div class="card-header"><span class="alert-tag" style="background:rgba(59,130,246,0.1); color:#3b82f6;">INVESTING</span> ${pubDate}</div>
                             <div class="card-body">
-                                <h3 style="font-size:14px; margin-bottom:8px; line-height:1.4;">${title}</h3>
+                                <h3 style="font-size:13.5px; margin-bottom:8px; line-height:1.4; font-weight:800;">${title}</h3>
                                 <p style="font-size:11px; color:var(--text-muted); line-height:1.6;">${desc}</p>
                             </div>
                         </div>
-                    `;
+                    `);
                 });
+            } catch (e) { console.error("Investing error:", e); }
 
-                html += '</div>';
-                newsContainer.innerHTML = html;
-            } catch (e) {
-                console.error(e);
-                newsContainer.innerHTML = '<div class="pro-card" style="padding:100px; text-align:center; color:var(--danger);">뉴스를 불러오는 데 실패했습니다.</div>';
+            if (newsItems.length > 0) {
+                newsContainer.innerHTML = html + newsItems.join('') + '</div>';
+            } else {
+                newsContainer.innerHTML = '<div class="pro-card" style="padding:100px; text-align:center; color:var(--danger);">뉴스를 불러오는 데 실패했습니다. 잠시 후 다시 시도해 주세요.</div>';
             }
         }
 
