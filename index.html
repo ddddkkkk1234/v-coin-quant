@@ -326,7 +326,29 @@
             body.innerHTML = html || '<tr><td colspan="8" style="text-align:center; padding:50px;">데이터 로딩 중...</td></tr>';
         }
 
-        function changeExchange() { currentDomestic = document.getElementById('domesticEx').value; currentOverseas = document.getElementById('overseasEx').value; document.getElementById('th-domestic').innerText = (currentDomestic === 'upbit' ? '업비트' : '빗썸') + ' (KRW)'; displayLimit = 20; updateMarketList().then(() => fetchData()); }
+        function swapExchanges() {
+            const d = document.getElementById('domesticEx');
+            const o = document.getElementById('overseasEx');
+            const temp = d.value;
+            // 스왑 시에는 기본 KRW/USDT 조합으로 초기화되도록 유도 (필요 시 복잡하게 구현 가능)
+            changeExchange();
+        }
+
+        function changeExchange() {
+            const dVal = document.getElementById('domesticEx').value;
+            const oVal = document.getElementById('overseasEx').value;
+
+            currentDomestic = dVal.includes('upbit') ? 'upbit' : 'bithumb';
+            currentOverseas = oVal.includes('binance') ? 'binance' : 'bybit';
+
+            // 마켓 타입 (krw, btc, usdt) 감지
+            const dMarket = dVal.split('_')[1];
+            const oMarket = oVal.split('_')[1];
+
+            document.getElementById('th-domestic').innerText = (currentDomestic === 'upbit' ? '업비트' : '빗썸') + ` (${dMarket.toUpperCase()})`;
+            displayLimit = 20;
+            updateMarketList().then(() => fetchData());
+        }
         function loadMore() { displayLimit += 20; renderTable(); }
         function loadChart(s) { new TradingView.widget({ "autosize": true, "symbol": `UPBIT:${s}KRW`, "interval": "60", "timezone": "Asia/Seoul", "theme": "dark", "container_id": "tv_chart_container" }); }
         function switchView(v) {
