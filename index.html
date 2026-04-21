@@ -81,6 +81,9 @@
         .pnl-down { color: var(--danger); }
         .view-section { display: none; }
         .view-section.active { display: block; }
+        
+        .news-card { cursor: pointer; transition: 0.3s; height: 100%; border-left: 3px solid transparent; }
+        .news-card:hover { border-left-color: var(--accent); background: rgba(255,255,255,0.02); transform: translateX(5px); }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -89,15 +92,13 @@
 
     <header>
         <div class="nav-container">
-            <div style="display:flex; align-items:center;">
-                <div class="logo" onclick="location.reload()">K-LOG</div>
-                <nav class="main-menu">
-                    <div class="menu-item active" id="m-coin" onclick="switchView('coin')">암호화폐</div>
-                    <div class="menu-item" id="m-news" onclick="switchView('news')">뉴스</div>
-                    <div class="menu-item" id="m-calendar" onclick="switchView('calendar')">경제 캘린더</div>
-                    <div class="menu-item" id="m-analysis" onclick="switchView('analysis')"><i class="fa-solid fa-wand-magic-sparkles"></i> AI 시황분석</div>
-                </nav>
-            </div>
+            <div class="logo" onclick="location.reload()">K-LOG</div>
+            <nav class="main-menu">
+                <div class="menu-item active" id="m-coin" onclick="switchView('coin')">암호화폐</div>
+                <div class="menu-item" id="m-news" onclick="switchView('news')">뉴스</div>
+                <div class="menu-item" id="m-calendar" onclick="switchView('calendar')">경제 캘린더</div>
+                <div class="menu-item" id="m-analysis" onclick="switchView('analysis')"><i class="fa-solid fa-wand-magic-sparkles"></i> AI 시황분석</div>
+            </nav>
             <div class="header-right">
                 <div class="utility-icons">
                     <button class="btn-journal-nav" onclick="switchView('journal')"><i class="fa-solid fa-book"></i> 매매일지</button>
@@ -328,6 +329,64 @@
             const m = document.getElementById(`m-${v}`); if(m) m.classList.add('active');
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             const target = document.getElementById(`view-${v}`); if(target) target.classList.add('active');
+            if(v === 'news') fetchNews();
+        }
+
+        async function fetchNews() {
+            const newsContainer = document.getElementById('view-news');
+            newsContainer.innerHTML = '<div class="pro-card" style="padding:100px; text-align:center;">실시간 뉴스를 불러오는 중...</div>';
+            
+            try {
+                // 1. 업비트 공지사항
+                const upbitRes = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api-manager.upbit.com/api/v1/notices?page=1&per_page=10'));
+                const upbitData = JSON.parse((await upbitRes.json()).contents);
+                
+                // 2. 인베스팅닷컴 RSS
+                const rssRes = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://kr.investing.com/rss/news_285.rss'));
+                const rssText = (await rssRes.json()).contents;
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(rssText, "text/xml");
+                const items = xmlDoc.querySelectorAll("item");
+
+                let html = '<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap:15px; padding:5px;">';
+                
+                upbitData.data.list.forEach(item => {
+                    const date = new Date(item.created_at).toLocaleString('ko-KR', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+                    html += `
+                        <div class="pro-card news-card" onclick="window.open('https://upbit.com/service_center/notice?id=${item.id}', '_blank')">
+                            <div class="card-header"><span class="alert-tag tag-buy">UPBIT</span> ${date}</div>
+                            <div class="card-body">
+                                <h3 style="font-size:14px; margin-bottom:8px; color:var(--accent); line-height:1.4;">${item.title}</h3>
+                                <p style="font-size:11px; color:var(--text-muted);">업비트 공식 공지사항입니다.</p>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                items.forEach(item => {
+                    const title = item.querySelector("title").textContent;
+                    const link = item.querySelector("link").textContent;
+                    const pubDateText = item.querySelector("pubDate").textContent;
+                    const pubDate = new Date(pubDateText).toLocaleString('ko-KR', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+                    const desc = item.querySelector("description").textContent.replace(/<[^>]*>?/gm, '').substring(0, 80) + '...';
+                    
+                    html += `
+                        <div class="pro-card news-card" onclick="window.open('${link}', '_blank')">
+                            <div class="card-header"><span class="alert-tag" style="background:rgba(59,130,246,0.1); color:#3b82f6;">INVESTING</span> ${pubDate}</div>
+                            <div class="card-body">
+                                <h3 style="font-size:14px; margin-bottom:8px; line-height:1.4;">${title}</h3>
+                                <p style="font-size:11px; color:var(--text-muted); line-height:1.6;">${desc}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+                newsContainer.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+                newsContainer.innerHTML = '<div class="pro-card" style="padding:100px; text-align:center; color:var(--danger);">뉴스를 불러오는 데 실패했습니다.</div>';
+            }
         }
 
         window.onload = init;
