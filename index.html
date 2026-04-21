@@ -187,6 +187,9 @@
                         </thead>
                         <tbody id="globalBody"></tbody>
                     </table>
+                    <div id="loadMoreContainer" style="padding: 20px; text-align: center; border-top: 1px solid var(--border); display: none;">
+                        <button onclick="loadMore()" style="background: var(--border); color: var(--text); border: none; padding: 10px 30px; border-radius: 20px; cursor: pointer; font-weight: 700; transition: 0.3s;">더보기 (More)</button>
+                    </div>
                 </div>
             </div>
             <div id="view-news" class="view-section"></div>
@@ -213,77 +216,139 @@
         let currentDomestic = 'upbit', currentOverseas = 'binance';
         let isFetching = false, displayLimit = 50;
 
-        async function init() {
+        function init() {
             loadChart('BTC');
+            // 초기화 시 비동기로 각각 실행하여 대기 시간 제거
             fetchUsdtRate();
             fetchGlobalStats();
-            await fetchData();
-            if(currentDomestic === 'upbit') connectWebSocket();
-            renderTable();
+            updateMarketList().then(() => fetchData());
+            
             setInterval(renderTable, 2000);
-            setInterval(() => { if(!isFetching) fetchData(); }, 5000);
+            setInterval(fetchData, 5000); // 가격만 업데이트
+            setInterval(fetchUsdtRate, 30000); // 환율은 가끔 업데이트
         }
 
-        // ... (fetchUsdtRate, fetchData, changeExchange 그대로 유지)
-
-        function loadMore() {
-            displayLimit += 50;
-            renderTable();
+        async function fetchUsdtRate() {
+            try {
+                const r = await fetch('https://api.upbit.com/v1/ticker?markets=KRW-USDT');
+                const data = await r.json();
+                usdtRate = data[0].trade_price;
+                document.getElementById('usdtDisplay').innerText = usdtRate.toLocaleString();
+                document.getElementById('tetherPremium').innerText = ((usdtRate / baseRate - 1) * 100).toFixed(2) + '%';
+            } catch(e) { console.error("Rate error:", e); }
         }
+
+        async function updateMarketList() {
+            try {
+                if(currentDomestic === 'upbit') {
+                    const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.upbit.com/v1/market/all'));
+                    const data = await r.json();
+                    markets = JSON.parse(data.contents).filter(x => x.market.startsWith('KRW-'));
+                } else {
+                    const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.bithumb.com/public/ticker/ALL_KRW'));
+                    const data = await r.json();
+                    const bthData = JSON.parse(data.contents);
+                    markets = Object.keys(bthData.data).filter(k => k !== 'date').map(k => ({ market: `KRW-${k}`, korean_name: k }));
+                }
+            } catch(e) { console.error("Market list error:", e); }
+        }
+
+        async function fetchData() {
+            if(isFetching) return;
+            isFetching = true;
+            try {
+                // 1. 해외 시세 (프록시 없이 시도)
+                const overseasUrl = currentOverseas === 'binance' 
+                    ? 'https://api.binance.com/api/v3/ticker/price'
+                    : 'https://api.bybit.com/v5/market/tickers?category=spot';
+                
+                const oRes = await fetch(currentOverseas === 'binance' ? overseasUrl : 'https://api.allorigins.win/get?url=' + encodeURIComponent(overseasUrl));
+                const oData = await oRes.json();
+                
+                overseasPrices = {};
+                if(currentOverseas === 'binance') {
+                    oData.forEach(p => { if(p.symbol.endsWith('USDT')) overseasPrices[p.symbol.replace('USDT','')] = parseFloat(p.price); });
+                } else {
+                    JSON.parse(oData.contents).result.list.forEach(p => { if(p.symbol.endsWith('USDT')) overseasPrices[p.symbol.replace('USDT','')] = parseFloat(p.lastPrice); });
+                }
+
+                // 2. 국내 시세
+                if(currentDomestic === 'upbit') {
+                    // 업비트는 프록시 없이 티커 호출 (벌크)
+                    const chunks = [];
+                    for(let i=0; i<markets.length; i+=100) chunks.push(markets.slice(i, i+100).map(m => m.market).join(','));
+                    for(const codes of chunks) {
+                        const r = await fetch(`https://api.upbit.com/v1/ticker?markets=${codes}`);
+                        const data = await r.json();
+                        data.forEach(t => { tickerData[t.market] = t; });
+                    }
+                } else {
+                    const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.bithumb.com/public/ticker/ALL_KRW'));
+                    const data = await r.json();
+                    const bthData = JSON.parse(data.contents).data;
+                    Object.keys(bthData).forEach(k => {
+                        if(k === 'date') return;
+                        tickerData[`KRW-${k}`] = { 
+                            trade_price: parseFloat(bthData[k].closing_price),
+                            acc_trade_price_24h: parseFloat(bthData[k].acc_trade_value_24H),
+                            signed_change_rate: parseFloat(bthData[k].fluctate_rate_24H) / 100
+                        };
+                    });
+                }
+            } catch(e) { console.error("Data error:", e); }
+            finally { isFetching = false; }
+        }
+
+        function changeExchange() {
+            currentDomestic = document.getElementById('domesticEx').value;
+            currentOverseas = document.getElementById('overseasEx').value;
+            document.getElementById('th-domestic').innerText = (currentDomestic === 'upbit' ? '업비트' : '빗썸') + ' (KRW)';
+            document.getElementById('th-overseas').innerText = (currentOverseas === 'binance' ? '바이낸스' : '바이비트') + ' (USDT)';
+            displayLimit = 50;
+            updateMarketList().then(() => fetchData());
+        }
+
+        function loadMore() { displayLimit += 50; renderTable(); }
 
         function renderTable() {
             const body = document.getElementById('globalBody'); if(!body || markets.length === 0) return;
             const searchTerm = document.getElementById('coinSearch').value.toLowerCase();
             const sortBy = document.getElementById('sortSelect').value;
-            let filteredMarkets = markets.filter(m => {
-                const symbol = m.market.replace('KRW-', '').toLowerCase();
-                const name = (m.korean_name || '').toLowerCase();
-                return symbol.includes(searchTerm) || name.includes(searchTerm);
-            });
+            
+            let filtered = markets.filter(m => (m.market.replace('KRW-','').toLowerCase().includes(searchTerm) || (m.korean_name || '').toLowerCase().includes(searchTerm)));
 
-            filteredMarkets.sort((a,b) => {
+            filtered.sort((a,b) => {
                 const ta = tickerData[a.market], tb = tickerData[b.market];
                 if(!ta || !tb) return 0;
                 if(sortBy === 'vol') return tb.acc_trade_price_24h - ta.acc_trade_price_24h;
                 if(sortBy === 'change') return tb.signed_change_rate - ta.signed_change_rate;
-                const getKimp = (market) => {
-                    const t = tickerData[market];
-                    const sym = market.replace('KRW-', '');
-                    const bp = overseasPrices[sym] || 0;
-                    return bp > 0 ? ((t.trade_price / (bp * usdtRate)) - 1) * 100 : -999;
+                const getKimp = (m) => {
+                    const t = tickerData[m.market], bp = overseasPrices[m.market.replace('KRW-','')];
+                    return (t && bp) ? ((t.trade_price / (bp * usdtRate)) - 1) * 100 : -999;
                 };
-                if(sortBy === 'kimp') return getKimp(b.market) - getKimp(a.market);
-                if(sortBy === 'kimp_low') return getKimp(a.market) - getKimp(b.market);
+                if(sortBy === 'kimp') return getKimp(b) - getKimp(a);
+                if(sortBy === 'kimp_low') return getKimp(a) - getKimp(b);
                 return 0;
             });
 
-            // 더보기 버튼 표시 여부 결정
-            const container = document.getElementById('loadMoreContainer');
-            if(filteredMarkets.length > displayLimit) {
-                container.style.display = 'block';
-            } else {
-                container.style.display = 'none';
-            }
+            document.getElementById('loadMoreContainer').style.display = filtered.length > displayLimit ? 'block' : 'none';
 
             let html = '';
-            filteredMarkets.slice(0, displayLimit).forEach(m => {
-                const t = tickerData[m.market]; if(!t) return;
-                const symbol = m.market.replace('KRW-', '');
-                const bPrice = overseasPrices[symbol] || 0;
-                let kimp = 0, diffPrice = 0, kimpStr = "-", diffStr = "-";
-                if(bPrice > 0) {
-                    const convertedOverseas = bPrice * usdtRate;
-                    kimp = ((t.trade_price - convertedOverseas) / convertedOverseas * 100);
-                    diffPrice = t.trade_price - convertedOverseas;
-                    kimpStr = kimp.toFixed(2) + "%";
-                    diffStr = (diffPrice >= 0 ? "+" : "") + Math.floor(diffPrice).toLocaleString();
+            filtered.slice(0, displayLimit).forEach(m => {
+                const t = tickerData[m.market], bp = overseasPrices[m.market.replace('KRW-','')];
+                if(!t) return;
+                let kimp = "-", diff = "-";
+                if(bp) {
+                    const conv = bp * usdtRate;
+                    kimp = (((t.trade_price - conv) / conv) * 100).toFixed(2) + "%";
+                    diff = (t.trade_price - conv >= 0 ? "+" : "") + Math.floor(t.trade_price - conv).toLocaleString();
                 }
-                html += `<tr onclick="loadChart('${symbol}')">
-                    <td><img src="https://static.upbit.com/logos/${symbol}.png" class="coin-icon" onerror="this.src='https://static.upbit.com/logos/BTC.png'"><b>${m.korean_name || symbol}</b> <small style="color:var(--text-muted)">${symbol}</small></td>
+                html += `<tr onclick="loadChart('${m.market.replace('KRW-','')}')">
+                    <td><img src="https://static.upbit.com/logos/${m.market.replace('KRW-','')}.png" class="coin-icon" onerror="this.src='https://static.upbit.com/logos/BTC.png'"><b>${m.korean_name || m.market}</b> <small style="color:var(--text-muted)">${m.market.replace('KRW-','')}</small></td>
                     <td style="font-weight:700;">${t.trade_price.toLocaleString()}</td>
-                    <td style="color:var(--text-muted);">${bPrice ? (bPrice < 1 ? bPrice.toFixed(4) : bPrice.toLocaleString()) : '-'}</td>
-                    <td class="${kimp>=0?'pnl-up':'pnl-down'}" style="font-weight:800;">${kimpStr}</td>
-                    <td class="${diffPrice>=0?'pnl-up':'pnl-down'}">${diffStr}</td>
+                    <td style="color:var(--text-muted);">${bp ? (bp < 1 ? bp.toFixed(4) : bp.toLocaleString()) : '-'}</td>
+                    <td class="${parseFloat(kimp)>=0?'pnl-up':'pnl-down'}" style="font-weight:800;">${kimp}</td>
+                    <td class="${parseFloat(diff.replace(/,/g,''))>=0?'pnl-up':'pnl-down'}">${diff}</td>
                     <td class="${t.signed_change_rate>=0?'pnl-up':'pnl-down'}">${(t.signed_change_rate*100).toFixed(2)}%</td>
                     <td style="text-align:right; font-size:11px; color:var(--text-muted);">${Math.floor(t.acc_trade_price_24h/1000000).toLocaleString()}M</td>
                 </tr>`;
@@ -312,7 +377,17 @@
             socket.onmessage = async (e) => { const data = JSON.parse(await e.data.text()); tickerData[data.code] = data; };
         }
 
-        window.onload = init;
+        function loadChart(symbol) {
+            new TradingView.widget({ "autosize": true, "symbol": `UPBIT:${symbol}KRW`, "interval": "60", "timezone": "Asia/Seoul", "theme": "dark", "style": "1", "locale": "ko", "container_id": "tv_chart_container" });
+        }
+
+        function switchView(v) {
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            const m = document.getElementById(`m-${v}`); if(m) m.classList.add('active');
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            const target = document.getElementById(`view-${v}`); if(target) target.classList.add('active');
+            if(v === 'news') fetchNews();
+        }
 
         async function fetchNews() {
             const newsContainer = document.getElementById('view-news');
@@ -328,25 +403,17 @@
             } catch (e) { console.error(e); }
             try {
                 const rssRes = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://kr.investing.com/rss/news_285.rss'));
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString((await rssRes.json()).contents, "text/xml");
+                const xmlDoc = new DOMParser().parseFromString((await rssRes.json()).contents, "text/xml");
                 xmlDoc.querySelectorAll("item").forEach((item, idx) => {
                     if(idx > 10) return;
-                    const title = item.querySelector("title")?.textContent;
                     const pubDate = new Date(item.querySelector("pubDate")?.textContent).toLocaleString('ko-KR', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
-                    newsItems.push(`<div class="pro-card news-card" onclick="window.open('${item.querySelector("link")?.textContent}', '_blank')"><div class="card-header"><span class="alert-tag" style="background:rgba(59,130,246,0.1); color:#3b82f6;">INVESTING</span> ${pubDate}</div><div class="card-body"><h3 style="font-size:13.5px; font-weight:800;">${title}</h3></div></div>`);
+                    newsItems.push(`<div class="pro-card news-card" onclick="window.open('${item.querySelector("link")?.textContent}', '_blank')"><div class="card-header"><span class="alert-tag" style="background:rgba(59,130,246,0.1); color:#3b82f6;">INVESTING</span> ${pubDate}</div><div class="card-body"><h3 style="font-size:13.5px; font-weight:800;">${item.querySelector("title")?.textContent}</h3></div></div>`);
                 });
             } catch (e) { console.error(e); }
-            newsContainer.innerHTML = newsItems.length > 0 ? `<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap:15px; padding:5px;">${newsItems.join('')}</div>` : '<div class="pro-card" style="padding:100px; text-align:center;">뉴스 로딩 실패</div>';
+            newsContainer.innerHTML = newsItems.length > 0 ? `<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap:15px; padding:5px;">${newsItems.join('')}</div>` : '<div class="pro-card" style="padding:100px; text-align:center;">뉴스 실패</div>';
         }
 
-        function switchView(v) {
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            const m = document.getElementById(`m-${v}`); if(m) m.classList.add('active');
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            const target = document.getElementById(`view-${v}`); if(target) target.classList.add('active');
-            if(v === 'news') fetchNews();
-        }
+        window.onload = init;
     </script>
 </body>
 </html>
