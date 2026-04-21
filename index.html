@@ -365,6 +365,7 @@
             const search = document.getElementById('coinSearch').value.toLowerCase();
             const sortBy = document.getElementById('sortSelect').value;
             let filtered = markets.filter(m => (m.market.includes(search.toUpperCase()) || (m.korean_name || '').includes(search)));
+            
             filtered.sort((a,b) => {
                 const ta = tickerData[a.market], tb = tickerData[b.market];
                 if(!ta || !tb) return 0;
@@ -373,27 +374,64 @@
                 const getK = (m) => { const t = tickerData[m.market], p = overseasPrices[m.market.replace('KRW-','')]; return (t && p) ? ((t.trade_price / (p * usdtRate)) - 1) * 100 : -999; };
                 return getK(b) - getK(a);
             });
+
             document.getElementById('loadMoreContainer').style.display = filtered.length > displayLimit ? 'block' : 'none';
             let html = '';
             filtered.slice(0, displayLimit).forEach(m => {
                 const t = tickerData[m.market], bp = overseasPrices[m.market.replace('KRW-','')];
-                let kimp = "-", diff = "-";
-                if(t && bp) {
+                if(!t) return;
+                
+                let kimp = "-", diff = "-", low52 = "-", high52 = "-", rangePct = 50;
+                
+                // 김프 계산
+                if(bp) {
                     const conv = bp * usdtRate;
                     kimp = (((t.trade_price - conv) / conv) * 100).toFixed(2) + "%";
-                    diff = (t.trade_price - conv >= 0 ? "+" : "") + Math.floor(t.trade_price - conv).toLocaleString();
+                    diff = Math.floor(t.trade_price - conv).toLocaleString();
                 }
+
+                // 52주 데이터 및 24시간 레인지 계산
+                if(t.lowest_52_week_price) {
+                    low52 = "+" + (((t.trade_price - t.lowest_52_week_price) / t.lowest_52_week_price) * 100).toFixed(1) + "%";
+                    high52 = (((t.trade_price - t.highest_52_week_price) / t.highest_52_week_price) * 100).toFixed(1) + "%";
+                    
+                    // 24시간 레인지 바 위치 계산
+                    const range = t.high_price - t.low_price;
+                    if(range > 0) rangePct = ((t.trade_price - t.low_price) / range) * 100;
+                }
+
                 html += `<tr onclick="loadChart('${m.market.replace('KRW-','')}')">
-                    <td><b>${m.korean_name || m.market}</b> <small style="color:var(--text-muted)">${m.market.replace('KRW-','')}</small></td>
-                    <td style="font-weight:700;">${t ? t.trade_price.toLocaleString() : '로딩중...'}</td>
-                    <td style="color:var(--text-muted);">${bp ? bp.toLocaleString() : '-'}</td>
-                    <td class="${parseFloat(kimp)>=0?'pnl-up':'pnl-down'}" style="font-weight:800;">${kimp}</td>
-                    <td class="${parseFloat(diff)>=0?'pnl-up':'pnl-down'}">${diff}</td>
-                    <td class="${t?.signed_change_rate>=0?'pnl-up':'pnl-down'}">${t ? (t.signed_change_rate*100).toFixed(2) : '0'}%</td>
-                    <td style="text-align:right;">${t ? Math.floor(t.acc_trade_price_24h/1000000).toLocaleString() : '0'}M</td>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <img src="https://static.upbit.com/logos/${m.market.replace('KRW-','')}.png" style="width:18px; height:18px; border-radius:50%;" onerror="this.src='https://static.upbit.com/logos/BTC.png'">
+                            <div>
+                                <div style="font-weight:800; font-size:13px;">${m.korean_name || m.market}</div>
+                                <div style="font-size:10px; color:var(--text-muted);">${m.market.replace('KRW-','')}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="font-weight:700;">${t.trade_price.toLocaleString()}</td>
+                    <td>
+                        <div class="${parseFloat(kimp)>=0?'pnl-up':'pnl-down'}" style="font-weight:800;">${kimp}</div>
+                        <div style="font-size:10px; color:var(--text-muted); opacity:0.7;">${diff}</div>
+                    </td>
+                    <td class="${t?.signed_change_rate>=0?'pnl-up':'pnl-down'}" style="font-weight:700;">
+                        ${(t.signed_change_rate*100).toFixed(2)}%
+                    </td>
+                    <td style="color:var(--success); font-size:11px;">${low52}</td>
+                    <td style="color:var(--danger); font-size:11px;">${high52}</td>
+                    <td style="font-size:12px;">${Math.floor(t.acc_trade_price_24h/1000000).toLocaleString()}M</td>
+                    <td>
+                        <div style="width:100%; height:4px; background:#1e293b; border-radius:2px; position:relative; margin-top:5px;">
+                            <div style="position:absolute; left:${rangePct}%; width:4px; height:8px; background:var(--accent); top:-2px; border-radius:2px; transform:translateX(-50%);"></div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text-muted); margin-top:4px;">
+                            <span>L</span><span>H</span>
+                        </div>
+                    </td>
                 </tr>`;
             });
-            body.innerHTML = html || '<tr><td colspan="7" style="text-align:center; padding:50px;">데이터를 불러오는 중입니다...</td></tr>';
+            body.innerHTML = html || '<tr><td colspan="8" style="text-align:center; padding:50px;">데이터를 불러오는 중입니다...</td></tr>';
         }
 
         function changeExchange() {
