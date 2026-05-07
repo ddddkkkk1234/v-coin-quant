@@ -149,7 +149,7 @@
                                 <option value="upbit_btc">업비트 (BTC)</option>
                                 <option value="bithumb_krw">빗썸 (KRW)</option>
                             </select>
-                            <button onclick="swapExchanges()" class="btn-swap"><i class="fa-solid fa-right-left"></i></button>
+                            <div class="btn-swap" style="cursor:default;"><i class="fa-solid fa-right-left"></i></div>
                             <select id="overseasEx" style="background:var(--card-bg); border:1px solid var(--border); color:var(--text); padding:8px 12px; border-radius:8px; font-size:12px; cursor:pointer;" onchange="changeExchange()">
                                 <option value="binance_usdt">바이낸스 현물 (USDT)</option>
                                 <option value="binance_btc">바이낸스 현물 (BTC)</option>
@@ -180,13 +180,120 @@
                     </div>
                 </div>
             </div>
-            <!-- ... (뉴스, 캘린더 등 섹션 생략) ... -->
+            <!-- 암호화폐 섹션 하단에 텍스트 콘텐츠 추가 -->
+                <div class="pro-card" style="margin-top: 20px;">
+                    <div class="card-header">📚 암호화폐 투자 가이드 & 시황 분석</div>
+                    <div class="card-body" style="line-height: 1.8; color: var(--text-muted); font-size: 14px;">
+                        <h3 style="color: var(--text); margin-bottom: 15px;">김치 프리미엄(Kimchi Premium)이란 무엇인가?</h3>
+                        <p style="margin-bottom: 15px;">
+                            김치 프리미엄은 한국의 암호화폐 거래소 가격이 해외 거래소(바이낸스 등)보다 높게 형성되는 현상을 의미합니다. 이는 한국 시장의 특수한 수요와 외환 규제 등으로 인해 발생하며, 시장의 과열 여부를 판단하는 중요한 지표로 활용됩니다. K-LOG는 실시간으로 업비트, 빗썸과 바이낸스, 바이비트의 가격 차이를 계산하여 투자자들에게 정확한 정보를 제공합니다.
+                        </p>
+                        
+                        <h3 style="color: var(--text); margin-bottom: 15px;">효율적인 암호화폐 자산 관리 전략</h3>
+                        <p style="margin-bottom: 15px;">
+                            변동성이 큰 암호화폐 시장에서 살아남기 위해서는 철저한 리스크 관리가 필수입니다. 분산 투자와 분할 매수 전략을 통해 평균 단가를 조절하고, 자신의 자산 대비 적정한 레버리지를 사용하는 것이 중요합니다. 특히 K-LOG에서 제공하는 '리스크 계산기'를 활용하여 진입 전 손절 라인과 목표 수익 구간을 명확히 설정하시기 바랍니다.
+                        </p>
+
+                        <h3 style="color: var(--text); margin-bottom: 15px;">실시간 차트와 데이터 분석의 중요성</h3>
+                        <p>
+                            단순한 가격 추종보다는 거래량(Volume)과 고가/저가 대비 현재 위치를 파악하는 것이 중요합니다. 52주 신고가/신저가 대비 현재의 위치를 파악하면 중장기적인 추세를 읽을 수 있습니다. K-LOG는 실시간 API를 통해 가장 빠른 시장 데이터를 전달하며, 차트 위젯을 통해 기술적 분석을 지원합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 뉴스 섹션 -->
+            <div id="view-news" class="view-section">
+                <div class="pro-card">
+                    <div class="card-header">📰 실시간 암호화폐 주요 뉴스</div>
+                    <div class="card-body">
+                        <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+                            <i class="fa-solid fa-newspaper" style="font-size: 48px; margin-bottom: 20px; opacity: 0.5;"></i>
+                            <p>글로벌 주요 뉴스 피드를 불러오는 중입니다...</p>
+                            <p style="font-size: 12px; margin-top: 10px;">(비트코인 현물 ETF, 금리 결정 및 규제 소식을 실시간으로 업데이트합니다)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 경제 캘린더 섹션 -->
+            <div id="view-calendar" class="view-section">
+                <div class="pro-card">
+                    <div class="card-header">📅 주요 경제 일정</div>
+                    <div class="card-body">
+                        <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+                            <i class="fa-solid fa-calendar-days" style="font-size: 48px; margin-bottom: 20px; opacity: 0.5;"></i>
+                            <p>이번 주 주요 경제 지표(CPI, FOMC, 고용지표) 발표 일정을 준비 중입니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI 분석 섹션 -->
+            <div id="view-analysis" class="view-section">
+                <div class="pro-card">
+                    <div class="card-header">✨ AI 시장 감정 및 기술적 분석</div>
+                    <div class="card-body">
+                        <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+                            <i class="fa-solid fa-robot" style="font-size: 48px; margin-bottom: 20px; opacity: 0.5;"></i>
+                            <p>AI가 현재 시장 데이터를 학습하여 기술적 분석 레포트를 생성하고 있습니다.</p>
+                            <div style="margin-top: 20px; background: rgba(0,242,255,0.05); padding: 15px; border-radius: 8px; border: 1px dashed var(--accent);">
+                                <strong>현재 분석 상태:</strong> 데이터 수집 중... (예상 완료 시간: 10분 내외)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 매매일지 섹션 -->
+            <div id="view-journal" class="view-section">
+                <div class="pro-card">
+                    <div class="card-header">📓 나의 매매일지</div>
+                    <div class="card-body">
+                        <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+                            <i class="fa-solid fa-pen-to-square" style="font-size: 48px; margin-bottom: 20px; opacity: 0.5;"></i>
+                            <p>로그인 후 본인만의 매매 전략과 일지를 기록하고 관리하세요.</p>
+                            <button class="btn-journal-nav" style="margin: 20px auto;">로그인 / 회원가입</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
         <aside class="right-area">
             <div class="pro-card" style="height:250px; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.2); margin-bottom:15px;"><ins class="adsbygoogle" style="display:block; width:100%; height:250px;" data-ad-client="ca-pub-5553376072633585" data-ad-slot="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
             <div class="pro-card" style="margin-bottom:15px;"><div class="card-header">📐 리스크 계산기 (Risk Calc)</div><div class="card-body"><input type="text" placeholder="진입가 ($)" style="width:100%; background:var(--bg); border:1px solid var(--border); padding:8px; border-radius:6px; color:var(--text); margin-bottom:8px; font-size:12px;"><div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;"><input type="number" placeholder="레버리지" style="background:var(--bg); border:1px solid var(--border); padding:8px; border-radius:6px; color:var(--text); font-size:12px;"><input type="number" placeholder="비중 (%)" style="background:var(--bg); border:1px solid var(--border); padding:8px; border-radius:6px; color:var(--text); font-size:12px;"></div><button class="btn-journal-nav" style="width:100%; justify-content:center; font-size:11px;">포지션 계산하기</button></div></div>
         </aside>
     </div>
+
+    <footer style="max-width: 1750px; margin: 40px auto; padding: 40px 20px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 12px;">
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;">
+            <div>
+                <div style="font-size: 20px; font-weight: 900; color: var(--text); margin-bottom: 15px;">K-LOG</div>
+                <p style="line-height: 1.6;">K-LOG는 전 세계 암호화폐 시장의 데이터를 실시간으로 수집하여 투자자들에게 인사이트를 제공하는 전문 분석 플랫폼입니다. 김치 프리미엄, 실시간 호가 정보, AI 분석 데이터를 통해 현명한 투자를 돕습니다.</p>
+            </div>
+            <div>
+                <h4 style="color: var(--text); margin-bottom: 15px;">서비스</h4>
+                <p style="margin-bottom: 8px; cursor: pointer;">실시간 시세</p>
+                <p style="margin-bottom: 8px; cursor: pointer;">AI 시황분석</p>
+                <p style="margin-bottom: 8px; cursor: pointer;">매매일지</p>
+            </div>
+            <div>
+                <h4 style="color: var(--text); margin-bottom: 15px;">고객지원</h4>
+                <p style="margin-bottom: 8px; cursor: pointer;">문의하기</p>
+                <p style="margin-bottom: 8px; cursor: pointer;">광고 제휴</p>
+                <p style="margin-bottom: 8px; cursor: pointer;">API 문서</p>
+            </div>
+            <div>
+                <h4 style="color: var(--text); margin-bottom: 15px;">법적 고지</h4>
+                <p style="margin-bottom: 8px; cursor: pointer;">개인정보처리방침</p>
+                <p style="margin-bottom: 8px; cursor: pointer;">이용약관</p>
+                <p style="margin-bottom: 8px; cursor: pointer;">면책조항</p>
+            </div>
+        </div>
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; opacity: 0.6;">
+            &copy; 2024 K-LOG. All rights reserved. 본 사이트의 데이터는 투자 참고용이며, 투자에 대한 책임은 투자자 본인에게 있습니다.
+        </div>
+    </footer>
 
     <script>
         let markets = [], overseasPrices = {}, tickerData = {}, usdtRate = 1460, baseRate = 1445;
