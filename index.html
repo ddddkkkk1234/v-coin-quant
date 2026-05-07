@@ -732,18 +732,26 @@
                     const data = await r.json();
                     const prefix = dVal.includes('btc') ? 'BTC-' : 'KRW-';
                     markets = data.filter(x => x.market.startsWith(prefix));
-                } else {
+                } else if(dVal.startsWith('bithumb')) {
                     const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.bithumb.com/public/ticker/ALL_KRW'));
-                    const data = await r.json(); const bthData = JSON.parse(data.contents).data;
-                    markets = Object.keys(bthData).filter(k => k !== 'date').map(k => ({ market: `KRW-${k}`, korean_name: k }));
+                    const res = await r.json();
+                    const data = JSON.parse(res.contents).data;
+                    markets = Object.keys(data).filter(k => k !== 'date').map(k => ({
+                        market: `KRW-${k}`,
+                        korean_name: k
+                    }));
                 }
-            } catch(e) {}
+            } catch(e) {
+                console.error("Market list update failed:", e);
+            }
         }
 
         async function fetchData() {
             try {
+                // Overseas Prices (Binance/Bybit)
                 const oVal = document.getElementById('overseasEx').value;
                 const oUrl = oVal.startsWith('binance') ? 'https://api.binance.com/api/v3/ticker/price' : 'https://api.bybit.com/v5/market/tickers?category=spot';
+                
                 fetch(oVal.startsWith('binance') ? oUrl : 'https://api.allorigins.win/get?url=' + encodeURIComponent(oUrl))
                     .then(r => r.json()).then(data => {
                         if(oVal.startsWith('binance')) {
@@ -755,18 +763,36 @@
                         }
                     });
 
+                // Domestic Prices (Upbit/Bithumb)
                 const dVal = document.getElementById('domesticEx').value;
                 if(dVal.startsWith('upbit')) {
                     const codes = markets.slice(0, 150).map(m => m.market).join(',');
                     const r = await fetch(`https://api.upbit.com/v1/ticker?markets=${codes}`);
-                    const data = await r.json(); data.forEach(t => { tickerData[t.market] = t; });
-                } else {
+                    const data = await r.json();
+                    data.forEach(t => { tickerData[t.market] = t; });
+                } else if(dVal.startsWith('bithumb')) {
                     const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.bithumb.com/public/ticker/ALL_KRW'));
-                    const data = await r.json(); const bthData = JSON.parse(data.contents).data;
-                    Object.keys(bthData).forEach(k => { if(k !== 'date') tickerData[`KRW-${k}`] = { trade_price: parseFloat(bthData[k].closing_price), acc_trade_price_24h: parseFloat(bthData[k].acc_trade_value_24H), signed_change_rate: parseFloat(bthData[k].fluctate_rate_24H) / 100, high_price: parseFloat(bthData[k].high_24H), low_price: parseFloat(bthData[k].low_24H) }; });
+                    const res = await r.json();
+                    const bthData = JSON.parse(res.contents).data;
+                    Object.keys(bthData).forEach(k => {
+                        if(k !== 'date') {
+                            const coin = bthData[k];
+                            tickerData[`KRW-${k}`] = {
+                                trade_price: parseFloat(coin.closing_price),
+                                acc_trade_price_24h: parseFloat(coin.acc_trade_value_24H),
+                                signed_change_rate: parseFloat(coin.fluctate_rate_24H) / 100,
+                                high_price: parseFloat(coin.high_24H),
+                                low_price: parseFloat(coin.low_24H),
+                                highest_52_week_price: parseFloat(coin.high_24H), // Bithumb doesn't provide 52-week data easily
+                                lowest_52_week_price: parseFloat(coin.low_24H)
+                            };
+                        }
+                    });
                 }
                 saveCache();
-            } catch(e) {}
+            } catch(e) {
+                console.error("Data fetch failed:", e);
+            }
         }
 
         function setSort(key) {
