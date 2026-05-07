@@ -1,22 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6YNP8XXDH"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-D6YNP8XXDH');
-    </script>
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "we8q67k8xs");
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>K-LOG | 실시간 김프 & AI 매매일지</title>
@@ -78,50 +62,71 @@
             font-weight: 900; 
             background: var(--ai-gradient); 
             -webkit-background-clip: text; 
+            background-clip: text;
             -webkit-text-fill-color: transparent; 
             letter-spacing: -1.5px; 
             cursor: pointer; 
             flex: 1;
-            filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.3));
+            filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.5));
+            transition: all 0.3s ease;
         }
-        .main-menu { display: flex; gap: 32px; align-items: center; justify-content: center; flex: 2; }
+        .logo:hover {
+            filter: drop-shadow(0 0 25px rgba(0, 242, 255, 0.8));
+            transform: scale(1.02);
+        }
+        .main-menu { display: flex; gap: 12px; align-items: center; justify-content: center; flex: 2; }
         .menu-item { 
             color: var(--text-muted); 
             font-weight: 700; 
             cursor: pointer; 
             font-size: 14px; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            padding: 8px 12px;
-            border-radius: 8px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            padding: 10px 18px;
+            border-radius: 12px;
             white-space: nowrap; 
+            position: relative;
+            overflow: hidden;
         }
-        .menu-item:hover { color: var(--text); background: rgba(255, 255, 255, 0.05); }
-        .menu-item.active { color: var(--accent); background: rgba(0, 242, 255, 0.08); }
+        .menu-item:hover { 
+            color: var(--accent); 
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .menu-item.active { 
+            color: var(--accent); 
+            background: rgba(0, 242, 255, 0.1); 
+            box-shadow: inset 0 0 20px rgba(0, 242, 255, 0.05);
+        }
         
         .header-right { display: flex; align-items: center; gap: 15px; flex: 1; justify-content: flex-end; }
         .utility-icons { display: flex; align-items: center; gap: 20px; color: var(--text-muted); border-left: 1px solid var(--border); padding-left: 24px; }
-        .u-icon { cursor: pointer; transition: 0.2s; font-size: 18px; }
-        .u-icon:hover { color: var(--accent); transform: scale(1.1); }
+        .u-icon { cursor: pointer; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 18px; }
+        .u-icon:hover { color: var(--accent); transform: translateY(-2px); filter: drop-shadow(0 0 8px var(--accent)); }
         
         .btn-journal-nav { 
             background: var(--ai-gradient); 
             color: #000; 
-            padding: 10px 20px; 
-            border-radius: 10px; 
+            padding: 12px 24px; 
+            border-radius: 12px; 
             font-weight: 800; 
-            font-size: 12px; 
+            font-size: 13px; 
             cursor: pointer; 
             border: none; 
             display: flex; 
             align-items: center; 
-            gap: 8px; 
-            transition: 0.3s; 
+            gap: 10px; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
             box-shadow: 0 4px 15px rgba(0, 242, 255, 0.2); 
         }
-        .btn-journal-nav:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 242, 255, 0.4); }
+        .btn-journal-nav:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 12px 25px rgba(0, 242, 255, 0.4);
+            filter: brightness(1.1);
+        }
 
-        .main-container { max-width: 1750px; margin: 32px auto; display: grid; grid-template-columns: 320px 1fr 360px; gap: 24px; padding: 0 24px; }
-        .left-area, .right-area { display: flex; flex-direction: column; gap: 24px; }
+        .main-container { max-width: 1750px; margin: 32px auto; display: grid; grid-template-columns: 320px 1fr 360px; gap: 32px; padding: 0 24px; }
+        .left-area, .right-area { display: flex; flex-direction: column; gap: 32px; }
         .right-area, .left-area-content { 
             position: sticky; 
             top: 100px; 
@@ -129,13 +134,13 @@
             max-height: calc(100vh - 130px); 
             overflow-y: auto; 
             padding-right: 12px; 
-            padding-bottom: 250px; /* 하단 여백 대폭 증가 (광고에 가려지지 않게 함) */
+            padding-bottom: 250px;
             display: flex;
             flex-direction: column;
         }
 
         /* 개별 카드가 스크롤 영역 내에서 찌그러지지 않도록 설정 */
-        .right-area .pro-card, .left-area .pro-card { flex-shrink: 0; }
+        .right-area .pro-card, .left-area .pro-card { flex-shrink: 0; margin-bottom: 24px; }
 
         .right-area::-webkit-scrollbar, .left-area-content::-webkit-scrollbar { width: 4px; }
         .right-area::-webkit-scrollbar-track, .left-area-content::-webkit-scrollbar-track { background: transparent; }
@@ -144,95 +149,99 @@
 
         .pro-card { 
             background: var(--card-bg); 
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 16px; 
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px; 
             border: 1px solid var(--border); 
             overflow: hidden; 
-            margin-bottom: 20px; 
             box-shadow: var(--shadow);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .pro-card:hover { box-shadow: var(--shadow-lg); border-color: rgba(255, 255, 255, 0.15); }
+        .pro-card:hover { 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); 
+            border-color: rgba(0, 242, 255, 0.2);
+            transform: translateY(-2px);
+        }
         .card-header { 
-            padding: 14px 20px; 
+            padding: 18px 24px; 
             font-weight: 800; 
             border-bottom: 1px solid var(--border); 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            background: rgba(255, 255, 255, 0.03); 
+            background: rgba(255, 255, 255, 0.02); 
             font-size: 11px; 
             color: var(--text-muted); 
             text-transform: uppercase; 
-            letter-spacing: 1.5px; 
+            letter-spacing: 2px; 
         }
-        .card-body { padding: 20px; }
+        .card-body { padding: 24px; }
 
-        .mini-stat { margin-bottom: 20px; }
-        .mini-label { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .mini-value { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; color: var(--text); }
-        .ls-bar-container { height: 8px; background: rgba(30, 41, 59, 0.5); border-radius: 10px; overflow: hidden; display: flex; margin: 10px 0; }
-        .ls-long { background: var(--success); height: 100%; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px rgba(34, 197, 94, 0.3); }
-        .ls-short { background: var(--danger); height: 100%; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
-        .fng-bar-mini { height: 6px; background: rgba(30, 41, 59, 0.5); border-radius: 10px; margin-top: 10px; position: relative; }
-        .fng-dot { position: absolute; width: 10px; height: 10px; background: #fff; border-radius: 50%; top: -2px; box-shadow: 0 0 15px rgba(255,255,255,0.8); transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .mini-stat { margin-bottom: 24px; }
+        .mini-label { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .mini-value { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--text); }
+        .ls-bar-container { height: 10px; background: rgba(30, 41, 59, 0.5); border-radius: 12px; overflow: hidden; display: flex; margin: 12px 0; }
+        .ls-long { background: var(--success); height: 100%; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
+        .ls-short { background: var(--danger); height: 100%; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+        .fng-bar-mini { height: 8px; background: rgba(30, 41, 59, 0.5); border-radius: 12px; margin-top: 12px; position: relative; }
+        .fng-dot { position: absolute; width: 12px; height: 12px; background: #fff; border-radius: 50%; top: -2px; box-shadow: 0 0 20px rgba(255,255,255,1); transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
 
         table { width: 100%; border-collapse: separate; border-spacing: 0; }
         th { 
             background: rgba(15, 23, 42, 0.4); 
-            padding: 14px 12px; 
+            padding: 16px 14px; 
             text-align: left; 
             color: var(--text-muted); 
             font-size: 11px; 
             font-weight: 800; 
             border-bottom: 1px solid var(--border); 
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
         }
-        th.sortable { cursor: pointer; transition: 0.2s; }
-        th.sortable:hover { color: var(--accent); }
+        th.sortable { cursor: pointer; transition: 0.3s; }
+        th.sortable:hover { color: var(--accent); background: rgba(255, 255, 255, 0.03); }
         td { 
-            padding: 16px 12px; 
+            padding: 18px 14px; 
             border-bottom: 1px solid var(--border); 
             font-family: 'JetBrains Mono', monospace; 
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
         tr:last-child td { border-bottom: none; }
-        tr:hover td { background: rgba(255, 255, 255, 0.02); }
+        tr:nth-child(even) td { background: rgba(255, 255, 255, 0.01); }
+        tr:hover td { background: rgba(0, 242, 255, 0.03) !important; }
 
-        .pnl-up { color: var(--success); text-shadow: 0 0 10px rgba(34, 197, 94, 0.2); }
-        .pnl-down { color: var(--danger); text-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+        .pnl-up { color: var(--success); text-shadow: 0 0 12px rgba(34, 197, 94, 0.3); }
+        .pnl-down { color: var(--danger); text-shadow: 0 0 12px rgba(239, 68, 68, 0.3); }
         
-        .range-bar { width: 100%; height: 5px; background: rgba(30, 41, 59, 0.5); border-radius: 10px; position: relative; margin-top: 10px; }
-        .range-dot { position: absolute; width: 4px; height: 10px; background: var(--accent); top: -2.5px; border-radius: 2px; transform: translateX(-50%); transition: 0.3s; box-shadow: 0 0 8px var(--accent); }
+        .range-bar { width: 100%; height: 6px; background: rgba(30, 41, 59, 0.5); border-radius: 12px; position: relative; margin-top: 12px; }
+        .range-dot { position: absolute; width: 5px; height: 12px; background: var(--accent); top: -3px; border-radius: 3px; transform: translateX(-50%); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--accent); }
         
         .btn-swap { 
-            background: rgba(255, 255, 255, 0.03); 
+            background: rgba(255, 255, 255, 0.05); 
             border: 1px solid var(--border); 
             color: var(--text-muted); 
-            padding: 8px 12px; 
-            border-radius: 10px; 
+            padding: 10px 15px; 
+            border-radius: 12px; 
             cursor: pointer; 
             font-size: 14px; 
-            transition: all 0.2s; 
+            transition: all 0.3s; 
         }
-        .btn-swap:hover { color: var(--accent); border-color: var(--accent); background: rgba(0, 242, 255, 0.05); }
+        .btn-swap:hover { color: var(--accent); border-color: var(--accent); background: rgba(0, 242, 255, 0.08); transform: rotate(180deg); }
 
         input, select, textarea {
-            background: rgba(15, 23, 42, 0.4) !important;
+            background: rgba(15, 23, 42, 0.6) !important;
             border: 1px solid var(--border) !important;
             color: var(--text) !important;
-            border-radius: 10px !important;
-            padding: 10px 14px !important;
+            border-radius: 12px !important;
+            padding: 12px 16px !important;
             font-size: 13px !important;
-            transition: all 0.2s !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
             outline: none !important;
         }
         input:focus, select:focus, textarea:focus {
             border-color: var(--accent) !important;
-            box-shadow: 0 0 0 2px rgba(0, 242, 255, 0.1) !important;
-            background: rgba(15, 23, 42, 0.6) !important;
+            box-shadow: 0 0 0 4px rgba(0, 242, 255, 0.1), 0 0 20px rgba(0, 242, 255, 0.2) !important;
+            background: rgba(15, 23, 42, 0.8) !important;
         }
 
         .view-section { display: none; animation: fadeIn 0.4s ease-out; }
@@ -370,14 +379,10 @@
                         <div style="display:flex; gap:8px; align-items:center;">
                             <select id="domesticEx" style="background:var(--card-bg); border:1px solid var(--border); color:var(--text); padding:8px 12px; border-radius:8px; font-size:12px; cursor:pointer;" onchange="changeExchange()">
                                 <option value="upbit_krw">업비트 (KRW)</option>
-                                <option value="upbit_btc">업비트 (BTC)</option>
-                                <option value="bithumb_krw">빗썸 (KRW)</option>
                             </select>
                             <div class="btn-swap" style="cursor:default;"><i class="fa-solid fa-right-left"></i></div>
                             <select id="overseasEx" style="background:var(--card-bg); border:1px solid var(--border); color:var(--text); padding:8px 12px; border-radius:8px; font-size:12px; cursor:pointer;" onchange="changeExchange()">
                                 <option value="binance_usdt">바이낸스 현물 (USDT)</option>
-                                <option value="binance_btc">바이낸스 현물 (BTC)</option>
-                                <option value="bybit_usdt">바이비트 현물 (USDT)</option>
                             </select>
                         </div>
                         <input type="text" id="coinSearch" placeholder="코인명/심볼 검색" style="width:100%; background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:10px; color:var(--text); font-size:12px; outline:none;" oninput="renderTable()">
@@ -388,8 +393,9 @@
                         <thead>
                             <tr>
                                 <th style="width: 140px;" class="sortable" onclick="setSort('name')">이름<span id="sort-name" class="sort-icon"></span></th>
-                                <th style="width: 110px;" class="sortable" id="th-price" onclick="setSort('price')">현재가<span id="sort-price" class="sort-icon"></span></th>
-                                <th style="width: 90px;" class="sortable" onclick="setSort('kimp')">김프<span id="sort-kimp" class="sort-icon"></span></th>
+                                <th style="width: 110px;" class="sortable" id="th-price" onclick="setSort('price')">국내시세<span id="sort-price" class="sort-icon"></span></th>
+                                <th style="width: 110px;" class="sortable" onclick="setSort('overseas')">해외시세($)<span id="sort-overseas" class="sort-icon"></span></th>
+                                <th style="width: 80px;" class="sortable" onclick="setSort('kimp')">김프<span id="sort-kimp" class="sort-icon"></span></th>
                                 <th style="width: 80px;" class="sortable" onclick="setSort('change')">전일대비<span id="sort-change" class="sort-icon"></span></th>
                                 <th style="width: 90px;" class="sortable" onclick="setSort('low52')">저가대비(52주)<span id="sort-low52" class="sort-icon"></span></th>
                                 <th style="width: 90px;" class="sortable" onclick="setSort('high52')">고가대비(52주)<span id="sort-high52" class="sort-icon"></span></th>
@@ -687,15 +693,39 @@
     </footer>
 
     <script>
-        let markets = [], overseasPrices = {}, tickerData = {}, usdtRate = 1460, baseRate = 1445;
+        let markets = [], overseasPrices = {}, tickerData = {}, usdtRate = 1460, btcRate = 90000000, baseRate = 1445;
         let currentDomestic = 'upbit', currentOverseas = 'binance';
         let displayLimit = 20, sortKey = 'vol', sortOrder = 'desc';
         const top20 = ["BTC", "ETH", "SOL", "XRP", "DOGE", "ADA", "AVAX", "SHIB", "DOT", "LINK", "TRX", "MATIC", "BCH", "NEAR", "LTC", "APT", "PEPE", "ETC", "STX", "ARB"];
 
-        function init() {
+        // 업비트와 해외 거래소 심볼 매핑 (이름이 다른 코인들)
+        const symbolMap = {
+            "BEAM": "BEAMX",
+            "BTT": "BTTC",
+            "XEC": "XEC", 
+            "PDA": "PDA"
+        };
+        const getOSymbol = (s) => symbolMap[s] || s;
+
+        async function init() {
+            await fetchExchangeRate(); // 환율 먼저 로드
             loadChart('BTC'); loadCache(); renderTable(); fetchUsdtRate(); fetchTopCoins(); 
             setTimeout(() => { fetchGlobalStats(); updateMarketList().then(() => fetchData()); }, 100);
-            setInterval(renderTable, 1000); setInterval(fetchData, 4000);
+            setInterval(renderTable, 1000); 
+            setInterval(fetchData, 2000); 
+            setInterval(fetchUsdtRate, 5000); 
+            setInterval(fetchExchangeRate, 60000); // 1분마다 실제 환율 갱신
+        }
+
+        async function fetchExchangeRate() {
+            try {
+                // 외부 API를 통해 실제 USD/KRW 환율 가져오기
+                const r = await fetch('https://open.er-api.com/v6/latest/USD');
+                const data = await r.json();
+                if(data && data.rates && data.rates.KRW) {
+                    baseRate = data.rates.KRW;
+                }
+            } catch(e) { console.error("환율 로드 실패:", e); }
         }
 
         function loadCache() {
@@ -709,10 +739,17 @@
 
         async function fetchUsdtRate() {
             try {
-                const r = await fetch('https://api.upbit.com/v1/ticker?markets=KRW-USDT');
-                const data = await r.json(); usdtRate = data[0].trade_price;
-                document.getElementById('usdtDisplay').innerText = usdtRate.toLocaleString();
-                document.getElementById('tetherPremium').innerText = ((usdtRate / baseRate - 1) * 100).toFixed(2) + '%';
+                const r = await fetch('https://api.upbit.com/v1/ticker?markets=KRW-USDT,KRW-BTC');
+                const data = await r.json();
+                data.forEach(t => {
+                    if (t.market === 'KRW-USDT') {
+                        usdtRate = t.trade_price;
+                        document.getElementById('usdtDisplay').innerText = usdtRate.toLocaleString();
+                        // 테더 프리미엄: (업비트 테더가 / 실제 환율 - 1)
+                        document.getElementById('tetherPremium').innerText = ((usdtRate / baseRate - 1) * 100).toFixed(2) + '%';
+                    }
+                    if (t.market === 'KRW-BTC') btcRate = t.trade_price;
+                });
             } catch(e) {}
         }
 
@@ -732,67 +769,53 @@
                     const data = await r.json();
                     const prefix = dVal.includes('btc') ? 'BTC-' : 'KRW-';
                     markets = data.filter(x => x.market.startsWith(prefix));
-                } else if(dVal.startsWith('bithumb')) {
+                } else {
                     const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.bithumb.com/public/ticker/ALL_KRW'));
-                    const res = await r.json();
-                    const data = JSON.parse(res.contents).data;
-                    markets = Object.keys(data).filter(k => k !== 'date').map(k => ({
-                        market: `KRW-${k}`,
-                        korean_name: k
-                    }));
+                    const data = await r.json(); const bthData = JSON.parse(data.contents).data;
+                    markets = Object.keys(bthData).filter(k => k !== 'date').map(k => ({ market: `KRW-${k}`, korean_name: k }));
                 }
-            } catch(e) {
-                console.error("Market list update failed:", e);
-            }
+            } catch(e) {}
         }
 
         async function fetchData() {
             try {
-                // Overseas Prices (Binance/Bybit)
                 const oVal = document.getElementById('overseasEx').value;
-                const oUrl = oVal.startsWith('binance') ? 'https://api.binance.com/api/v3/ticker/price' : 'https://api.bybit.com/v5/market/tickers?category=spot';
+                const oUrl = 'https://api.binance.com/api/v3/ticker/price';
                 
-                fetch(oVal.startsWith('binance') ? oUrl : 'https://api.allorigins.win/get?url=' + encodeURIComponent(oUrl))
-                    .then(r => r.json()).then(data => {
-                        if(oVal.startsWith('binance')) {
-                            const suffix = oVal.includes('btc') ? 'BTC' : 'USDT';
-                            data.forEach(p => { if(p.symbol.endsWith(suffix)) overseasPrices[p.symbol.replace(suffix,'')] = parseFloat(p.price); });
-                        } else {
-                            const res = JSON.parse(data.contents);
-                            if(res.result) res.result.list.forEach(p => { if(p.symbol.endsWith('USDT')) overseasPrices[p.symbol.replace('USDT','')] = parseFloat(p.lastPrice); });
-                        }
-                    });
+                // 역방향 매핑 및 특수 처리
+                const reverseMap = { "BEAMX": "BEAM", "BTTC": "BTT" };
 
-                // Domestic Prices (Upbit/Bithumb)
+                const br = await fetch(oUrl);
+                const bData = await br.json();
+                const suffix = oVal.includes('btc') ? 'BTC' : 'USDT';
+                
+                // 새로운 가격 데이터를 받기 전 BTC 등 주요 코인 가격 유지 전략
+                bData.forEach(p => { 
+                    if(p.symbol.endsWith(suffix)) {
+                        let s = p.symbol.replace(suffix,'');
+                        overseasPrices[s] = parseFloat(p.price);
+                        if(reverseMap[s]) overseasPrices[reverseMap[s]] = parseFloat(p.price);
+                    }
+                });
+                
+                // 해외 기준이 USDT일 때 BTC 가격은 BTCUSDT에서 가져와야 함 (매우 중요)
+                if(suffix === 'USDT' && overseasPrices['BTC']) {
+                    overseasPrices['BTC_USDT'] = overseasPrices['BTC']; 
+                }
+
                 const dVal = document.getElementById('domesticEx').value;
                 if(dVal.startsWith('upbit')) {
                     const codes = markets.slice(0, 150).map(m => m.market).join(',');
                     const r = await fetch(`https://api.upbit.com/v1/ticker?markets=${codes}`);
-                    const data = await r.json();
-                    data.forEach(t => { tickerData[t.market] = t; });
-                } else if(dVal.startsWith('bithumb')) {
+                    const data = await r.json(); data.forEach(t => { tickerData[t.market] = t; });
+                } else {
                     const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.bithumb.com/public/ticker/ALL_KRW'));
-                    const res = await r.json();
-                    const bthData = JSON.parse(res.contents).data;
-                    Object.keys(bthData).forEach(k => {
-                        if(k !== 'date') {
-                            const coin = bthData[k];
-                            tickerData[`KRW-${k}`] = {
-                                trade_price: parseFloat(coin.closing_price),
-                                acc_trade_price_24h: parseFloat(coin.acc_trade_value_24H),
-                                signed_change_rate: parseFloat(coin.fluctate_rate_24H) / 100,
-                                high_price: parseFloat(coin.high_24H),
-                                low_price: parseFloat(coin.low_24H),
-                                highest_52_week_price: parseFloat(coin.high_24H), // Bithumb doesn't provide 52-week data easily
-                                lowest_52_week_price: parseFloat(coin.low_24H)
-                            };
-                        }
-                    });
+                    const data = await r.json(); const bthData = JSON.parse(data.contents).data;
+                    Object.keys(bthData).forEach(k => { if(k !== 'date') tickerData[`KRW-${k}`] = { trade_price: parseFloat(bthData[k].closing_price), acc_trade_price_24h: parseFloat(bthData[k].acc_trade_value_24H), signed_change_rate: parseFloat(bthData[k].fluctate_rate_24H) / 100, high_price: parseFloat(bthData[k].high_24H), low_price: parseFloat(bthData[k].low_24H) }; });
                 }
                 saveCache();
-            } catch(e) {
-                console.error("Data fetch failed:", e);
-            }
+                renderTable();
+            } catch(e) {}
         }
 
         function setSort(key) {
@@ -810,22 +833,54 @@
             if(activeHeader) { activeHeader.classList.add('active-sort'); document.getElementById(`sort-${sortKey}`).innerHTML = sortOrder === 'asc' ? ' ▲' : ' ▼'; }
 
             let filtered = markets.filter(m => (m.market.includes(search.toUpperCase()) || (m.korean_name || '').includes(search)));
+            
             filtered.sort((a,b) => {
+                const symbolA = a.market.split(/[-_]/)[1] || a.market.split(/[-_]/)[0];
+                const symbolB = b.market.split(/[-_]/)[1] || b.market.split(/[-_]/)[0];
+
+                if (!search) {
+                    if (symbolA === 'BTC') return -1;
+                    if (symbolB === 'BTC') return 1;
+                }
+
                 const ta = tickerData[a.market], tb = tickerData[b.market]; if(!ta || !tb) return 0;
                 let valA, valB;
                 const getK = (m) => { 
-                    const t = tickerData[m.market], p = overseasPrices[m.market.split('-')[1]]; 
-                    return (t && p) ? ((t.trade_price / (p * usdtRate)) - 1) * 100 : -999; 
+                    const t = tickerData[m.market];
+                    const symbol = m.market.split(/[-_]/)[1];
+                    const p = overseasPrices[getOSymbol(symbol)];
+                    if (!t || !p) return null;
+
+                    const domesticPriceKRW = m.market.startsWith('BTC-') ? t.trade_price * btcRate : t.trade_price;
+                    const isOverseasBTC = document.getElementById('overseasEx').value.includes('btc');
+                    const rate = isOverseasBTC ? btcRate : baseRate; // 실제 환율 사용
+                    const overseasPriceKRW = p * rate;
+
+                    return ((domesticPriceKRW / overseasPriceKRW) - 1) * 100;
                 };
                 switch(sortKey) {
                     case 'name': valA = a.korean_name || a.market; valB = b.korean_name || b.market; break;
-                    case 'price': valA = ta.trade_price; valB = tb.trade_price; break;
+                    case 'price': 
+                        valA = a.market.startsWith('BTC-') ? ta.trade_price * btcRate : ta.trade_price;
+                        valB = b.market.startsWith('BTC-') ? tb.trade_price * btcRate : tb.trade_price;
+                        break;
+                    case 'overseas': 
+                        const isOverseasBTC = document.getElementById('overseasEx').value.includes('btc');
+                        const rate = isOverseasBTC ? btcRate : baseRate;
+                        valA = overseasPrices[getOSymbol(symbolA)] ? overseasPrices[getOSymbol(symbolA)] * rate : null;
+                        valB = overseasPrices[getOSymbol(symbolB)] ? overseasPrices[getOSymbol(symbolB)] * rate : null;
+                        break;
                     case 'kimp': valA = getK(a); valB = getK(b); break;
                     case 'change': valA = ta.signed_change_rate; valB = tb.signed_change_rate; break;
                     case 'low52': valA = ta.lowest_52_week_price ? (ta.trade_price / ta.lowest_52_week_price) : 0; valB = tb.lowest_52_week_price ? (tb.trade_price / tb.lowest_52_week_price) : 0; break;
                     case 'high52': valA = ta.highest_52_week_price ? (ta.trade_price / ta.highest_52_week_price) : 0; valB = tb.highest_52_week_price ? (tb.trade_price / tb.highest_52_week_price) : 0; break;
                     default: valA = ta.acc_trade_price_24h; valB = tb.acc_trade_price_24h; break;
                 }
+
+                if (valA === null && valB !== null) return 1;
+                if (valA !== null && valB === null) return -1;
+                if (valA === null && valB === null) return 0;
+
                 if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
                 if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
                 return 0;
@@ -834,27 +889,58 @@
             document.getElementById('loadMoreContainer').style.display = filtered.length > displayLimit ? 'block' : 'none';
             let html = '';
             filtered.slice(0, displayLimit).forEach(m => {
-                const symbol = m.market.split('-')[1];
-                const t = tickerData[m.market], bp = overseasPrices[symbol];
-                if(!t) return;
+                const parts = m.market.split(/[-_]/);
+                const symbol = (parts[0] === 'KRW' || parts[0] === 'BTC') ? parts[1] : parts[0];
+                const oSymbol = getOSymbol(symbol);
+                const t = tickerData[m.market], bp = overseasPrices[oSymbol];
+                
+                if(!t && symbol !== 'BTC') return;
+
+                const isDomesticBTC = m.market.startsWith('BTC-');
+                const isOverseasBTC = document.getElementById('overseasEx').value.includes('btc');
+                
+                let tradePrice = t ? t.trade_price : 0;
+                let tradePriceKRW = isDomesticBTC ? tradePrice * btcRate : tradePrice;
+                let changeRate = t ? t.signed_change_rate : 0;
+                let accTrade = t ? t.acc_trade_price_24h : 0;
+
+                const formatP = (val) => {
+                    if (!val || val === 0) return '0';
+                    if (val < 1) return val.toFixed(8).replace(/\.?0+$/, ""); 
+                    return val.toLocaleString();
+                };
+
                 let kimp = "-", diff = "-", low52 = "-", high52 = "-", rangePct = 50;
-                if(bp) { const conv = bp * usdtRate; kimp = (((t.trade_price - conv) / conv) * 100).toFixed(2) + "%"; diff = Math.floor(t.trade_price - conv).toLocaleString(); }
-                if(t.lowest_52_week_price) {
+                if(bp && t) { 
+                    const rate = isOverseasBTC ? btcRate : baseRate; // 실제 환율 사용
+                    const overseasPriceKRW = bp * rate; 
+                    kimp = (((tradePriceKRW - overseasPriceKRW) / overseasPriceKRW) * 100).toFixed(2) + "%"; 
+                    const diffVal = tradePriceKRW - overseasPriceKRW;
+                    diff = (Math.abs(diffVal) < 1 ? diffVal.toFixed(4) : Math.floor(diffVal).toLocaleString()); 
+                }
+                if(t && t.lowest_52_week_price) {
                     low52 = "+" + (((t.trade_price - t.lowest_52_week_price) / t.lowest_52_week_price) * 100).toFixed(1) + "%";
                     high52 = (((t.trade_price - t.highest_52_week_price) / t.highest_52_week_price) * 100).toFixed(1) + "%";
                     const range = t.high_price - t.low_price; if(range > 0) rangePct = ((t.trade_price - t.low_price) / range) * 100;
                 }
                 html += `<tr onclick="loadChart('${symbol}')">
                     <td><div style="display:flex; align-items:center; gap:8px;"><img src="https://static.upbit.com/logos/${symbol}.png" style="width:18px; height:18px; border-radius:50%;" onerror="this.src='https://static.upbit.com/logos/BTC.png'"><div><div style="font-weight:800; font-size:13px;">${m.korean_name || m.market}</div><div style="font-size:10px; color:var(--text-muted);">${symbol}</div></div></div></td>
-                    <td style="font-weight:700;">${t.trade_price.toLocaleString()}</td>
+                    <td style="font-weight:700;">
+                        <div>${tradePrice > 0 ? formatP(tradePrice) : '로딩중...'}</div>
+                        <div style="font-size:10px; color:var(--text-muted); opacity:0.7;">${isDomesticBTC ? '≈ ' + Math.floor(tradePriceKRW).toLocaleString() + '₩' : ''}</div>
+                    </td>
+                    <td style="font-weight:700; color:var(--accent);">
+                        <div>${bp ? formatP(bp * (isOverseasBTC ? btcRate : baseRate)) : '-'}</div>
+                        <div style="font-size:10px; color:var(--text-muted); opacity:0.7;">${bp ? (isOverseasBTC ? '₿' : '$') + formatP(bp) : ''}</div>
+                    </td>
                     <td><div class="${parseFloat(kimp)>=0?'pnl-up':'pnl-down'}" style="font-weight:800;">${kimp}</div><div style="font-size:10px; color:var(--text-muted); opacity:0.7;">${diff}</div></td>
-                    <td class="${t?.signed_change_rate>=0?'pnl-up':'pnl-down'}" style="font-weight:700;">${(t.signed_change_rate*100).toFixed(2)}%</td>
+                    <td class="${changeRate>=0?'pnl-up':'pnl-down'}" style="font-weight:700;">${(changeRate*100).toFixed(2)}%</td>
                     <td style="color:var(--success); font-size:11px;">${low52}</td><td style="color:var(--danger); font-size:11px;">${high52}</td>
-                    <td style="font-size:12px;">${Math.floor(t.acc_trade_price_24h/1000000).toLocaleString()}M</td>
+                    <td style="font-size:12px;">${accTrade > 0 ? Math.floor(accTrade/1000000).toLocaleString() + 'M' : '-'}</td>
                     <td><div class="range-bar"><div class="range-dot" style="left:${rangePct}%;"></div></div><div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text-muted); margin-top:4px;"><span>L</span><span>H</span></div></td>
                 </tr>`;
             });
-            body.innerHTML = html || '<tr><td colspan="8" style="text-align:center; padding:50px;">데이터 로딩 중...</td></tr>';
+            body.innerHTML = html || '<tr><td colspan="9" style="text-align:center; padding:50px;">데이터 로딩 중...</td></tr>';
         }
 
         function swapExchanges() {
@@ -867,6 +953,11 @@
             const dVal = document.getElementById('domesticEx').value;
             const marketType = dVal.split('_')[1].toUpperCase();
             document.getElementById('th-price').innerText = `현재가(${marketType})`;
+            
+            // 차트도 현재 선택된 해외 거래소 기준으로 새로고침
+            const currentSymbol = document.getElementById('targetSymbolDisplay').innerText || 'BTC';
+            loadChart(currentSymbol);
+
             displayLimit = 20; updateMarketList().then(() => fetchData());
         }
 
@@ -1176,15 +1267,33 @@
         });
 
         function loadChart(s) { 
-            new TradingView.widget({ "autosize": true, "symbol": `UPBIT:${s}KRW`, "interval": "60", "timezone": "Asia/Seoul", "theme": "dark", "container_id": "tv_chart_container" }); 
+            const oVal = document.getElementById('overseasEx').value;
+            const os = getOSymbol(s);
+            let tvSymbol = `BINANCE:${os}USDT`;
+            
+            if (oVal.startsWith('bybit')) {
+                tvSymbol = `BYBIT:${os}USDT`;
+            } else if (oVal.includes('btc')) {
+                tvSymbol = `BINANCE:${os}BTC`;
+            }
+
+            new TradingView.widget({ 
+                "autosize": true, 
+                "symbol": tvSymbol, 
+                "interval": "60", 
+                "timezone": "Asia/Seoul", 
+                "theme": "dark", 
+                "container_id": "tv_chart_container" 
+            }); 
             
             // 리스크 계산기에 코인 정보 및 가격 자동 입력
             document.getElementById('targetSymbolDisplay').innerText = s;
             document.getElementById('calcSymbol').value = s;
-            const price = overseasPrices[s];
+            const price = overseasPrices[os];
             if(price) {
-                document.getElementById('calcEntry').value = price.toFixed(4);
-                document.getElementById('currentSelectedPrice').innerText = '$ ' + price.toLocaleString();
+                // 해외 시세를 계산기에 바로 반영
+                document.getElementById('calcPrice').value = price;
+                runCalc();
             }
         }
         function switchView(v) {
@@ -1196,10 +1305,10 @@
             if(rightArea) {
                 if(v === 'news' || v === 'calendar') {
                     rightArea.style.display = 'none';
-                    document.querySelector('.main-container').style.gridTemplateColumns = '300px 1fr';
+                    document.querySelector('.main-container').style.gridTemplateColumns = '320px 1fr';
                 } else {
                     rightArea.style.display = 'flex';
-                    document.querySelector('.main-container').style.gridTemplateColumns = '300px 1fr 340px';
+                    document.querySelector('.main-container').style.gridTemplateColumns = '320px 1fr 360px';
                 }
             }
         }

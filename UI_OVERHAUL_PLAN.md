@@ -1,4 +1,4 @@
-# K-LOG UI/UX Overhaul Plan
+ # K-LOG UI/UX Overhaul Plan
 
 ## 1. 개요
 현재의 실용적인 기능을 바탕으로, 트레이딩 전문가용 플랫폼 느낌이 나는 **프리미엄 다크 테마(Premium Dark UI)**로 전체 디자인을 개편합니다.
